@@ -67,7 +67,7 @@ public class VelaServlet extends HttpServlet {
         }
         System.out.println("--Read credential information.");
         
-//    	Get twitter info
+        //    	Get twitter info
         twitter4j.conf.ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true)
     	.setOAuthConsumerKey("uuchxIS2TFhIwAniWsnlq0Pwv")
@@ -75,7 +75,7 @@ public class VelaServlet extends HttpServlet {
         .setOAuthAccessToken("785668193465401348-FakTCROba7Icmsf87d0MJOA9YyiTnZk")
         .setOAuthAccessTokenSecret("UZpgs53Qd1CNJgQ9OqeCyLbp7b2mgIbpZWrRn1GR68lW1");
 		
-		String[] keywordsArray = {"pretty", "girl","basketball","Trump","gun","marvel","physics","Chinese"};
+		String[] keywordsArray = {"job", "violence","happy","beyonce","pretty", "girl","basketball","Trump","gun","marvel","physics","Chinese","interesting"};
 		//		Implementing StatusListner
 		StatusListener listener = new StatusListener() {
 			@Override
