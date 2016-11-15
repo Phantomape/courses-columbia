@@ -19,4 +19,14 @@
     <servlet-name>VelaServlet</servlet-name>
     <url-pattern>/VelaServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CetusServlet</display-name>
+    <servlet-name>CetusServlet</servlet-name>
+    <servlet-class>org.phantomape.CetusServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CetusServlet</servlet-name>
+    <url-pattern>/CetusServlet</url-pattern>
+  </servlet-mapping>
 </web-app>
