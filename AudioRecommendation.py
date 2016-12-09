@@ -15,7 +15,7 @@ conf = SparkConf().setMaster("local").setAppName("AudioRecommendation")
 
 # External modules are imported via a separate array. This can also be done
 # on a SparkContext that has already been constructed.
-sc = SparkContext(conf = conf)
+sc = SparkContext(conf=conf)
 quiet_logs(sc)
 
 print 'Loading the dataset...'
@@ -46,6 +46,7 @@ print "Let's load the artist ID to name mappings..."
 
 rawArtistRDD = sc.textFile(artistDataPath)
 
+
 def parseArtistIdNamePair(singlePair):
     splitPair = singlePair.rsplit('\t')
     # we should have two items in the list - id and name of the artist.
@@ -61,6 +62,7 @@ def parseArtistIdNamePair(singlePair):
 artistByID = dict(rawArtistRDD.flatMap(lambda x: parseArtistIdNamePair(x)).collect())
 
 print "Artist ID to name mappings loaded OK..."
+
 
 def parseArtistAlias(alias):
     splitPair = alias.rsplit('\t')
@@ -86,6 +88,7 @@ from pyspark.mllib.recommendation import *
 # Let's turn the artist aliases into a broadcast variable.
 # That'll distribute it to worker nodes efficiently, so we save bandwidth.
 artistAliasBroadcast = sc.broadcast(artistAlias)
+
 
 def mapSingleObservation(x):
     userID, artistID, count = map(lambda lineItem: int(lineItem), x.split())

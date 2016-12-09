@@ -4,10 +4,17 @@ import sys
 import numpy
 # Path for spark source folder
 #os.environ['SPARK_HOME']="/usr/local/bin/spark-1.3.1-bin-hadoop2.6"
-os.environ['SPARK_HOME'] = "C:\Spark\spark-2.0.2-bin-hadoop2.7\spark-2.0.2-bin-hadoop2.7"
+# os.environ['SPARK_HOME'] = "C:\Spark\spark-2.0.2-bin-hadoop2.7\spark-2.0.2-bin-hadoop2.7"
 
-sys.path.append("C:\Spark\spark-2.0.2-bin-hadoop2.7\spark-2.0.2-bin-hadoop2.7\python")
-sys.path.append("C:\Spark\spark-2.0.2-bin-hadoop2.7\spark-2.0.2-bin-hadoop2.7\python\lib\py4j-0.8.2.1-src.zip")
+os.environ['SPARK_HOME'] = "/Users/HaikuoLiu/Desktop/CloudComputing/spark/spark-1.6.1-bin-hadoop2.6"
+
+
+# sys.path.append("C:\Spark\spark-2.0.2-bin-hadoop2.7\spark-2.0.2-bin-hadoop2.7\python")
+
+sys.path.append("/Users/HaikuoLiu/Desktop/CloudComputing/spark/spark-1.6.1-bin-hadoop2.6/python")
+
+# sys.path.append("C:\Spark\spark-2.0.2-bin-hadoop2.7\spark-2.0.2-bin-hadoop2.7\python\lib\py4j-0.8.2.1-src.zip")
+sys.path.append("/Users/HaikuoLiu/Desktop/CloudComputing/spark/spark-1.6.1-bin-hadoop2.6/python/py4j-0.9-src.zip")
 
 try:
     from pyspark import SparkContext
@@ -17,13 +24,21 @@ except ImportError as e:
     print ("Can not import Spark Modules", e)
     sys.exit(1)
 
-logFile = "C:\Codes\Python\AudioRecommendation\AudioRecommendation\README.md"  # Should be some file on your system
+# logFile = "C:\Codes\Python\AudioRecommendation\AudioRecommendation\README.md"  # Should be some file on your system
+logFile = "/Users/HaikuoLiu/PycharmProjects/AudioRecommendation/log.txt"  # Should be some file on your system
+
 sc = SparkContext("local", "Audio Recommendation")
 logData = sc.textFile(logFile).cache()
 
-datasetPath = 'Audio/user_artist_data.txt'
-artistDataPath = 'Audio/artist_data.txt'
-artistAliasPath = 'Audio/artist_alias.txt'
+# datasetPath = 'Audio/user_artist_data.txt'
+datasetPath = '/Users/HaikuoLiu/Desktop/CloudComputing/spark/profiledata_06-May-2005/user_artist_data.txt'
+
+
+# artistDataPath = 'Audio/artist_data.txt'
+artistDataPath = '/Users/HaikuoLiu/Desktop/CloudComputing/spark/profiledata_06-May-2005/artist_data.txt'
+
+# artistAliasPath = 'Audio/artist_alias.txt'
+artistAliasPath = '/Users/HaikuoLiu/Desktop/CloudComputing/spark/profiledata_06-May-2005/artist_alias.txt'
 numPartitions = 2
 rawDataRDD = sc.textFile(datasetPath, numPartitions)
 rawDataRDD.cache()
@@ -110,7 +125,9 @@ model = ALS.trainImplicit(trainData, 10, 5, 0.01)
 print "Model construction finished..."
 
 print "Let's see if this model makes sense..."
-testUserID = 2120603
+# testUserID = 2120603
+
+testUserID = 1000002
 print "Let's grab all artists played by user {0}".format(testUserID)
 
 artistByIDBroadcast = sc.broadcast(artistByID)
@@ -126,117 +143,121 @@ print "Now let's generate some recommendations and see if they make sense for th
 # Got to use the model.call syntax here, because recommendProducts is not implemented
 # In pySpark 1.3 :(
 recommendationsForUser = \
-    map(lambda observation: artistByID.get(observation.product), model.call("recommendProducts", testUserID, 30))
+    map(lambda observation: artistByID.get(observation.product), model.call("recommendProducts", testUserID, 10))
 
 print recommendationsForUser
 
-# Now let's get done to evaluation. To do this right, we'll split the data into test and training sets, then
-# compare test data set AUC between models!
-def areaUnderCurve(positiveData, bAllItemIDs, predictFunction):
-    """Computes mean AUC metric given a labeled data set and a prediction function.
-    Adapted from the Scala version distributed with "Advanced Analytics with Spark".
-    Args:
-        positiveData: A labelled dataset to evaluate on, as a Spark RDD.
-        bAllItemIDs: All items' IDs as a broadcast variable.
-        predictFunction: A lambda function that maps an RDD of data points into an RDD of Ratings.
-    Returns:
-        The mean AUC.
-    """
-    # Take held-out data as the "positive", and map to tuples
-    positiveUserProducts = positiveData.map(lambda r: (r.user, r.product))
-    # Make predictions for each of them, including a numeric score, and gather by user
-    positivePredictions = predictFunction(positiveUserProducts).groupBy(lambda x: x.user)
-    # BinaryClassificationMetrics.areaUnderROC is not used here since there are really lots of
-    # small AUC problems, and it would be inefficient, when a direct computation is available.
+print "top ten recommendations for user " + str(testUserID) + ":"
+for r in recommendationsForUser:
+    print r
 
-    # Create a set of "negative" products for each user. These are randomly chosen
-    # from among all of the other items, excluding those that are "positive" for the user.
-    negativeUserProducts = (positiveUserProducts
-                            .groupByKey()
-                            .mapPartitions(lambda userIDAndPosItemIDs: createNegativeProductSet(userIDAndPosItemIDs, bAllItemIDs))
-                            .flatMap(lambda x: x)) #  flatmap breaks the collections above down into one big set of tuples
-
-    negativePredictions = predictFunction(negativeUserProducts).groupBy(lambda x: x.user)
-    # join positive and negative by user
-    return (positivePredictions
-            .join(negativePredictions)
-            .values()
-            .map(lambda (positiveRatings, negativeRatings): computeAUC(positiveRatings, negativeRatings))
-            .mean())
-
-import random
-
-def createNegativeProductSet(userIDAndPosItemIDs, bAllItemIDs):
-    """Creates a random set of products that were predicted by a recommendation model,
-    but never actually liked/used by a particular user.
-    We can then use these products to verify that
-    our recommendation model consistently rates these negative products
-    lower than the ones liked by the user (based on test/CV data)
-    Args:
-       userIDAndPosItemIDs: A tuple of <UserID, ResultIterable>
-       bAllItemIDs: a broadcast variable containing IDs of all the products in the dataset.
-    Returns:
-        A collection of tuples of form <UserID, ItemID> with products recommended
-        to but not ever liked by users.
-    """
-    allItemIDs = bAllItemIDs.value
-    return map(lambda (userID, posItemIDs): getNegativeProductsForSingleUser(userID, posItemIDs, allItemIDs), userIDAndPosItemIDs)
-
-from array import array
-
-def getNegativeProductsForSingleUser(userID, posItemIDs, allItemIDs):
-    posItemIDSet = set(posItemIDs)
-    negative = array('i')
-    i = 0
-    # Keep about as many negative examples per user as positive.
-    # Duplicates are OK
-    while i < len(allItemIDs) and len(negative) < len(posItemIDSet):
-        itemID = allItemIDs[random.randint(0, len(allItemIDs))]
-        if itemID not in posItemIDSet:
-            negative.append(itemID)
-        i += 1
-    # Result is a collection of (user,negative-item) tuples
-    return map(lambda itemID: (userID, itemID), negative)
-
-def computeAUC(positiveRatings, negativeRatings):
-    # AUC may be viewed as the probability that a random positive item scores
-    # higher than a random negative one. Here the proportion of all positive-negative
-    # pairs that are correctly ranked is computed. The result is equal to the AUC metric.
-    correct = 0L
-    total = 0L
-    # for each pairing
-    for positive in positiveRatings:
-        for negative in negativeRatings:
-            # Count the correctly-ranked pairs
-            if positive.rating > negative.rating:
-                correct += 1
-            total += 1
-    return float(correct) / total
-
-# OK, now that we've fleshed out that AUC function, let's get to the easy part.
-# Lets split the data into training and cross-validation sets!
-mappedSampleRDD = sample.map(lambda x: mapSingleObservation(x))
-trainData, cvData = mappedSampleRDD.randomSplit([0.9, 0.1])
-trainData.cache()
-cvData.cache()
-
-allItemIDs = mappedSampleRDD.map(lambda x: x.product).distinct().collect()
-bAllItemIDs = sc.broadcast(allItemIDs)
-
-model = ALS.trainImplicit(trainData, 10, 5, 0.01)
-auc = areaUnderCurve(cvData, bAllItemIDs, model.predictAll)
-
-# Now let's run grid search to optimize rank, lambda and alpha hyperparameters.
-# These values are just to get a sense of where we should be heading.
-
-def runGridSearch(rankRange, lambdaRange, alphaRange):
-    for r in rankRange:
-        for l in lambdaRange:
-            for a in alphaRange:
-                model = ALS.trainImplicit(trainData, r, 10, l, -1, a)
-                auc = areaUnderCurve(cvData, bAllItemIDs, model.predictAll)
-                yield ((r, l, a), auc)
-
-evaluations = runGridSearch(rankRange=[10, 50], lambdaRange=[1.0, 0.0001], alphaRange=[1.0, 40.0])
-
-sorted(list(evaluations), key=lambda x: x[1])
+# # Now let's get done to evaluation. To do this right, we'll split the data into test and training sets, then
+# # compare test data set AUC between models!
+# def areaUnderCurve(positiveData, bAllItemIDs, predictFunction):
+#     """Computes mean AUC metric given a labeled data set and a prediction function.
+#     Adapted from the Scala version distributed with "Advanced Analytics with Spark".
+#     Args:
+#         positiveData: A labelled dataset to evaluate on, as a Spark RDD.
+#         bAllItemIDs: All items' IDs as a broadcast variable.
+#         predictFunction: A lambda function that maps an RDD of data points into an RDD of Ratings.
+#     Returns:
+#         The mean AUC.
+#     """
+#     # Take held-out data as the "positive", and map to tuples
+#     positiveUserProducts = positiveData.map(lambda r: (r.user, r.product))
+#     # Make predictions for each of them, including a numeric score, and gather by user
+#     positivePredictions = predictFunction(positiveUserProducts).groupBy(lambda x: x.user)
+#     # BinaryClassificationMetrics.areaUnderROC is not used here since there are really lots of
+#     # small AUC problems, and it would be inefficient, when a direct computation is available.
+#
+#     # Create a set of "negative" products for each user. These are randomly chosen
+#     # from among all of the other items, excluding those that are "positive" for the user.
+#     negativeUserProducts = (positiveUserProducts
+#                             .groupByKey()
+#                             .mapPartitions(lambda userIDAndPosItemIDs: createNegativeProductSet(userIDAndPosItemIDs, bAllItemIDs))
+#                             .flatMap(lambda x: x)) #  flatmap breaks the collections above down into one big set of tuples
+#
+#     negativePredictions = predictFunction(negativeUserProducts).groupBy(lambda x: x.user)
+#     # join positive and negative by user
+#     return (positivePredictions
+#             .join(negativePredictions)
+#             .values()
+#             .map(lambda (positiveRatings, negativeRatings): computeAUC(positiveRatings, negativeRatings))
+#             .mean())
+#
+# import random
+#
+# def createNegativeProductSet(userIDAndPosItemIDs, bAllItemIDs):
+#     """Creates a random set of products that were predicted by a recommendation model,
+#     but never actually liked/used by a particular user.
+#     We can then use these products to verify that
+#     our recommendation model consistently rates these negative products
+#     lower than the ones liked by the user (based on test/CV data)
+#     Args:
+#        userIDAndPosItemIDs: A tuple of <UserID, ResultIterable>
+#        bAllItemIDs: a broadcast variable containing IDs of all the products in the dataset.
+#     Returns:
+#         A collection of tuples of form <UserID, ItemID> with products recommended
+#         to but not ever liked by users.
+#     """
+#     allItemIDs = bAllItemIDs.value
+#     return map(lambda (userID, posItemIDs): getNegativeProductsForSingleUser(userID, posItemIDs, allItemIDs), userIDAndPosItemIDs)
+#
+# from array import array
+#
+# def getNegativeProductsForSingleUser(userID, posItemIDs, allItemIDs):
+#     posItemIDSet = set(posItemIDs)
+#     negative = array('i')
+#     i = 0
+#     # Keep about as many negative examples per user as positive.
+#     # Duplicates are OK
+#     while i < len(allItemIDs) and len(negative) < len(posItemIDSet):
+#         itemID = allItemIDs[random.randint(0, len(allItemIDs) - 1)]
+#         if itemID not in posItemIDSet:
+#             negative.append(itemID)
+#         i += 1
+#     # Result is a collection of (user,negative-item) tuples
+#     return map(lambda itemID: (userID, itemID), negative)
+#
+# def computeAUC(positiveRatings, negativeRatings):
+#     # AUC may be viewed as the probability that a random positive item scores
+#     # higher than a random negative one. Here the proportion of all positive-negative
+#     # pairs that are correctly ranked is computed. The result is equal to the AUC metric.
+#     correct = 0L
+#     total = 0L
+#     # for each pairing
+#     for positive in positiveRatings:
+#         for negative in negativeRatings:
+#             # Count the correctly-ranked pairs
+#             if positive.rating > negative.rating:
+#                 correct += 1
+#             total += 1
+#     return float(correct) / total
+#
+# # OK, now that we've fleshed out that AUC function, let's get to the easy part.
+# # Lets split the data into training and cross-validation sets!
+# mappedSampleRDD = sample.map(lambda x: mapSingleObservation(x))
+# trainData, cvData = mappedSampleRDD.randomSplit([0.9, 0.1])
+# trainData.cache()
+# cvData.cache()
+#
+# allItemIDs = mappedSampleRDD.map(lambda x: x.product).distinct().collect()
+# bAllItemIDs = sc.broadcast(allItemIDs)
+#
+# model = ALS.trainImplicit(trainData, 10, 5, 0.01)
+# auc = areaUnderCurve(cvData, bAllItemIDs, model.predictAll)
+#
+# # Now let's run grid search to optimize rank, lambda and alpha hyperparameters.
+# # These values are just to get a sense of where we should be heading.
+#
+# def runGridSearch(rankRange, lambdaRange, alphaRange):
+#     for r in rankRange:
+#         for l in lambdaRange:
+#             for a in alphaRange:
+#                 model = ALS.trainImplicit(trainData, r, 10, l, -1, a)
+#                 auc = areaUnderCurve(cvData, bAllItemIDs, model.predictAll)
+#                 yield ((r, l, a), auc)
+#
+# evaluations = runGridSearch(rankRange=[10, 50], lambdaRange=[1.0, 0.0001], alphaRange=[1.0, 40.0])
+#
+# sorted(list(evaluations), key=lambda x: x[1])
