@@ -1,5 +1,9 @@
 import os
-import os.path
+import sys
+os.environ['SPARK_HOME'] = "/Users/HaikuoLiu/Desktop/CloudComputing/spark/spark-1.6.1-bin-hadoop2.6"
+sys.path.append("/Users/HaikuoLiu/Desktop/CloudComputing/spark/spark-1.6.1-bin-hadoop2.6/python")
+sys.path.append("/Users/HaikuoLiu/Desktop/CloudComputing/spark/spark-1.6.1-bin-hadoop2.6/python/py4j-0.9-src.zip")
+
 
 from pyspark import SparkContext
 from pyspark import SparkConf
@@ -20,9 +24,18 @@ quiet_logs(sc)
 
 print 'Loading the dataset...'
 # Actual code goes here.
-datasetPath = 'Audio/user_artist_data.txt'
-artistDataPath = 'Audio/artist_data.txt'
-artistAliasPath = 'Audio/artist_alias.txt'
+logFile = "/Users/HaikuoLiu/PycharmProjects/AudioRecommendation/log.txt"  # Should be some file on your system
+
+sc = SparkContext("localx", "Audio Recommendationx")
+logData = sc.textFile(logFile).cache()
+
+# datasetPath = 'Audio/user_artist_data.txt'
+datasetPath = '/Users/HaikuoLiu/Desktop/CloudComputing/spark/profiledata_06-May-2005/user_artist_data.txt'
+
+
+# artistDataPath = 'Audio/artist_data.txt'
+artistDataPath = '/Users/HaikuoLiu/Desktop/CloudComputing/spark/profiledata_06-May-2005/artist_data.txt'
+
 numPartitions = 2
 rawDataRDD = sc.textFile(datasetPath, numPartitions)
 rawDataRDD.cache()

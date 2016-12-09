@@ -24,20 +24,12 @@ except ImportError as e:
     print ("Can not import Spark Modules", e)
     sys.exit(1)
 
-# logFile = "C:\Codes\Python\AudioRecommendation\AudioRecommendation\README.md"  # Should be some file on your system
 logFile = "/Users/HaikuoLiu/PycharmProjects/AudioRecommendation/log.txt"  # Should be some file on your system
 
 sc = SparkContext("local", "Audio Recommendation")
 logData = sc.textFile(logFile).cache()
-
-# datasetPath = 'Audio/user_artist_data.txt'
 datasetPath = '/Users/HaikuoLiu/Desktop/CloudComputing/spark/profiledata_06-May-2005/user_artist_data.txt'
-
-
-# artistDataPath = 'Audio/artist_data.txt'
 artistDataPath = '/Users/HaikuoLiu/Desktop/CloudComputing/spark/profiledata_06-May-2005/artist_data.txt'
-
-# artistAliasPath = 'Audio/artist_alias.txt'
 artistAliasPath = '/Users/HaikuoLiu/Desktop/CloudComputing/spark/profiledata_06-May-2005/artist_alias.txt'
 numPartitions = 2
 rawDataRDD = sc.textFile(datasetPath, numPartitions)
@@ -127,16 +119,16 @@ print "Model construction finished..."
 print "Let's see if this model makes sense..."
 # testUserID = 2120603
 
-testUserID = 1000002
-print "Let's grab all artists played by user {0}".format(testUserID)
-
-artistByIDBroadcast = sc.broadcast(artistByID)
-
-artistsForUser = (trainData
-                  .filter(lambda observation: observation.user == testUserID)
-                  .map(lambda observation: artistByIDBroadcast.value.get(observation.product))
-                  .collect())
-print artistsForUser
+testUserID = 2093760
+# print "Let's grab all artists played by user {0}".format(testUserID)
+#
+# artistByIDBroadcast = sc.broadcast(artistByID)
+#
+# artistsForUser = (trainData
+#                   .filter(lambda observation: observation.user == testUserID)
+#                   .map(lambda observation: artistByIDBroadcast.value.get(observation.product))
+#                   .collect())
+# print artistsForUser
 
 print "Now let's generate some recommendations and see if they make sense for the guy..."
 

@@ -8,6 +8,17 @@ from pyspark import SparkContext
 from pyspark.mllib.recommendation import *
 
 
+# Red Hot Chili Peppers
+# U2
+# Coldplay
+# Queen
+# The Beatles
+# Led Zeppelin
+# David Bowie
+# [unknown]
+# Radiohead
+# Pink Floyd
+
 
 # For erm
 
@@ -33,6 +44,8 @@ seed = 20
 sample, someOtherJunk = RDD_raw_data.randomSplit(weights, seed)
 sample.cache()
 
+
+print "hello!"
 
 RDD_raw_artist = spark_context.textFile(artist_data)
 
@@ -89,6 +102,8 @@ artists_user = (trained_data
 # In pySpark 1.3 :(
 recommendation_results = \
     map(lambda observation: id_of_artist.get(observation.product), model.call("recommendProducts", uid_to_recommend, 10))
+
+print "finished!"
 
 print recommendation_results
 
