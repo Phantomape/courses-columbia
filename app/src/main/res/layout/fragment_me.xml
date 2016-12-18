@@ -6,9 +6,10 @@
     tools:context="com.eathere.cc.eathere.MeFragment">
 
     <TextView
+        android:id="@+id/frag_me_about"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/frag_me"
+        android:text="@string/frag_me_about"
         android:textSize="40dp"
         android:textStyle="bold"
         android:layout_centerInParent="true"/>
