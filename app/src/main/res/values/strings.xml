@@ -13,4 +13,6 @@
     <string name="about_content">App to search and recommend restaurants.</string>
     <string name="about_credits">Created by: Xucheng Chen, Haikuo Liu, Jisong Liu, Shuo Wang @ Columbia University</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="empty_list_restaurant">Type a restaurant name to start a search...</string>
+    <string name="empty_list_recommend">Please sign in to see our recommendation</string>
 </resources>

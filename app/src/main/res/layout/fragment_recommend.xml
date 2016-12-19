@@ -12,4 +12,13 @@
         android:layout_marginBottom="?attr/actionBarSize"
         />
 
+    <TextView
+        android:id="@+id/frag_recommend_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/empty_list_recommend"
+        android:textSize="24sp"
+        android:visibility="gone" />
+
 </RelativeLayout>

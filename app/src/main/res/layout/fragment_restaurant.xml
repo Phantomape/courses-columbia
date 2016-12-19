@@ -23,4 +23,14 @@
         android:layout_below="@+id/frag_restaurant_search_view"
         />
 
+    <TextView
+        android:id="@+id/frag_restaurant_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/empty_list_restaurant"
+        android:textSize="24sp"
+        android:layout_below="@+id/frag_restaurant_search_view"
+        android:visibility="gone" />
+
 </RelativeLayout>

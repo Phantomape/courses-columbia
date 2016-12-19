@@ -63,6 +63,7 @@ public class RestaurantFragment extends Fragment{
                 R.layout.fragment_restaurant_list_view_item, new String[] { "img", "title", "rating", "address", "category"},
                 new int[] { R.id.img, R.id.title, R.id.rating, R.id.address, R.id.category });
         listView.setAdapter(adapter);
+        listView.setEmptyView(rootView.findViewById(R.id.frag_restaurant_empty_list));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -75,6 +76,7 @@ public class RestaurantFragment extends Fragment{
                 startActivity(intent);
             }
         });
+
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -84,68 +86,14 @@ public class RestaurantFragment extends Fragment{
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Map<String, Object> map = new HashMap<String, Object>();
 
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-        list.add(map);
-
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-        list.add(map);
-
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-
-        list.add(map);
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-        list.add(map);
-
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-        list.add(map);
-
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-        list.add(map);
-
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-        list.add(map);
-
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-        list.add(map);
-
-        map.put("img", android.R.drawable.ic_menu_search);
-        map.put("title", "Organic Avenue");
-        map.put("rating", "3.5/5.0");
-        map.put("address", "111 W 40th St, Theater District");
-        map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-        list.add(map);
+        for (int i = 0; i < 10; i++) {
+            map.put("img", android.R.drawable.ic_menu_search);
+            map.put("title", "Organic Avenue");
+            map.put("rating", "3.5/5.0");
+            map.put("address", "111 W 40th St, Theater District");
+            map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
+            list.add(map);
+        }
 
         return list;
     }
