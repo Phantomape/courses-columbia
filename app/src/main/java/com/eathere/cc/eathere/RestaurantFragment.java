@@ -6,10 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,13 +28,34 @@ public class RestaurantFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_restaurant, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_restaurant, container, false);
+        final SearchView searchView = (SearchView) rootView.findViewById(R.id.frag_restaurant_search_view);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Toast toast = Toast.makeText(getContext(), "Searching: " + s, Toast.LENGTH_SHORT);
+                toast.show();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+                }
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
         ListView listView = (ListView) rootView.findViewById(R.id.frag_restaurant_list_view);
         SimpleAdapter adapter = new SimpleAdapter(getActivity(), getData(),
                 R.layout.fragment_restaurant_list_view_item, new String[] { "img", "title", "rating", "address", "category"},

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">EatHere</string>
     <string name="frag_restaurant">Restaurant</string>
+    <string name="frag_restaurant_search">Search...</string>
     <string name="frag_recommend">Recommend</string>
     <string name="frag_me">Me</string>
     <string name="frag_me_about">About</string>
@@ -11,4 +12,5 @@
     <string name="about_title">App to </string>
     <string name="about_content">App to search and recommend restaurants.</string>
     <string name="about_credits">Created by: Xucheng Chen, Haikuo Liu, Jisong Liu, Shuo Wang @ Columbia University</string>
+    <string name="title_activity_login">Sign in</string>
 </resources>
