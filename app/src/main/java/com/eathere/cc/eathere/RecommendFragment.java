@@ -1,12 +1,14 @@
 package com.eathere.cc.eathere;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -36,6 +38,18 @@ public class RecommendFragment extends Fragment{
                 R.layout.fragment_recommend_list_view_item, new String[] { "img", "title", "rating", "address", "category"},
                 new int[] { R.id.img, R.id.title, R.id.rating, R.id.address, R.id.category });
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), InfoActivity.class);
+                Map<String, Object> listEntry = (Map<String, Object>) parent.getAdapter().getItem(position);
+                intent.putExtra("title", (String) listEntry.get("title"));
+                intent.putExtra("rating", (String) listEntry.get("rating"));
+                intent.putExtra("address", (String) listEntry.get("address"));
+                intent.putExtra("category", (String) listEntry.get("category"));
+                startActivity(intent);
+            }
+        });
         // Inflate the layout for this fragment
         return rootView;
     }

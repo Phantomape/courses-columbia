@@ -5,8 +5,8 @@
     <string name="frag_recommend">Recommend</string>
     <string name="frag_me">Me</string>
     <string name="frag_me_about">About</string>
-    <string name="frag_me_login">Log In</string>
-    <string name="frag_me_logout">Log Out</string>
+    <string name="frag_me_login">Sign In</string>
+    <string name="frag_me_logout">Sign Out</string>
     <string name="frag_me_user_name">User</string>
     <string name="title_activity_about">About</string>
     <string name="about_title">App to </string>
