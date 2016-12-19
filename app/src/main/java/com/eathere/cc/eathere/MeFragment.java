@@ -24,7 +24,7 @@ public class MeFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_me, container, false);
-        TextView about = (TextView) rootView.findViewById(R.id.frag_me_about);
+        TextView about = (TextView) rootView.findViewById(R.id.frag_me_button_about);
         about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

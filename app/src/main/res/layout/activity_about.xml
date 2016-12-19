@@ -26,17 +26,30 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"><!-- have an eye on ! -->
-        <TextView android:id="@+id/activity_about_text_view_content"
-            android:layout_width="wrap_content"
+        <TextView android:id="@+id/activity_about_text_view_app_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/about_content"
             android:layout_weight="0"
+            android:text="@string/app_name"
+            android:textSize="50sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            />
+        <TextView android:id="@+id/activity_about_text_view_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="@string/about_content"
+            android:textSize="22sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
             />
         <TextView android:id="@+id/activity_about_text_view_credits"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/about_credits"
             android:layout_weight="0"
+            android:text="@string/about_credits"
+            android:gravity="center"
             />
     </LinearLayout>
 
