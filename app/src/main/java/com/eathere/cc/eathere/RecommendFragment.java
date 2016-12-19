@@ -1,10 +1,12 @@
 package com.eathere.cc.eathere;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -28,11 +30,11 @@ public class RecommendFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recommend, container, false);
+
         ListView listView = (ListView) rootView.findViewById(R.id.frag_recommend_list_view);
         SimpleAdapter adapter = new SimpleAdapter(getActivity(), getData(),
                 R.layout.fragment_recommend_list_view_item, new String[] { "img", "title", "rating", "address", "category"},
                 new int[] { R.id.img, R.id.title, R.id.rating, R.id.address, R.id.category });
-        //setListAdapter(adapter);
         listView.setAdapter(adapter);
         // Inflate the layout for this fragment
         return rootView;
