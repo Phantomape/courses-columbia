@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 
 public class MeFragment extends Fragment{
@@ -37,7 +36,7 @@ public class MeFragment extends Fragment{
         loginLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
                 startActivity(intent);
             }
         });

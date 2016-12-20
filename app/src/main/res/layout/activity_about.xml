@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="@string/about_content"
+            android:text="@string/activity_about_content"
             android:textSize="22sp"
             android:textColor="@android:color/black"
             android:gravity="center"
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="@string/about_credits"
+            android:text="@string/activity_about_credits"
             android:gravity="center"
             />
     </LinearLayout>

@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/frag_me_user_avatar"
         android:layout_margin="12dp"
-        android:text="@string/frag_me_user_name"
+        android:text="@string/frag_me_username"
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
@@ -32,7 +32,7 @@
         android:layout_below="@id/frag_me_user_name"
         android:layout_centerHorizontal="true"
         android:layout_margin="12dp"
-        android:text="@string/frag_me_login"
+        android:text="@string/frag_me_sign_in"
         android:textSize="22sp"
         android:background="@drawable/arc_button" />
 

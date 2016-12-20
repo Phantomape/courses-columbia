@@ -1,13 +1,27 @@
 package com.eathere.cc.eathere;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class InfoActivity extends AppCompatActivity {
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+public class InfoActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +47,38 @@ public class InfoActivity extends AppCompatActivity {
         textViewAddress.setText(address);
         textViewCategory.setText(category);
 
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.activity_info_map);
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        Geocoder geodecoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = geodecoder.getFromLocationName("111 W 40th St, New York, NY 10018", 100);
+        } catch (IOException ioException) {
+            // Catch network or other I/O problems.
+            String errorMessage = getString(R.string.google_map_service_not_available);
+            Log.e("Google Map", errorMessage, ioException);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            // Catch invalid arguments
+            String errorMessage = getString(R.string.google_map_invalid_arguments_used);
+            Log.e("Google Map", errorMessage, illegalArgumentException);
+        }
+        if ((addresses != null) && (!addresses.isEmpty())) {
+            Address target = addresses.get(0);
+            double lat = target.getLatitude();
+            double lng = target.getLongitude();
+            LatLng latLng = new LatLng(lat, lng);
+            map.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title("Marker"));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        } else {
+            Log.e("Google Map", "No addresses found");
+        }
     }
 
     @Override
