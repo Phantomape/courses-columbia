@@ -28,7 +28,15 @@
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
             android:theme="@style/MyMaterialTheme" />
-        <activity android:name=".InfoActivity"></activity>
+        <activity android:name=".InfoActivity" />
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/MyMaterialTheme" />
+        <activity
+            android:name=".SignUpActivity"
+            android:label="@string/title_activity_sign_up"
+            android:theme="@style/MyMaterialTheme"></activity>
     </application>
 
 </manifest>
