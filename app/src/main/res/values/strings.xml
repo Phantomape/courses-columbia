@@ -14,8 +14,12 @@
     <string name="activity_about_title">EatHere</string>
     <string name="activity_about_content">App to search and recommend restaurants.</string>
     <string name="activity_about_credits">Created by: Xucheng Chen, Haikuo Liu, Jisong Liu, Shuo Wang @ Columbia University</string>
-    <string name="title_activity_login">Sign In</string>
+    <string name="title_activity_sign_in">Sign In</string>
+    <string name="activity_sign_in_sign_in">Sign In</string>
+    <string name="activity_sign_in_account_creation_prompt">Don\'t have an account?</string>
+    <string name="activity_sign_in_account_creation">Create new account</string>
     <string name="title_activity_sign_up">Sign Up</string>
+    <string name="activity_sign_up_sign_up">Sign Up</string>
     <string name="google_map_service_not_available">Google Map Service is not available</string>
     <string name="google_map_invalid_arguments_used">Google Map: Invalid arguments</string>
 </resources>

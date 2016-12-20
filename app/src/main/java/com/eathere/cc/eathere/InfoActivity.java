@@ -1,14 +1,19 @@
 package com.eathere.cc.eathere;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.Manifest;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,7 +26,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class InfoActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class InfoActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
+
+    private GoogleMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +61,16 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap map) {
+        this.map = map;
+        // check permission for current location
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            map.setMyLocationEnabled(true);
+        } else {
+            // request permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
+        }
         Geocoder geodecoder = new Geocoder(this, Locale.getDefault());
         List<Address> addresses = null;
         try {
@@ -78,6 +95,19 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         } else {
             Log.e("Google Map", "No addresses found");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 1) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                map.setMyLocationEnabled(true);
+            } else {
+                // Permission was denied. Display an error message.
+                Toast toast = Toast.makeText(this, "Location permission denied, cannot display current location", Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
     }
 
