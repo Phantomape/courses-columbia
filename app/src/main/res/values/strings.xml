@@ -22,4 +22,8 @@
     <string name="activity_sign_up_sign_up">Sign Up</string>
     <string name="google_map_service_not_available">Google Map Service is not available</string>
     <string name="google_map_invalid_arguments_used">Google Map: Invalid arguments</string>
+    <string name="activity_permissions_help">Permissions Required :)</string>
+    <string name="activity_permissions_help_message">EatHere needs access to your location (for recommendation and search) and camera (for your user picture)</string>
+    <string name="activity_permissions_quit">Quit Application</string>
+    <string name="activity_permissions_settings">Set permissions</string>
 </resources>

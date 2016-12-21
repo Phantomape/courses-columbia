@@ -7,7 +7,7 @@
 
     <!-- Dangerous Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -18,6 +18,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -34,12 +35,15 @@
             android:name=".SignUpActivity"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/MyMaterialTheme" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAh5MWRlJP2MMoDLDnPrgKvgHex-ivQK7w"/>
+            android:value="AIzaSyAh5MWRlJP2MMoDLDnPrgKvgHex-ivQK7w" />
+
+        <activity android:name=".PermissionsActivity"></activity>
     </application>
 
 </manifest>
