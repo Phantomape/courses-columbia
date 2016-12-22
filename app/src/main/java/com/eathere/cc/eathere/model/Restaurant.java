@@ -10,6 +10,6 @@ public class Restaurant {
     public String picUrl;
 
     public Restaurant(String id) {
-        id = this.id;
+        this.id = id;
     }
 }
