@@ -37,16 +37,16 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        String title = intent.getStringExtra("title");
-        String rating = intent.getStringExtra("rating");
+        String rname = intent.getStringExtra("rname");
+        double overallRating = intent.getDoubleExtra("overall_rating", -1); // TODO: FIX
         String address = intent.getStringExtra("address");
-        String category = intent.getStringExtra("category");
-        TextView textViewTitle = (TextView) findViewById(R.id.activity_info_text_view_title);
-        TextView textViewRating = (TextView) findViewById(R.id.activity_info_text_view_rating);
+        String category = intent.getStringExtra("rid");
+        TextView textViewRName = (TextView) findViewById(R.id.activity_info_text_view_rname);
+        TextView textViewOverallRating = (TextView) findViewById(R.id.activity_info_text_view_overall_rating);
         TextView textViewAddress = (TextView) findViewById(R.id.activity_info_text_view_address);
         TextView textViewCategory = (TextView) findViewById(R.id.activity_info_text_view_category);
-        textViewTitle.setText(title);
-        textViewRating.setText(rating);
+        textViewRName.setText(rname);
+        textViewOverallRating.setText("" + overallRating);
         textViewAddress.setText(address);
         textViewCategory.setText(category);
 

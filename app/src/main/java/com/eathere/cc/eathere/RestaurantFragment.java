@@ -16,7 +16,9 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.eathere.cc.eathere.model.AsyncNetUtils;
+import com.eathere.cc.eathere.model.Restaurant;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 public class RestaurantFragment extends Fragment{
@@ -34,9 +37,7 @@ public class RestaurantFragment extends Fragment{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -44,6 +45,21 @@ public class RestaurantFragment extends Fragment{
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_restaurant, container, false);
         final SearchView searchView = (SearchView) rootView.findViewById(R.id.frag_restaurant_search_view);
+        final ListView listView = (ListView) rootView.findViewById(R.id.frag_restaurant_list_view);
+
+        listView.setEmptyView(rootView.findViewById(R.id.frag_restaurant_empty_list));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), InfoActivity.class);
+                Map<String, Object> listEntry = (Map<String, Object>) parent.getAdapter().getItem(position);
+                intent.putExtra("rname", (String) listEntry.get("rname"));
+                intent.putExtra("overall_rating", (double) listEntry.get("overall_rating"));
+                intent.putExtra("address", (String) listEntry.get("address"));
+                intent.putExtra("rid", (String) listEntry.get("rid")); // TODO: FIX
+                startActivity(intent);
+            }
+        });
         searchView.setSubmitButtonEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -57,13 +73,23 @@ public class RestaurantFragment extends Fragment{
                         try {
                             jsonResponse = new JSONObject(response);
                             if (jsonResponse.getBoolean("status") == true) {
-                                Toast toast2 = Toast.makeText(getContext(), "response: " + response, Toast.LENGTH_LONG);
-                                toast2.show();
+                                JSONArray restaurantsJson = jsonResponse.getJSONArray("restaurant_infos");
+                                List<Map<String, Object>> restaurants = new ArrayList<Map<String, Object>>();
+                                for (int i = 0; i < restaurantsJson.length(); i++) {
+                                    Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
+                                    restaurants.add(restaurant.toMap());
+                                }
+                                SimpleAdapter adapter = new SimpleAdapter(getActivity(), restaurants,
+                                        R.layout.fragment_restaurant_list_view_item, new String[] { "pic", "rname", "overall_rating", "address", "rid"},
+                                        new int[] { R.id.img, R.id.rname, R.id.overall_rating, R.id.address, R.id.category });
+                                listView.setAdapter(adapter);
                             } else {
-
+                                Toast toast2 = Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG);
+                                toast2.show();
                             }
                         } catch (JSONException e) {
-
+                            Toast toast2 = Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG);
+                            toast2.show();
                         }
                     }
                 });
@@ -78,25 +104,6 @@ public class RestaurantFragment extends Fragment{
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
-            }
-        });
-
-        ListView listView = (ListView) rootView.findViewById(R.id.frag_restaurant_list_view);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(), getData(),
-                R.layout.fragment_restaurant_list_view_item, new String[] { "img", "title", "rating", "address", "category"},
-                new int[] { R.id.img, R.id.title, R.id.rating, R.id.address, R.id.category });
-        listView.setAdapter(adapter);
-        listView.setEmptyView(rootView.findViewById(R.id.frag_restaurant_empty_list));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), InfoActivity.class);
-                Map<String, Object> listEntry = (Map<String, Object>) parent.getAdapter().getItem(position);
-                intent.putExtra("title", (String) listEntry.get("title"));
-                intent.putExtra("rating", (String) listEntry.get("rating"));
-                intent.putExtra("address", (String) listEntry.get("address"));
-                intent.putExtra("category", (String) listEntry.get("category"));
-                startActivity(intent);
             }
         });
 
