@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eathere.cc.eathere.model.AsyncNetUtils;
+import com.eathere.cc.eathere.model.NetworkStatusUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -107,32 +108,36 @@ public class SignInActivity extends AppCompatActivity {
         String emailStr = email.getText().toString();
         String passwordStr = password.getText().toString();
 
-        AsyncNetUtils.post("http://54.210.133.203:8080/api/users/login", "username=1&email=2&password=2", new AsyncNetUtils.Callback() {
-            @Override
-            public void onResponse(String response) {
-                progressDialog.dismiss();
-                JSONObject jsonResponse = null;
-                try {
-                    jsonResponse = new JSONObject(response);
-                    if (jsonResponse.getBoolean("status") == true) {
-                        JSONObject userProfile = jsonResponse.getJSONObject("user_profile");
-                        String uid = userProfile.getString("uid");
-                        String username = userProfile.getString("username");
-                        signUpPrompt.setText(uid + username);
-                        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("uid", uid);
-                        editor.putString("username", username);
-                        editor.commit();
-                        onSignInSuccess();
-                    } else {
+        if (NetworkStatusUtils.isNetworkConnected(this)) {
+            AsyncNetUtils.post("http://54.210.133.203:8080/api/users/login", "username=1&email=2&password=2", new AsyncNetUtils.Callback() {
+                @Override
+                public void onResponse(String response) {
+                    progressDialog.dismiss();
+                    JSONObject jsonResponse = null;
+                    try {
+                        jsonResponse = new JSONObject(response);
+                        if (jsonResponse.getBoolean("status") == true) {
+                            JSONObject userProfile = jsonResponse.getJSONObject("user_profile");
+                            String uid = userProfile.getString("uid");
+                            String username = userProfile.getString("username");
+                            SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("uid", uid);
+                            editor.putString("username", username);
+                            editor.commit();
+                            onSignInSuccess();
+                        } else {
+                            onSignInFailed();
+                        }
+                    } catch (JSONException e) {
                         onSignInFailed();
                     }
-                } catch (JSONException e) {
-                    onSignInFailed();
                 }
-            }
-        });
+            });
+        } else {
+            progressDialog.dismiss();
+            onSignInFailedNoInternet();
+        }
     }
 
     public boolean validate() {
@@ -165,6 +170,11 @@ public class SignInActivity extends AppCompatActivity {
 
     public void onSignInFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        signIn.setEnabled(true);
+    }
+
+    public void onSignInFailedNoInternet() {
+        Toast.makeText(getBaseContext(), "No Internet", Toast.LENGTH_LONG).show();
         signIn.setEnabled(true);
     }
 

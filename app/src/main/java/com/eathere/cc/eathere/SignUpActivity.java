@@ -1,7 +1,9 @@
 package com.eathere.cc.eathere;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.eathere.cc.eathere.model.AsyncNetUtils;
+import com.eathere.cc.eathere.model.NetworkStatusUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
@@ -84,16 +92,36 @@ public class SignUpActivity extends AppCompatActivity {
 
         // TODO: Implement your own signup logic here.
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignUpSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
+        if (NetworkStatusUtils.isNetworkConnected(this)) {
+            AsyncNetUtils.post("http://54.210.133.203:8080/api/users/register", "username=1&email=2&password=2", new AsyncNetUtils.Callback() {
+                @Override
+                public void onResponse(String response) {
+                    progressDialog.dismiss();
+                    JSONObject jsonResponse = null;
+                    try {
+                        jsonResponse = new JSONObject(response);
+                        if (jsonResponse.getBoolean("status") == true) {
+                            JSONObject userProfile = jsonResponse.getJSONObject("user_profile");
+                            String uid = userProfile.getString("uid");
+                            String username = userProfile.getString("username");
+                            SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("uid", uid);
+                            editor.putString("username", username);
+                            editor.commit();
+                            onSignUpSuccess();
+                        } else {
+                            onSignUpFailed();
+                        }
+                    } catch (JSONException e) {
+                        onSignUpFailed();
                     }
-                }, 3000);
+                }
+            });
+        } else {
+            progressDialog.dismiss();
+            onSignUpFailedNoInternet();
+        }
     }
 
     public void onSignUpSuccess() {
@@ -103,7 +131,12 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void onSignUpFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Sign up failed", Toast.LENGTH_LONG).show();
+        signUp.setEnabled(true);
+    }
+
+    public void onSignUpFailedNoInternet() {
+        Toast.makeText(getBaseContext(), "No Internet", Toast.LENGTH_LONG).show();
         signUp.setEnabled(true);
     }
 
