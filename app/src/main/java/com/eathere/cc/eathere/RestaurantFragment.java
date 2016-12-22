@@ -2,6 +2,7 @@ package com.eathere.cc.eathere;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,11 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+
+import com.eathere.cc.eathere.model.AsyncNetUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,8 +48,25 @@ public class RestaurantFragment extends Fragment{
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                Toast toast = Toast.makeText(getContext(), "Searching: " + s, Toast.LENGTH_SHORT);
-                toast.show();
+                //Toast toast = Toast.makeText(getContext(), "Searching: " + s, Toast.LENGTH_SHORT);
+                //toast.show();
+                AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
+                    @Override
+                    public void onResponse(String response) {
+                        JSONObject jsonResponse = null;
+                        try {
+                            jsonResponse = new JSONObject(response);
+                            if (jsonResponse.getBoolean("status") == true) {
+                                Toast toast2 = Toast.makeText(getContext(), "response: " + response, Toast.LENGTH_LONG);
+                                toast2.show();
+                            } else {
+
+                            }
+                        } catch (JSONException e) {
+
+                        }
+                    }
+                });
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);

@@ -107,7 +107,7 @@ public class SignInActivity extends AppCompatActivity {
         String emailStr = email.getText().toString();
         String passwordStr = password.getText().toString();
 
-        AsyncNetUtils.post("http://54.210.133.203:8080/api/users/register", "username=1&email=2&password=2", new AsyncNetUtils.Callback() {
+        AsyncNetUtils.post("http://54.210.133.203:8080/api/users/login", "username=1&email=2&password=2", new AsyncNetUtils.Callback() {
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
