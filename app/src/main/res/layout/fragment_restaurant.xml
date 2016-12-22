@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:background="@color/windowBackground"
     tools:context="com.eathere.cc.eathere.RestaurantFragment">
 
     <SearchView
@@ -27,9 +28,10 @@
         android:id="@+id/frag_restaurant_empty_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="20dp"
         android:gravity="center"
         android:text="@string/frag_restaurant_empty_list"
-        android:textSize="24sp"
+        android:textSize="18sp"
         android:layout_below="@+id/frag_restaurant_search_view"
         android:visibility="gone" />
 

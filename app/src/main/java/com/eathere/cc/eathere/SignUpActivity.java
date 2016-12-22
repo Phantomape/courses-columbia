@@ -38,8 +38,6 @@ public class SignUpActivity extends AppCompatActivity {
         // display back arrow button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        fname = (EditText) findViewById(R.id.activity_sign_up_input_fname);
-        lname = (EditText) findViewById(R.id.activity_sign_up_input_lname);
         username = (EditText) findViewById(R.id.activity_sign_up_input_username);
         email = (EditText) findViewById(R.id.activity_sign_up_input_email);
         password = (EditText) findViewById(R.id.activity_sign_up_input_password);
@@ -79,8 +77,6 @@ public class SignUpActivity extends AppCompatActivity {
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-        String fnameStr = fname.getText().toString();
-        String lnameStr = lname.getText().toString();
         String usernameStr = username.getText().toString();
         String emailStr = email.getText().toString();
         String passwordStr = password.getText().toString();
@@ -138,25 +134,9 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String fnameStr = fname.getText().toString();
-        String lnameStr = lname.getText().toString();
         String usernameStr = username.getText().toString();
         String emailStr = email.getText().toString();
         String passwordStr = password.getText().toString();
-
-        if (fnameStr.isEmpty() || fnameStr.length() < 3) {
-            fname.setError("at least 3 characters");
-            valid = false;
-        } else {
-            fname.setError(null);
-        }
-
-        if (lnameStr.isEmpty() || lnameStr.length() < 3) {
-            lname.setError("at least 3 characters");
-            valid = false;
-        } else {
-            lname.setError(null);
-        }
 
         if (usernameStr.isEmpty() || usernameStr.length() < 3) {
             username.setError("at least 3 characters");

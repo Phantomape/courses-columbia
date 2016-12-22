@@ -2,7 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="false">
         <shape>
-            <corners android:radius="10dp" />
+            <solid android:color="@android:color/white" />
+            <corners android:radius="20dp" />
             <padding
                 android:bottom="3dp"
                 android:left="3dp"
@@ -10,14 +11,14 @@
                 android:top="3dp" />
             <stroke
                 android:width="2dp"
-                android:color="@android:color/holo_blue_dark" />
+                android:color="@android:color/white" />
         </shape>
     </item>
 
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="@android:color/holo_blue_light" />
-            <corners android:radius="10dp" />
+            <solid android:color="@color/colorAccent" />
+            <corners android:radius="20dp" />
             <padding
                 android:bottom="3dp"
                 android:left="3dp"
@@ -25,7 +26,7 @@
                 android:top="3dp" />
             <stroke
                 android:width="2dp"
-                android:color="@android:color/holo_blue_dark" />
+                android:color="@android:color/white" />
         </shape>
     </item>
 </selector>

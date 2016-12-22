@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        setupTabIcons();
     }
 
     @Override protected void onResume() {
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(final ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new RestaurantFragment(), "Restaurant");
+        adapter.addFragment(new RestaurantFragment(), "Search");
         adapter.addFragment(new RecommendFragment(), "Recommend");
         adapter.addFragment(new MeFragment(), "Me");
         viewPager.setAdapter(adapter);
@@ -94,6 +95,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } );
+    }
+
+    private void setupTabIcons() {
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_search);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_recommend);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_me);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
