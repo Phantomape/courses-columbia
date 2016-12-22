@@ -2,7 +2,6 @@ package com.eathere.cc.eathere;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,13 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.eathere.cc.eathere.model.AsyncNetUtils;
 import com.eathere.cc.eathere.model.NetworkStatusUtils;
 import com.eathere.cc.eathere.model.Restaurant;
@@ -26,13 +22,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 
 public class RestaurantFragment extends Fragment{
+    private static final String TAG = "RestaurantFragment";
 
     public RestaurantFragment() {
         // Required empty public constructor
@@ -81,7 +76,7 @@ public class RestaurantFragment extends Fragment{
                                         Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
                                         restaurants.add(restaurant.toMap());
                                     }
-                                    RestaurantSimpleAdapter adapter = new RestaurantSimpleAdapter(getActivity(), restaurants,
+                                    GlideSimpleAdapter adapter = new GlideSimpleAdapter(getActivity(), restaurants,
                                             R.layout.fragment_restaurant_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address", "rid"},
                                             new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
 
@@ -115,25 +110,4 @@ public class RestaurantFragment extends Fragment{
         return rootView;
     }
 
-    public class RestaurantSimpleAdapter extends SimpleAdapter {
-        private Context context;
-        private String[] picUrls;
-        public RestaurantSimpleAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
-            super(context, data, resource, from, to);
-            this.context = context;
-            String[] picUrls = new String[data.size()];
-            for (int i = 0; i < data.size(); i++) {
-                picUrls[i] = (String) (((Map<String, Object>) data.get(i)).get("pic_url"));
-            }
-            this.picUrls = picUrls;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            ImageView imageView = (ImageView) view.findViewById(R.id.pic);
-            Glide.with(context).load(picUrls[position]).placeholder(android.R.drawable.ic_menu_search).into(imageView);
-            return view;
-        }
-    }
 }

@@ -26,6 +26,7 @@ import java.util.Locale;
 
 public class InfoActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static String TAG = "InfoActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

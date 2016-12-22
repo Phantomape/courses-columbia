@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +13,12 @@ import android.widget.TextView;
 
 
 public class MeFragment extends Fragment{
-    TextView username;
-    Button loginLogout;
+    private static final String TAG = "MeFragment";
+
+    private TextView username;
+    private Button loginLogout;
+
+    private SharedPreferences sharedPreferences;
 
     public MeFragment() {
         // Required empty public constructor
@@ -47,40 +50,39 @@ public class MeFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        final SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
         String uidStr = sharedPreferences.getString("uid", "default_uid");
         String usernameStr = sharedPreferences.getString("username", "default_username");
-        if (uidStr == "default_uid") {
-            username.setText("User");
-            loginLogout.setText(R.string.frag_me_sign_in);
-            loginLogout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), SignInActivity.class);
-                    startActivity(intent);
-                }
-            });
+        if (uidStr.equals("default_uid")) {
+            setSignInLayout();
         } else {
-            username.setText(usernameStr);
-            loginLogout.setText(R.string.frag_me_sign_out);
-            loginLogout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.clear();
-                    editor.commit();
-                    username.setText("User");
-                    loginLogout.setText(R.string.frag_me_sign_in);
-                    loginLogout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getActivity(), SignInActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-                }
-            });
+            setSignOutLayout(usernameStr);
         }
+    }
+
+    private void setSignInLayout() {
+        username.setText(R.string.frag_me_username);
+        loginLogout.setText(R.string.frag_me_sign_in);
+        loginLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void setSignOutLayout(String usernameStr) {
+        username.setText(usernameStr);
+        loginLogout.setText(R.string.frag_me_sign_out);
+        loginLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear().commit();
+                setSignInLayout();
+            }
+        });
     }
 
 }

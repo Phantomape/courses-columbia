@@ -22,8 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SignInActivity extends AppCompatActivity {
-
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "SignInActivity";
     private static final int REQUEST_SIGNUP = 0;
 
     private Button signIn;

@@ -2,11 +2,8 @@ package com.eathere.cc.eathere;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eathere.cc.eathere.model.AsyncNetUtils;
@@ -26,7 +22,6 @@ import org.json.JSONObject;
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
 
-    private Button signIn;
     private Button signUp;
     private EditText fname;
     private EditText lname;
@@ -53,7 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signup();
+                signUp();
             }
         });
     }
@@ -69,7 +64,7 @@ public class SignUpActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void signup() {
+    public void signUp() {
         Log.d(TAG, "Signup");
 
         if (!validate()) {

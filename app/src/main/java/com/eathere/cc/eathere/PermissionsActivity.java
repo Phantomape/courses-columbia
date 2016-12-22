@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 public class PermissionsActivity extends AppCompatActivity {
+    private static final String TAG = "PermissionsActivity";
 
     private static final String PACKAGE_URL_SCHEME = "package:";
 

@@ -52,8 +52,6 @@ public class Restaurant {
         return new Restaurant(rid, rname, overallRating, address, latitude, longitude, picUrl);
     }
 
-
-
 }
 
 
