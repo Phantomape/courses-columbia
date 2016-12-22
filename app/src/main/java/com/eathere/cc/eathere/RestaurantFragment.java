@@ -16,6 +16,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.eathere.cc.eathere.model.AsyncNetUtils;
+import com.eathere.cc.eathere.model.NetworkStatusUtils;
 import com.eathere.cc.eathere.model.Restaurant;
 
 import org.json.JSONArray;
@@ -64,33 +65,35 @@ public class RestaurantFragment extends Fragment{
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
-                    @Override
-                    public void onResponse(String response) {
-                        JSONObject jsonResponse = null;
-                        try {
-                            jsonResponse = new JSONObject(response);
-                            if (jsonResponse.getBoolean("status") == true) {
-                                JSONArray restaurantsJson = jsonResponse.getJSONArray("restaurant_infos");
-                                List<Map<String, Object>> restaurants = new ArrayList<Map<String, Object>>();
-                                for (int i = 0; i < restaurantsJson.length(); i++) {
-                                    Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
-                                    restaurants.add(restaurant.toMap());
+                if (NetworkStatusUtils.isNetworkConnected(getActivity())) {
+                    AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
+                        @Override
+                        public void onResponse(String response) {
+                            JSONObject jsonResponse = null;
+                            try {
+                                jsonResponse = new JSONObject(response);
+                                if (jsonResponse.getBoolean("status") == true) {
+                                    JSONArray restaurantsJson = jsonResponse.getJSONArray("restaurant_infos");
+                                    List<Map<String, Object>> restaurants = new ArrayList<Map<String, Object>>();
+                                    for (int i = 0; i < restaurantsJson.length(); i++) {
+                                        Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
+                                        restaurants.add(restaurant.toMap());
+                                    }
+                                    SimpleAdapter adapter = new SimpleAdapter(getActivity(), restaurants,
+                                            R.layout.fragment_restaurant_list_view_item, new String[]{"pic", "rname", "overall_rating", "address", "rid"},
+                                            new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
+                                    listView.setAdapter(adapter);
+                                } else {
+                                    Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG).show();
                                 }
-                                SimpleAdapter adapter = new SimpleAdapter(getActivity(), restaurants,
-                                        R.layout.fragment_restaurant_list_view_item, new String[] { "pic", "rname", "overall_rating", "address", "rid"},
-                                        new int[] { R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category });
-                                listView.setAdapter(adapter);
-                            } else {
-                                Toast toast2 = Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG);
-                                toast2.show();
+                            } catch (JSONException e) {
+                                Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG).show();
                             }
-                        } catch (JSONException e) {
-                            Toast toast2 = Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG);
-                            toast2.show();
                         }
-                    }
-                });
+                    });
+                } else {
+                    Toast.makeText(getContext(), "No Internet", Toast.LENGTH_LONG).show();
+                }
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);

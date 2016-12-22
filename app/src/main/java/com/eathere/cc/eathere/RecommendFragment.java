@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +15,31 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.eathere.cc.eathere.model.AsyncNetUtils;
+import com.eathere.cc.eathere.model.NetworkStatusUtils;
+import com.eathere.cc.eathere.model.Restaurant;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class RecommendFragment extends Fragment{
 
+    private static final String TAG = "RecommendFragment";
+
     private Timer refreshTimer;
     private Handler refreshHandler;
+    private Random random;
+
+    ListView listView;
 
     public RecommendFragment() {
         // Required empty public constructor
@@ -33,22 +48,7 @@ public class RecommendFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        refreshTimer = new Timer();
-        refreshHandler = new Handler();
-    }
-
-    public void refreshTimerTask() {
-        refreshTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                refreshHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getActivity(), "Backend refresh", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }, 1000, 10000);// 定时任务
+        random  = new Random();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class RecommendFragment extends Fragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recommend, container, false);
 
-        ListView listView = (ListView) rootView.findViewById(R.id.frag_recommend_list_view);
+        listView = (ListView) rootView.findViewById(R.id.frag_recommend_list_view);
         listView.setEmptyView(rootView.findViewById(R.id.frag_recommend_empty_list));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -70,10 +70,78 @@ public class RecommendFragment extends Fragment{
                 startActivity(intent);
             }
         });
-        refreshTimerTask();
+
         // Inflate the layout for this fragment
         return rootView;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startRefreshTimerTask();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopRefreshTimerTask();
+    }
+
+    public void startRefreshTimerTask() {
+        refreshTimer = new Timer();
+        refreshHandler = new Handler();
+        refreshTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                refreshHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (NetworkStatusUtils.isNetworkConnected(getActivity())) {
+                            AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Toast.makeText(getActivity(), "Backend Refresh", Toast.LENGTH_LONG).show();
+                                    JSONObject jsonResponse = null;
+                                    try {
+                                        jsonResponse = new JSONObject(response);
+                                        if (jsonResponse.getBoolean("status") == true) {
+                                            JSONArray restaurantsJson = jsonResponse.getJSONArray("restaurant_infos");
+                                            List<Map<String, Object>> restaurants = new ArrayList<Map<String, Object>>();
+                                            for (int i = 0; i < restaurantsJson.length(); i++) {
+                                                Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
+                                                restaurants.add(restaurant.toMap());
+                                            }
+                                            restaurants.remove(random.nextInt(2));
+                                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), restaurants,
+                                                    R.layout.fragment_restaurant_list_view_item, new String[]{"pic", "rname", "overall_rating", "address", "rid"},
+                                                    new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
+                                            listView.setAdapter(adapter);
+                                        } else {
+                                            // No recommendation: do nothing
+                                        }
+                                    } catch (JSONException e) {
+                                        // No recommendation: do nothing
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.e(TAG, "No Internet");
+                        }
+                    }
+                });
+            }
+        }, 1000, 10000);// 定时任务
+    }
+
+    public void stopRefreshTimerTask() {
+        if (refreshTimer != null) {
+            refreshTimer.cancel();
+        }
+        refreshTimer = null;
+        refreshHandler = null;
+    }
+
+
 
     private List<Map<String, Object>> getData() { // TODO: Remove
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
