@@ -99,7 +99,7 @@ public class SignInActivity extends AppCompatActivity {
 
         signIn.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignInActivity.this, android.R.style.Theme_Material_Dialog);
+        final ProgressDialog progressDialog = new ProgressDialog(SignInActivity.this, R.style.MyMaterialTheme_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
