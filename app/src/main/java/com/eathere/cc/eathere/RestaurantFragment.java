@@ -64,8 +64,6 @@ public class RestaurantFragment extends Fragment{
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //Toast toast = Toast.makeText(getContext(), "Searching: " + s, Toast.LENGTH_SHORT);
-                //toast.show();
                 AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
                     @Override
                     public void onResponse(String response) {
@@ -81,7 +79,7 @@ public class RestaurantFragment extends Fragment{
                                 }
                                 SimpleAdapter adapter = new SimpleAdapter(getActivity(), restaurants,
                                         R.layout.fragment_restaurant_list_view_item, new String[] { "pic", "rname", "overall_rating", "address", "rid"},
-                                        new int[] { R.id.img, R.id.rname, R.id.overall_rating, R.id.address, R.id.category });
+                                        new int[] { R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category });
                                 listView.setAdapter(adapter);
                             } else {
                                 Toast toast2 = Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG);
@@ -112,7 +110,7 @@ public class RestaurantFragment extends Fragment{
     }
 
 
-    private List<Map<String, Object>> getData() {
+    private List<Map<String, Object>> getData() {  // TODO: remove
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Map<String, Object> map = new HashMap<String, Object>();
 
@@ -124,7 +122,6 @@ public class RestaurantFragment extends Fragment{
             map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
             list.add(map);
         }
-
         return list;
     }
 }
