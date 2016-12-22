@@ -1,7 +1,9 @@
 package com.eathere.cc.eathere;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,12 +15,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.eathere.cc.eathere.model.AsyncNetUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class SignInActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
     private Button signIn;
+    private TextView signUpPrompt;
     private TextView signUpLink;
     private EditText email;
     private EditText password;
@@ -27,6 +35,9 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // display back arrow button
@@ -51,6 +62,8 @@ public class SignInActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_SIGNUP);
             }
         });
+
+        signUpPrompt = (TextView) findViewById(R.id.activity_sign_in_text_view_account_creation_prompt);
     }
 
     @Override
@@ -94,17 +107,32 @@ public class SignInActivity extends AppCompatActivity {
         String emailStr = email.getText().toString();
         String passwordStr = password.getText().toString();
 
-        // TODO: Implement your own authentication logic here.
-
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
+        AsyncNetUtils.post("http://54.210.133.203:8080/api/users/register", "username=1&email=2&password=2", new AsyncNetUtils.Callback() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.dismiss();
+                JSONObject jsonResponse = null;
+                try {
+                    jsonResponse = new JSONObject(response);
+                    if (jsonResponse.getBoolean("status") == true) {
+                        JSONObject userProfile = jsonResponse.getJSONObject("user_profile");
+                        String uid = userProfile.getString("uid");
+                        String username = userProfile.getString("username");
+                        signUpPrompt.setText(uid + username);
+                        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("uid", uid);
+                        editor.putString("username", username);
+                        editor.commit();
                         onSignInSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
+                    } else {
+                        onSignInFailed();
                     }
-                }, 3000);
+                } catch (JSONException e) {
+                    onSignInFailed();
+                }
+            }
+        });
     }
 
     public boolean validate() {
