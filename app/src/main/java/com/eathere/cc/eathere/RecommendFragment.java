@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.eathere.cc.eathere.model.AsyncNetUtils;
 import com.eathere.cc.eathere.model.NetworkStatusUtils;
 import com.eathere.cc.eathere.model.Restaurant;
@@ -61,13 +63,13 @@ public class RecommendFragment extends Fragment{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), InfoActivity.class);
-                Map<String, Object> listEntry = (Map<String, Object>) parent.getAdapter().getItem(position);
-                intent.putExtra("rname", (String) listEntry.get("rname"));
-                intent.putExtra("overall_rating", (double) listEntry.get("overall_rating"));
-                intent.putExtra("address", (String) listEntry.get("address"));
-                intent.putExtra("rid", (String) listEntry.get("rid")); // TODO: FIX
-                startActivity(intent);
+            Intent intent = new Intent(getActivity(), InfoActivity.class);
+            Map<String, Object> listEntry = (Map<String, Object>) parent.getAdapter().getItem(position);
+            intent.putExtra("rname", (String) listEntry.get("rname"));
+            intent.putExtra("overall_rating", (double) listEntry.get("overall_rating"));
+            intent.putExtra("address", (String) listEntry.get("address"));
+            intent.putExtra("rid", (String) listEntry.get("rid")); // TODO: FIX
+            startActivity(intent);
             }
         });
 
@@ -93,42 +95,42 @@ public class RecommendFragment extends Fragment{
         refreshTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                refreshHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (NetworkStatusUtils.isNetworkConnected(getActivity())) {
-                            AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
-                                @Override
-                                public void onResponse(String response) {
-                                    Toast.makeText(getActivity(), "Backend Refresh", Toast.LENGTH_LONG).show();
-                                    JSONObject jsonResponse = null;
-                                    try {
-                                        jsonResponse = new JSONObject(response);
-                                        if (jsonResponse.getBoolean("status") == true) {
-                                            JSONArray restaurantsJson = jsonResponse.getJSONArray("restaurant_infos");
-                                            List<Map<String, Object>> restaurants = new ArrayList<Map<String, Object>>();
-                                            for (int i = 0; i < restaurantsJson.length(); i++) {
-                                                Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
-                                                restaurants.add(restaurant.toMap());
-                                            }
-                                            restaurants.remove(random.nextInt(2));
-                                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), restaurants,
-                                                    R.layout.fragment_restaurant_list_view_item, new String[]{"pic", "rname", "overall_rating", "address", "rid"},
-                                                    new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
-                                            listView.setAdapter(adapter);
-                                        } else {
-                                            // No recommendation: do nothing
-                                        }
-                                    } catch (JSONException e) {
-                                        // No recommendation: do nothing
-                                    }
+            refreshHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                if (NetworkStatusUtils.isNetworkConnected(getActivity())) {
+                    AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
+                        @Override
+                        public void onResponse(String response) {
+                        Toast.makeText(getActivity(), "Backend Refresh", Toast.LENGTH_LONG).show();
+                        JSONObject jsonResponse = null;
+                        try {
+                            jsonResponse = new JSONObject(response);
+                            if (jsonResponse.getBoolean("status") == true) {
+                                JSONArray restaurantsJson = jsonResponse.getJSONArray("restaurant_infos");
+                                List<Map<String, Object>> restaurants = new ArrayList<Map<String, Object>>();
+                                for (int i = 0; i < restaurantsJson.length(); i++) {
+                                    Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
+                                    restaurants.add(restaurant.toMap());
                                 }
-                            });
-                        } else {
-                            Log.e(TAG, "No Internet");
+                                restaurants.remove(random.nextInt(2));
+                                RecommendSimpleAdapter adapter = new RecommendSimpleAdapter(getActivity(), restaurants,
+                                        R.layout.fragment_restaurant_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address", "rid"},
+                                        new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
+                                listView.setAdapter(adapter);
+                            } else {
+                                // No recommendation: do nothing
+                            }
+                        } catch (JSONException e) {
+                            // No recommendation: do nothing
                         }
-                    }
-                });
+                        }
+                    });
+                } else {
+                    Log.e(TAG, "No Internet");
+                }
+                }
+            });
             }
         }, 1000, 10000);// 定时任务
     }
@@ -141,19 +143,26 @@ public class RecommendFragment extends Fragment{
         refreshHandler = null;
     }
 
-
-
-    private List<Map<String, Object>> getData() { // TODO: Remove
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        Map<String, Object> map = new HashMap<String, Object>();
-        for (int i = 0; i < 10; i++) {
-            map.put("img", android.R.drawable.ic_menu_search);
-            map.put("title", "Organic Avenue");
-            map.put("rating", "3.5/5.0");
-            map.put("address", "111 W 40th St, Theater District");
-            map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-            list.add(map);
+    public class RecommendSimpleAdapter extends SimpleAdapter {
+        private Context context;
+        private String[] picUrls;
+        public RecommendSimpleAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
+            super(context, data, resource, from, to);
+            this.context = context;
+            String[] picUrls = new String[data.size()];
+            for (int i = 0; i < data.size(); i++) {
+                picUrls[i] = (String) (((Map<String, Object>) data.get(i)).get("pic_url"));
+            }
+            this.picUrls = picUrls;
         }
-        return list;
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            ImageView imageView = (ImageView) view.findViewById(R.id.pic);
+            Glide.with(context).load(picUrls[position]).placeholder(android.R.drawable.ic_menu_search).into(imageView);
+            return view;
+        }
     }
+
 }

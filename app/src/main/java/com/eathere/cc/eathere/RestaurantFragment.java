@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.eathere.cc.eathere.model.AsyncNetUtils;
 import com.eathere.cc.eathere.model.NetworkStatusUtils;
 import com.eathere.cc.eathere.model.Restaurant;
@@ -79,9 +81,10 @@ public class RestaurantFragment extends Fragment{
                                         Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
                                         restaurants.add(restaurant.toMap());
                                     }
-                                    SimpleAdapter adapter = new SimpleAdapter(getActivity(), restaurants,
-                                            R.layout.fragment_restaurant_list_view_item, new String[]{"pic", "rname", "overall_rating", "address", "rid"},
+                                    RestaurantSimpleAdapter adapter = new RestaurantSimpleAdapter(getActivity(), restaurants,
+                                            R.layout.fragment_restaurant_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address", "rid"},
                                             new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
+
                                     listView.setAdapter(adapter);
                                 } else {
                                     Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG).show();
@@ -112,19 +115,25 @@ public class RestaurantFragment extends Fragment{
         return rootView;
     }
 
-
-    private List<Map<String, Object>> getData() {  // TODO: remove
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        for (int i = 0; i < 10; i++) {
-            map.put("img", android.R.drawable.ic_menu_search);
-            map.put("title", "Organic Avenue");
-            map.put("rating", "3.5/5.0");
-            map.put("address", "111 W 40th St, Theater District");
-            map.put("category", "Salad, JuiceBars & Smoothies, Vegetarian");
-            list.add(map);
+    public class RestaurantSimpleAdapter extends SimpleAdapter {
+        private Context context;
+        private String[] picUrls;
+        public RestaurantSimpleAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
+            super(context, data, resource, from, to);
+            this.context = context;
+            String[] picUrls = new String[data.size()];
+            for (int i = 0; i < data.size(); i++) {
+                picUrls[i] = (String) (((Map<String, Object>) data.get(i)).get("pic_url"));
+            }
+            this.picUrls = picUrls;
         }
-        return list;
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            ImageView imageView = (ImageView) view.findViewById(R.id.pic);
+            Glide.with(context).load(picUrls[position]).placeholder(android.R.drawable.ic_menu_search).into(imageView);
+            return view;
+        }
     }
 }

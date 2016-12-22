@@ -37,7 +37,7 @@ public class Restaurant {
         restaurant.put("address", address);
         restaurant.put("latitude", latitude);
         restaurant.put("longitude", longitude);
-        restaurant.put("pic", android.R.drawable.ic_menu_search); // TODO: FIX
+        restaurant.put("pic_url", "http://random.com"); // TODO: FIX
         return restaurant;
     }
 
