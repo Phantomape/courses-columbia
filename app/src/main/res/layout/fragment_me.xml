@@ -12,7 +12,7 @@
         android:layout_height="100dp"
         android:layout_margin="12dp"
         android:layout_centerHorizontal="true"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/ic_avatar"
         android:scaleType="fitXY" />
 
     <TextView android:id="@+id/frag_me_user_name"

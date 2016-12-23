@@ -88,23 +88,27 @@ public class SignUpActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(String response) {
                     progressDialog.dismiss();
-                    JSONObject jsonResponse = null;
-                    try {
-                        jsonResponse = new JSONObject(response);
-                        if (jsonResponse.getBoolean("status") == true) {
-                            JSONObject userProfile = jsonResponse.getJSONObject("user_profile");
-                            String uid = userProfile.getString("uid");
-                            String username = userProfile.getString("username");
-                            SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("uid", uid);
-                            editor.putString("username", username);
-                            editor.commit();
-                            onSignUpSuccess();
-                        } else {
+                    if (response != null) { // response code 200
+                        JSONObject jsonResponse = null;
+                        try {
+                            jsonResponse = new JSONObject(response);
+                            if (jsonResponse.getBoolean("status") == true) {
+                                JSONObject userProfile = jsonResponse.getJSONObject("user_profile");
+                                String uid = userProfile.getString("uid");
+                                String username = userProfile.getString("username");
+                                SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("uid", uid);
+                                editor.putString("username", username);
+                                editor.commit();
+                                onSignUpSuccess();
+                            } else {
+                                onSignUpFailed();
+                            }
+                        } catch (JSONException e) {
                             onSignUpFailed();
                         }
-                    } catch (JSONException e) {
+                    } else {
                         onSignUpFailed();
                     }
                 }

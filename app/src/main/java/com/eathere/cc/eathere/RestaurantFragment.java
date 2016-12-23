@@ -72,26 +72,28 @@ public class RestaurantFragment extends Fragment{
                     AsyncNetUtils.post("http://cclb-635335002.us-east-1.elb.amazonaws.com:8080/api/restaurant/search", "uid="+uid+"&keyword="+keyword, new AsyncNetUtils.Callback() {
                         @Override
                         public void onResponse(String response) {
-                            JSONObject jsonResponse = null;
-                            try {
-                                jsonResponse = new JSONObject(response);
-                                if (jsonResponse.getBoolean("status") == true) {
-                                    JSONArray restaurantsJson = jsonResponse.getJSONArray("restaurant_infos");
-                                    List<Map<String, Object>> restaurants = new ArrayList<Map<String, Object>>();
-                                    for (int i = 0; i < restaurantsJson.length(); i++) {
-                                        Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
-                                        restaurants.add(restaurant.toMap());
-                                    }
-                                    GlideSimpleAdapter adapter = new GlideSimpleAdapter(getActivity(), restaurants,
-                                            R.layout.fragment_restaurant_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address", "rid"},
-                                            new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
+                            if (response != null) { // if http response is 200
+                                JSONObject jsonResponse = null;
+                                try {
+                                    jsonResponse = new JSONObject(response);
+                                    if (jsonResponse.getBoolean("status") == true) {
+                                        JSONArray restaurantsJson = jsonResponse.getJSONArray("restaurant_infos");
+                                        List<Map<String, Object>> restaurants = new ArrayList<Map<String, Object>>();
+                                        for (int i = 0; i < restaurantsJson.length(); i++) {
+                                            Restaurant restaurant = Restaurant.fromJSONObject(restaurantsJson.getJSONObject(i));
+                                            restaurants.add(restaurant.toMap());
+                                        }
+                                        GlideSimpleAdapter adapter = new GlideSimpleAdapter(getActivity(), restaurants,
+                                                R.layout.fragment_restaurant_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address", "rid"},
+                                                new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
 
-                                    listView.setAdapter(adapter);
-                                } else {
+                                        listView.setAdapter(adapter);
+                                    } else {
+                                        Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (JSONException e) {
                                     Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG).show();
                                 }
-                            } catch (JSONException e) {
-                                Toast.makeText(getContext(), "No results found", Toast.LENGTH_LONG).show();
                             }
                         }
                     });

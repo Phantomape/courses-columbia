@@ -37,7 +37,6 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
         setSupportActionBar(toolbar);
         // display back arrow button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         Intent intent = getIntent();
         String rname = intent.getStringExtra("rname");
         float overallRating = intent.getFloatExtra("overall_rating", -1); // TODO: FIX
@@ -69,7 +68,7 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
         Geocoder geodecoder = new Geocoder(this, Locale.getDefault());
         List<Address> addresses = null;
         try {
-            addresses = geodecoder.getFromLocationName("111 W 40th St, New York, NY 10018", 100);
+            addresses = geodecoder.getFromLocationName("111 W 40th St, New York, NY 10018", 3);
         } catch (IOException ioException) {
             // Catch network or other I/O problems.
             String errorMessage = getString(R.string.google_map_service_not_available);

@@ -33,7 +33,6 @@ public class NetUtils {
 
             int responseCode = conn.getResponseCode(); // no conn.connect() needed
             if (responseCode == 200) {
-
                 InputStream is = conn.getInputStream();
                 String response = getStringFromInputStream(is);
                 return response;
