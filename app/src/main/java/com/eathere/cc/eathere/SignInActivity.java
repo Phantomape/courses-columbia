@@ -108,7 +108,7 @@ public class SignInActivity extends AppCompatActivity {
         String passwordStr = password.getText().toString();
 
         if (NetworkStatusUtils.isNetworkConnected(this)) {
-            AsyncNetUtils.post("http://54.210.133.203:8080/api/users/login", "username=1&email=2&password=2", new AsyncNetUtils.Callback() {
+            AsyncNetUtils.post("http://cclb-635335002.us-east-1.elb.amazonaws.com:8080/api/users/login", "email="+emailStr+"&password="+passwordStr, new AsyncNetUtils.Callback() {
                 @Override
                 public void onResponse(String response) {
                     progressDialog.dismiss();
