@@ -58,6 +58,8 @@ public class RestaurantFragment extends Fragment{
                 intent.putExtra("rname", (String) listEntry.get("rname"));
                 intent.putExtra("overall_rating", (double) listEntry.get("overall_rating"));
                 intent.putExtra("address", (String) listEntry.get("address"));
+                intent.putExtra("latitude", (double) listEntry.get("latitude"));
+                intent.putExtra("longitude", (double) listEntry.get("longitude"));
                 intent.putExtra("rid", (String) listEntry.get("rid")); // TODO: FIX
                 startActivity(intent);
             }

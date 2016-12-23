@@ -26,7 +26,16 @@ import java.util.List;
 import java.util.Locale;
 
 public class InfoActivity extends AppCompatActivity implements OnMapReadyCallback {
-    private static String TAG = "InfoActivity";
+    private static final String TAG = "InfoActivity";
+    private static final float EMPTY_RATING = -1;
+    private static final float EMPTY_COORDINATE = -999;
+
+    String rname;
+    String address;
+    double latitude;
+    double longitude;
+    float overallRating;
+    String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +47,13 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
         // display back arrow button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
-        String rname = intent.getStringExtra("rname");
-        float overallRating = intent.getFloatExtra("overall_rating", -1); // TODO: FIX
-        String address = intent.getStringExtra("address");
-        String category = intent.getStringExtra("rid");
+        rname = intent.getStringExtra("rname");
+        overallRating = intent.getFloatExtra("overall_rating", EMPTY_RATING);
+        address = intent.getStringExtra("address");
+        latitude = intent.getDoubleExtra("latitude", EMPTY_COORDINATE);
+        longitude = intent.getDoubleExtra("longitude", EMPTY_COORDINATE);
+        category = intent.getStringExtra("rid"); // TODO: FIX
         TextView textViewRName = (TextView) findViewById(R.id.activity_info_text_view_rname);
-        //TextView textViewOverallRating = (TextView) findViewById(R.id.activity_info_text_view_overall_rating);
         TextView textViewAddress = (TextView) findViewById(R.id.activity_info_text_view_address);
         TextView textViewCategory = (TextView) findViewById(R.id.activity_info_text_view_category);
         textViewRName.setText(rname);
@@ -65,30 +75,35 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.d(TAG, "Got ACCESS_FINE_LOCATION permission");
             map.setMyLocationEnabled(true);
         }
-        Geocoder geodecoder = new Geocoder(this, Locale.getDefault());
-        List<Address> addresses = null;
-        try {
-            addresses = geodecoder.getFromLocationName("111 W 40th St, New York, NY 10018", 3);
-        } catch (IOException ioException) {
-            // Catch network or other I/O problems.
-            String errorMessage = getString(R.string.google_map_service_not_available);
-            Log.e("Google Map", errorMessage, ioException);
-        } catch (IllegalArgumentException illegalArgumentException) {
-            // Catch invalid arguments
-            String errorMessage = getString(R.string.google_map_invalid_arguments_used);
-            Log.e("Google Map", errorMessage, illegalArgumentException);
+        LatLng latLng = null;
+        if ((latitude != EMPTY_COORDINATE) && (longitude != EMPTY_COORDINATE)) {
+            latLng = new LatLng(latitude, longitude);
+        } else {
+            Geocoder geodecoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = null;
+            try {
+                addresses = geodecoder.getFromLocationName(address, 3);
+            } catch (IOException ioException) {
+                // Catch network or other I/O problems.
+                String errorMessage = getString(R.string.google_map_service_not_available);
+                Log.e("Google Map", errorMessage, ioException);
+            } catch (IllegalArgumentException illegalArgumentException) {
+                // Catch invalid arguments
+                String errorMessage = getString(R.string.google_map_invalid_arguments_used);
+                Log.e("Google Map", errorMessage, illegalArgumentException);
+            }
+            if ((addresses != null) && (!addresses.isEmpty())) {
+                Address target = addresses.get(0);
+                double lat = target.getLatitude();
+                double lng = target.getLongitude();
+                latLng = new LatLng(lat, lng);
+            }
         }
-        if ((addresses != null) && (!addresses.isEmpty())) {
-            Address target = addresses.get(0);
-            double lat = target.getLatitude();
-            double lng = target.getLongitude();
-            LatLng latLng = new LatLng(lat, lng);
-            map.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title("Marker"));
+        if (latLng != null) {
+            map.addMarker(new MarkerOptions().position(latLng));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         } else {
-            Log.e("Google Map", "No addresses found");
+            Log.e("Google Map", "No marker is placed");
         }
     }
 
