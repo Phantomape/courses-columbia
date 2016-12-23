@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,17 +40,19 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Intent intent = getIntent();
         String rname = intent.getStringExtra("rname");
-        double overallRating = intent.getDoubleExtra("overall_rating", -1); // TODO: FIX
+        float overallRating = intent.getFloatExtra("overall_rating", -1); // TODO: FIX
         String address = intent.getStringExtra("address");
         String category = intent.getStringExtra("rid");
         TextView textViewRName = (TextView) findViewById(R.id.activity_info_text_view_rname);
-        TextView textViewOverallRating = (TextView) findViewById(R.id.activity_info_text_view_overall_rating);
+        //TextView textViewOverallRating = (TextView) findViewById(R.id.activity_info_text_view_overall_rating);
         TextView textViewAddress = (TextView) findViewById(R.id.activity_info_text_view_address);
         TextView textViewCategory = (TextView) findViewById(R.id.activity_info_text_view_category);
         textViewRName.setText(rname);
-        textViewOverallRating.setText("" + overallRating);
         textViewAddress.setText(address);
         textViewCategory.setText(category);
+
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.activity_info_rating_bar_overall_rating);
+        ratingBar.setRating(overallRating);
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.activity_info_map);
