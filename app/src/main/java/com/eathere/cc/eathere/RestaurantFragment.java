@@ -2,6 +2,7 @@ package com.eathere.cc.eathere;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ import java.util.Map;
 public class RestaurantFragment extends Fragment{
     private static final String TAG = "RestaurantFragment";
 
+    private SharedPreferences sharedPreferences;
+
     public RestaurantFragment() {
         // Required empty public constructor
     }
@@ -36,6 +39,7 @@ public class RestaurantFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -63,7 +67,9 @@ public class RestaurantFragment extends Fragment{
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if (NetworkStatusUtils.isNetworkConnected(getActivity())) {
-                    AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
+                    String keyword = s;
+                    String uid = sharedPreferences.getString("uid", "empty_uid");
+                    AsyncNetUtils.post("http://cclb-635335002.us-east-1.elb.amazonaws.com:8080/api/restaurant/search", "uid="+uid+"&keyword="+keyword, new AsyncNetUtils.Callback() {
                         @Override
                         public void onResponse(String response) {
                             JSONObject jsonResponse = null;

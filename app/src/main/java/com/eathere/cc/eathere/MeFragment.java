@@ -51,9 +51,9 @@ public class MeFragment extends Fragment{
     public void onResume() {
         super.onResume();
         sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
-        String uidStr = sharedPreferences.getString("uid", "default_uid");
-        String usernameStr = sharedPreferences.getString("username", "default_username");
-        if (uidStr.equals("default_uid")) {
+        String uidStr = sharedPreferences.getString("uid", "empty_uid");
+        String usernameStr = sharedPreferences.getString("username", "empty_username");
+        if (uidStr.equals("empty_uid")) {
             setSignInLayout();
         } else {
             setSignOutLayout(usernameStr);

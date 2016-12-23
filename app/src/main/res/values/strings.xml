@@ -2,9 +2,9 @@
     <string name="app_name">EatHere</string>
     <string name="frag_restaurant">Restaurant</string>
     <string name="frag_restaurant_search">Search&#8230;</string>
-    <string name="frag_restaurant_empty_list">Type a restaurant name to start a search&#8230;</string>
+    <string name="frag_restaurant_empty_list">Type to search&#8230;</string>
     <string name="frag_recommend">Recommend</string>
-    <string name="frag_recommend_empty_list">Please sign in to see our recommendation</string>
+    <string name="frag_recommend_empty_list">Please sign in to check out our recommendation</string>
     <string name="frag_me">Me</string>
     <string name="frag_me_about">About</string>
     <string name="frag_me_sign_in">Sign In</string>

@@ -1,6 +1,8 @@
 package com.eathere.cc.eathere;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -32,6 +34,8 @@ public class RecommendFragment extends Fragment{
 
     private Timer refreshTimer;
     private Handler refreshHandler;
+    private SharedPreferences sharedPreferences;
+
     private ListView listView;
 
     public RecommendFragment() {
@@ -41,6 +45,7 @@ public class RecommendFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -89,7 +94,8 @@ public class RecommendFragment extends Fragment{
                 @Override
                 public void run() {
                 if (NetworkStatusUtils.isNetworkConnected(getActivity())) {
-                    AsyncNetUtils.post("http://54.210.133.203:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
+                    String uid = sharedPreferences.getString("uid", "empty_uid");
+                    AsyncNetUtils.post("http://cclb-635335002.us-east-1.elb.amazonaws.com:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
                         @Override
                         public void onResponse(String response) {
                             Log.d(TAG, "Background refresh for recommended restaurant list");
