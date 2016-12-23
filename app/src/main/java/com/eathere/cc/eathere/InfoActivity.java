@@ -35,7 +35,6 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
     double latitude;
     double longitude;
     float overallRating;
-    String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +51,10 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
         address = intent.getStringExtra("address");
         latitude = intent.getDoubleExtra("latitude", EMPTY_COORDINATE);
         longitude = intent.getDoubleExtra("longitude", EMPTY_COORDINATE);
-        category = intent.getStringExtra("rid"); // TODO: FIX
         TextView textViewRName = (TextView) findViewById(R.id.activity_info_text_view_rname);
         TextView textViewAddress = (TextView) findViewById(R.id.activity_info_text_view_address);
-        TextView textViewCategory = (TextView) findViewById(R.id.activity_info_text_view_category);
         textViewRName.setText(rname);
         textViewAddress.setText(address);
-        textViewCategory.setText(""+overallRating);
 
         RatingBar ratingBar = (RatingBar) findViewById(R.id.activity_info_rating_bar_overall_rating);
         ratingBar.setRating(overallRating);

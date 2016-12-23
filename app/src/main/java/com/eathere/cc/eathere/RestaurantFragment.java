@@ -60,7 +60,6 @@ public class RestaurantFragment extends Fragment{
                 intent.putExtra("address", (String) listEntry.get("address"));
                 intent.putExtra("latitude", (double) listEntry.get("latitude"));
                 intent.putExtra("longitude", (double) listEntry.get("longitude"));
-                intent.putExtra("rid", (String) listEntry.get("rid")); // TODO: FIX
                 startActivity(intent);
             }
         });
@@ -86,8 +85,8 @@ public class RestaurantFragment extends Fragment{
                                             restaurants.add(restaurant.toMap());
                                         }
                                         GlideSimpleAdapter adapter = new GlideSimpleAdapter(getActivity(), restaurants,
-                                                R.layout.fragment_restaurant_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address", "rid"},
-                                                new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address, R.id.category});
+                                                R.layout.fragment_restaurant_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address"},
+                                                new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address});
 
                                         listView.setAdapter(adapter);
                                     } else {
