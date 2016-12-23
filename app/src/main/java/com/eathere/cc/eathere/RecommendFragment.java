@@ -1,17 +1,24 @@
 package com.eathere.cc.eathere;
 
+import android.*;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eathere.cc.eathere.model.AsyncNetUtils;
@@ -28,13 +35,16 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class RecommendFragment extends Fragment{
+public class RecommendFragment extends Fragment implements LocationListener {
 
     private static final String TAG = "RecommendFragment";
 
     private Timer refreshTimer;
     private Handler refreshHandler;
     private SharedPreferences sharedPreferences;
+    private LocationManager locationManager;
+    private double latitude;
+    private double longitude;
 
     private ListView listView;
 
@@ -46,6 +56,13 @@ public class RecommendFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
+        latitude = 40.807993;
+        longitude = -73.963833;
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Got ACCESS_FINE_LOCATION permission");
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
     }
 
     @Override
@@ -95,7 +112,7 @@ public class RecommendFragment extends Fragment{
                 public void run() {
                 if (NetworkStatusUtils.isNetworkConnected(getActivity())) {
                     String uid = sharedPreferences.getString("uid", "empty_uid");
-                    AsyncNetUtils.post("http://cclb-635335002.us-east-1.elb.amazonaws.com:8080/api/restaurant/search", "uid=123&keyword=pizza", new AsyncNetUtils.Callback() {
+                    AsyncNetUtils.post("http://cclb-635335002.us-east-1.elb.amazonaws.com:8080/api/restaurant/recommend", "uid="+uid+"&latitude="+latitude+"&longitude="+longitude, new AsyncNetUtils.Callback() {
                         @Override
                         public void onResponse(String response) {
                             Log.d(TAG, "Background refresh for recommended restaurant list");
@@ -138,4 +155,25 @@ public class RecommendFragment extends Fragment{
         refreshHandler = null;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "get current location lat: " + location.getLatitude() + " lng: " + location.getLongitude());
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Log.d(TAG, "provider " + provider + " disabled");
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Log.d(TAG, "provider " + provider + " enabled");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.d(TAG, "provider " + provider + " status changed to " + status);
+    }
 }
