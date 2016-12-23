@@ -1,6 +1,7 @@
 package com.eathere.cc.eathere.model;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,18 +38,19 @@ public class Restaurant {
         restaurant.put("address", address);
         restaurant.put("latitude", latitude);
         restaurant.put("longitude", longitude);
-        restaurant.put("pic_url", "http://random.com"); // TODO: FIX
+        restaurant.put("pic_url", picUrl);
         return restaurant;
     }
 
     public static Restaurant fromJSONObject(JSONObject restaurantJson) throws JSONException {
         String rid = restaurantJson.getString("rid");
         String rname = restaurantJson.getString("name");
-        double overallRating = restaurantJson.optDouble("overall_rating", EMPTY_DOUBLE);
+        double overallRating = restaurantJson.optDouble("overallRating", EMPTY_DOUBLE);
         String address = restaurantJson.optString("address", EMPTY_STRING);
-        double latitude = restaurantJson.optDouble("lat", EMPTY_DOUBLE);
-        double longitude = restaurantJson.optDouble("lng", EMPTY_DOUBLE);
-        String picUrl = restaurantJson.optString("pic_url", EMPTY_STRING);
+        double latitude = restaurantJson.optDouble("latitude", EMPTY_DOUBLE);
+        double longitude = restaurantJson.optDouble("longitude", EMPTY_DOUBLE);
+        String picUrl = restaurantJson.optString("picUrl", EMPTY_STRING);
+
         return new Restaurant(rid, rname, overallRating, address, latitude, longitude, picUrl);
     }
 

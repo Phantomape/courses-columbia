@@ -103,12 +103,15 @@ public class SignUpActivity extends AppCompatActivity {
                                 editor.commit();
                                 onSignUpSuccess();
                             } else {
+                                Log.e(TAG, "Signup failed on false status");
                                 onSignUpFailed();
                             }
                         } catch (JSONException e) {
+                            Log.e(TAG, "Signup failed on JSON problem");
                             onSignUpFailed();
                         }
                     } else {
+                        Log.e(TAG, "Signup failed on non-200 response");
                         onSignUpFailed();
                     }
                 }
@@ -156,8 +159,8 @@ public class SignUpActivity extends AppCompatActivity {
             email.setError(null);
         }
 
-        if (passwordStr.isEmpty() || passwordStr.length() < 4 || passwordStr.length() > 10) {
-            password.setError("between 4 and 10 alphanumeric characters");
+        if (passwordStr.isEmpty() || passwordStr.length() < 4 || passwordStr.length() > 30) {
+            password.setError("between 4 and 30 alphanumeric characters");
             valid = false;
         } else {
             password.setError(null);

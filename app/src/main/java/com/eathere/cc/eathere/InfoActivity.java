@@ -48,7 +48,7 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         rname = intent.getStringExtra("rname");
-        overallRating = intent.getFloatExtra("overall_rating", EMPTY_RATING);
+        overallRating = (float) intent.getDoubleExtra("overall_rating", EMPTY_RATING);
         address = intent.getStringExtra("address");
         latitude = intent.getDoubleExtra("latitude", EMPTY_COORDINATE);
         longitude = intent.getDoubleExtra("longitude", EMPTY_COORDINATE);
@@ -58,7 +58,7 @@ public class InfoActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView textViewCategory = (TextView) findViewById(R.id.activity_info_text_view_category);
         textViewRName.setText(rname);
         textViewAddress.setText(address);
-        textViewCategory.setText(category);
+        textViewCategory.setText(""+overallRating);
 
         RatingBar ratingBar = (RatingBar) findViewById(R.id.activity_info_rating_bar_overall_rating);
         ratingBar.setRating(overallRating);

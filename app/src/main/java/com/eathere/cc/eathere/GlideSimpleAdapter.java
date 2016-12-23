@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -29,7 +30,7 @@ public class GlideSimpleAdapter extends SimpleAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
         ImageView imageView = (ImageView) view.findViewById(R.id.pic);
-        Glide.with(context).load(picUrls[position]).placeholder(R.drawable.ic_restaurant).into(imageView);
+        Glide.with(context).load(picUrls[position]).override(80, 80).placeholder(R.drawable.ic_restaurant).into(imageView);
         return view;
     }
 }
