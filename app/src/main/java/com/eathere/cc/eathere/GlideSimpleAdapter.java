@@ -11,9 +11,6 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by capri on 12/22/16.
- */
 
 public class GlideSimpleAdapter extends SimpleAdapter {
     private Context context;
@@ -32,7 +29,7 @@ public class GlideSimpleAdapter extends SimpleAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
         ImageView imageView = (ImageView) view.findViewById(R.id.pic);
-        Glide.with(context).load(picUrls[position]).placeholder(android.R.drawable.ic_menu_search).into(imageView);
+        Glide.with(context).load(picUrls[position]).placeholder(R.drawable.ic_restaurant).into(imageView);
         return view;
     }
 }

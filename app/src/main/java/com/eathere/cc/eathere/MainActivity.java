@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_search);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_recommend);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_favorite);
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_me);
     }
 
