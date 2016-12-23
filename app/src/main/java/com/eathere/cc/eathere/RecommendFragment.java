@@ -132,7 +132,7 @@ public class RecommendFragment extends Fragment implements LocationListener {
                                                 restaurants.add(restaurant.toMap());
                                             }
                                             GlideSimpleAdapter adapter = new GlideSimpleAdapter(getActivity(), restaurants,
-                                                    R.layout.fragment_restaurant_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address"},
+                                                    R.layout.fragment_recommend_list_view_item, new String[]{"pic_url", "rname", "overall_rating", "address"},
                                                     new int[]{R.id.pic, R.id.rname, R.id.overall_rating, R.id.address});
                                             listView.setAdapter(adapter);
                                         } else {
