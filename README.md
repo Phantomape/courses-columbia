@@ -6,4 +6,4 @@ App to recommend restaurants for you
 ##
 Android app under "app/"
 
-Backend/Data/Machine leaning code under "backend/"
+Backend/Data/Machine Learning code under "backend/"
