@@ -36,7 +36,6 @@ def getUser2ItemRecommendation(user_id, numberOfResults):
         conn.request("GET", "/recommendations/v4.0/models/d24f6ee7-4c2b-4e92-9b49-fad2f8651d8e/recommend/user?userId="+ str(user_id) + "&numberOfResults=" + str(numberOfResults)+ "&%s" % paramsU, "{body}", headers)
         response = conn.getresponse()
         data = response.read()
-        # print(data)
         conn.close()
         return data
     except Exception as e:

@@ -60,7 +60,7 @@ def user_login():
             print email
             print password
             user_profile = getByEmail(email)
-#             print user_profile["password"]
+            print user_profile["password"]
             if user_profile == None or user_profile["password"] != password:
                 ret = {"status": False}
             else:

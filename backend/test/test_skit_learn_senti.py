@@ -29,7 +29,6 @@ if __name__ == '__main__':
     data_dir = "/Users/HaikuoLiu/Downloads/review_polarity/txt_sentoken"
     classes = ['pos', 'neg']
 
-    # Read the data
     train_data = []
     train_labels = []
     test_data = []

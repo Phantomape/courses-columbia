@@ -4,12 +4,11 @@ from pymongo import MongoClient
 client = MongoClient()
 # client set up
 db = client.test
-userMongoData = db.preUserMongoData2
+userMongoData = db.userMongoData
 businessMongoData4 = db.businessMongoData4
 
 from bson.objectid import ObjectId
 def getByUser_id(findId):
-    # the userColllection like the table which store the data of user
     try:
         document = userMongoData.find_one({"user_id":findId})
         return document
@@ -17,7 +16,6 @@ def getByUser_id(findId):
         return "id incorrect"
 
 def getByRestaurant_id(findId):
-    # the userColllection like the table which store the data of user
     try:
 #         document = businessMongoData1.find({"item_id":{$regex:findId,$options:"$i"}})
         document = businessMongoData4.find_one({"item_id":{'$regex':findId}})
@@ -38,9 +36,6 @@ def search_dao(keyword):
 
 
 def getByEmail(email):
-    # the userColllection like the table which store the data of user
-#     print "findtheemail  "
-#     print email
     try:
         document = userMongoData.find_one({"email": email})
         return document
@@ -86,7 +81,6 @@ data = {
 # print getByEmail("3@gmail.com")
 #
 #
-# print insertData(data)
 # print getByUser_id("xx")
 #
 #

@@ -3,7 +3,7 @@ from pymongo import MongoClient
 client = MongoClient()
 db = client.test
 userTag = db.userTag
-fin = open('/home/ec2-user/restaurants_recommendation/data/userTag.json','r')
+fin = open('/home/ec2-user/restaurants_recommendation/spark_data/userTag.json','r')
 count = 0
 for eachLine in fin:
     line = eachLine.strip().decode('utf-8')
