@@ -23,6 +23,9 @@ public class Transformation {
         orthographicMatrix = new Matrix4f();
     }
 
+    /*
+     * This getOrthographicMatrix() won't be used in assignment 1
+     */
     public final Matrix4f getOrthographicMatrix(float left, float right, float bottom, float top, float near, float far){
     	orthographicMatrix.identity();
 		orthographicMatrix.m00(2.0f / (right - left));
@@ -31,9 +34,6 @@ public class Transformation {
 		orthographicMatrix.m03((left + right) / (left - right));
 		orthographicMatrix.m13((bottom + top) / (bottom - top));
 		orthographicMatrix.m23((far + near) / (far - near));
-		//result.elements[0 + 3 * 4] = (left + right) / (left - right);
-		//result.elements[1 + 3 * 4] = (bottom + top) / (bottom - top);
-		//result.elements[2 + 3 * 4] = (far + near) / (far - near);
 		
 		return orthographicMatrix;
     }
@@ -42,9 +42,7 @@ public class Transformation {
         projectionMatrix.identity();
     	//// --- student code ---
         
-        
         float aspectRatio = width/height;
-        
         float scale = (float)((1.0f / Math.tan(fov * 0.5)) );
         
         projectionMatrix.m00(scale / aspectRatio);

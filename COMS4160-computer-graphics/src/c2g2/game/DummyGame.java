@@ -80,20 +80,19 @@ public class DummyGame implements IGameLogic {
         tie2m.translateMesh(new Vector3f(-25.0f, 0f, -230f));
         moon1m.scaleMesh(0.1f, 0.1f, 0.1f);
         moon1m.translateMesh(new Vector3f(-50.0f, 0f, -250f));
-        //mesh.rotateMesh(new Vector3f(1, 0, 0), 20);
-        //Mesh mesh = new Mesh();  // comment this line when you enable OBJLoader
+        
         Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
-
+        
         mesh.setMaterial(material);
         tie1m.setMaterial(material);
         tie2m.setMaterial(material);
         moon1m.setMaterial(material);
-        GameItem gameItem = new GameItem(mesh);
+        GameItem arc = new GameItem(mesh);
         GameItem tie1i = new GameItem(tie1m);
         GameItem tie2i = new GameItem(tie2m); 
         GameItem moon1i = new GameItem(moon1m);
-        gameItems = new GameItem[]{gameItem, tie1i, tie2i, moon1i};
-
+        gameItems = new GameItem[]{arc, tie1i, tie2i, moon1i};
+        
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
         Vector3f lightColour = new Vector3f(1, 1, 1);
         Vector3f lightPosition = new Vector3f(0, 0, 1);
@@ -271,47 +270,47 @@ public class DummyGame implements IGameLogic {
     public void action_arc(){
     	Calendar cal = Calendar.getInstance();
     	int time = cal.get(Calendar.SECOND);
-/*
-    	gameItems[0].getMesh().translateMesh(new Vector3f(0f, 0f, 200f));
-    	gameItems[0].getMesh().rotateMesh(new Vector3f(0, 1, 0.3f), 0.1f);
-        gameItems[0].getMesh().translateMesh(new Vector3f(0f, 0f, -200f));
-    	//	Translation\
- */   	
+
+    	//	Translation\ 	
     	if(time - seconds > 3 && time - seconds < 15){
-    		Vector3f t = gameItems[currentObj].getPosition();
+    		Vector3f t = gameItems[0].getPosition();
     		gameItems[0].setPosition(t.x+3 * TRANSLATE_STEP, t.y, t.z + 3 * TRANSLATE_STEP);
     	} else if(time - seconds >= 15){
-    		Vector3f t = gameItems[currentObj].getPosition();
+    		Vector3f t = gameItems[0].getPosition();
     		gameItems[0].setPosition(t.x - 5 * TRANSLATE_STEP, t.y, t.z + 10 * TRANSLATE_STEP);
     	}
     	
+    	//	Rotation
     	if(time - seconds > 3 && time - seconds < 5){
-			Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x, curr.y, curr.z + 3 * ROTATION_STEP);
+			Vector3f curr = gameItems[0].getRotation();
+    		gameItems[0].setRotation(curr.x, curr.y, curr.z + 3 * ROTATION_STEP);
     	} else if (time - seconds >= 5 && time - seconds < 7){
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x , curr.y, curr.z - 3 * ROTATION_STEP);
+    		Vector3f curr = gameItems[0].getRotation();
+    		gameItems[0].setRotation(curr.x , curr.y, curr.z - 3 * ROTATION_STEP);
     	} else if(time - seconds >= 7 && time - seconds < 9){
-			Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x, curr.y, curr.z + 6 * ROTATION_STEP);
+			Vector3f curr = gameItems[0].getRotation();
+    		gameItems[0].setRotation(curr.x, curr.y, curr.z + 6 * ROTATION_STEP);
     	} else if(time - seconds >= 9 && time - seconds < 15 ){
-       		Vector3f t = gameItems[currentObj].getPosition();
+       		Vector3f t = gameItems[0].getPosition();
     		gameItems[0].setPosition(t.x - 5 * TRANSLATE_STEP, t.y - 3 * TRANSLATE_STEP, t.z + 5 * TRANSLATE_STEP);
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x, curr.y, curr.z - 12 * ROTATION_STEP);
+    		Vector3f curr = gameItems[0].getRotation();
+    		gameItems[0].setRotation(curr.x, curr.y, curr.z - 12 * ROTATION_STEP);
     	} else if(time - seconds >= 15 && time - seconds < 18 ){
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x, curr.y, curr.z + 2 * ROTATION_STEP);
-    
+    		Vector3f curr = gameItems[0].getRotation();
+    		gameItems[0].setRotation(curr.x, curr.y, curr.z + 2 * ROTATION_STEP);
+    		//	Pose change
     		gameItems[0].getMesh().translateMesh(new Vector3f(0f, 0f, 200f));
         	gameItems[0].getMesh().rotateMesh(new Vector3f(0, -1, 1f), 0.25f);
             gameItems[0].getMesh().translateMesh(new Vector3f(0f, 0f, -200f));
-    	} else if(time - seconds >= 18 && time - seconds < 200 ){
+    	} else if(time - seconds >= 18 && time - seconds < 20 ){
     		Vector3f curr = gameItems[currentObj].getRotation();
     		gameItems[currentObj].setRotation(curr.x, curr.y, curr.z - 4 * ROTATION_STEP);
     	}
     }
 
+    /*
+     * This part controls the action of TIE-fighter #1
+     */
     public void action_tie1(){
     	Calendar cal = Calendar.getInstance();
     	int time = cal.get(Calendar.SECOND);
@@ -325,9 +324,8 @@ public class DummyGame implements IGameLogic {
     		gameItems[1].setPosition(t.x - 5 * TRANSLATE_STEP, t.y - TRANSLATE_STEP, t.z + 10 * TRANSLATE_STEP);
     		
     	}
-    	
-    	if(time - seconds > 5 && time - seconds < 10){
-		} else if(time - seconds >= 5 && time - seconds < 8){
+    	//	Rotation
+    	if(time - seconds >= 5 && time - seconds < 8){
 			Vector3f curr = gameItems[1].getRotation();
     		gameItems[1].setRotation(curr.x, curr.y, curr.z + ROTATION_STEP);
     	} else if (time - seconds >= 18 && time - seconds < 10){
@@ -339,6 +337,7 @@ public class DummyGame implements IGameLogic {
     		Vector3f curr = gameItems[1].getRotation();
     		gameItems[1].setRotation(curr.x, curr.y, curr.z+ 10 * ROTATION_STEP);
     	} else if(time - seconds >= 13){
+    		//	Pose change
     		gameItems[1].getMesh().translateMesh(new Vector3f(0f, 0f, 220f));
         	gameItems[1].getMesh().rotateMesh(new Vector3f(0, 0, 1f), 0.5f);
             gameItems[1].getMesh().translateMesh(new Vector3f(0f, 0f, -220f));
@@ -346,6 +345,9 @@ public class DummyGame implements IGameLogic {
     	
     }
 
+    /*
+     * This part controls the action of TIE-fighter #2
+     */
     public void action_tie2(){
     	Calendar cal = Calendar.getInstance();
     	int time = cal.get(Calendar.SECOND);
@@ -359,8 +361,8 @@ public class DummyGame implements IGameLogic {
     		gameItems[2].setPosition(t.x - 5 * TRANSLATE_STEP, t.y - TRANSLATE_STEP, t.z + 10 * TRANSLATE_STEP);
     	}
     	
+    	//	Rotation
     	if(time - seconds > 5 && time - seconds < 10){
-		} else if(time - seconds >= 11 && time - seconds < 13){
 			Vector3f curr = gameItems[2].getRotation();
     		gameItems[2].setRotation(curr.x, curr.y, curr.z - ROTATION_STEP);
     	} else if (time - seconds >= 13 && time - seconds < 15){
@@ -370,13 +372,17 @@ public class DummyGame implements IGameLogic {
 			Vector3f curr = gameItems[2].getRotation();
     		gameItems[2].setRotation(curr.x, curr.y, curr.z - ROTATION_STEP);
     	} else if(time - seconds >= 17 && time - seconds < 20 ){
+    		//	Pose change
     		gameItems[2].getMesh().translateMesh(new Vector3f(0f, 0f, 230f));
         	gameItems[2].getMesh().rotateMesh(new Vector3f(0, 0, 1f), 0.5f);
             gameItems[2].getMesh().translateMesh(new Vector3f(0f, 0f, -230f));
         }    	
     	
     }
-
+    
+    /*
+     * This part controls the action of moon, in this case, rotate around itself
+     */
     public void action_moon(){
     	gameItems[3].getMesh().translateMesh(new Vector3f(50.0f, 0f, 250f));
     	gameItems[3].getMesh().rotateMesh(new Vector3f(0, 1, 0.3f), 0.01f);

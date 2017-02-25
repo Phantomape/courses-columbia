@@ -281,20 +281,6 @@ public class Mesh {
     	//student code
     	n.normalize();
     	for(int i=0; i< pos.length/3; i++){
-    		/*
-    		Vector3f x = new Vector3f(pos[i * 3] - p.x, pos[i * 3 + 1] - p.y, pos[i * 3 + 2] - p.z);
-    		
-    		Matrix3f H = new Matrix3f();
-    		H.m00(1 - n.x * n.x);H.m01(1 - n.x * n.y);H.m02(1 - n.x * n.z);
-    		H.m10(1 - n.y * n.x);H.m11(1 - n.y * n.y);H.m12(1 - n.y * n.z);
-    		H.m20(1 - n.z * n.x);H.m21(1 - n.z * n.y);H.m22(1 - n.z * n.z);
-    		
-    		Vector3f res = x.mul(H);
-    		pos[i * 3] = res.x;
-    		pos[i * 3 + 1] = res.y;
-    		pos[i * 3 + 2] = res.z;
-    		*/
-    		
     		Vector3f p2x = new Vector3f(pos[i * 3] - p.x, pos[i * 3 + 1] - p.y, pos[i * 3 + 2] - p.z);
     		float c = 1 - 2 * (float)Math.cos(p2x.dot(n) / p2x.length());
     		Vector3f p2y = new Vector3f(p2x.x * c, p2x.y * c, p2x.z * c);

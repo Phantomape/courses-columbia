@@ -1,0 +1,66 @@
+This is XeTeX, Version 3.14159265-2.6-0.99996 (MiKTeX 2.9.6210 64-bit) (preloaded format=xelatex 2017.1.28)  24 FEB 2017 18:56
+entering extended mode
+**./computer-graphics-report-1.tex
+(computer-graphics-report-1.tex
+LaTeX2e <2017/01/01> patch level 1
+Babel <3.9r> and hyphenation patterns for 76 language(s) loaded.
+("D:\LaTeX\MiKTeX 2.9\tex\latex\base\article.cls"
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+("D:\LaTeX\MiKTeX 2.9\tex\latex\base\size11.clo"
+File: size11.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("D:\LaTeX\MiKTeX 2.9\tex\latex\comment\comment.sty"
+\CommentStream=\write3
+
+Excluding comment 'comment') ("D:\LaTeX\MiKTeX 2.9\tex\latex\lipsum\lipsum.sty"
+Package: lipsum 2014/07/27 v1.3 150 paragraphs of Lorem Ipsum dummy text
+\c@lips@count=\count87
+) ("D:\LaTeX\MiKTeX 2.9\tex\latex\preprint\fullpage.sty"
+Package: fullpage 1999/02/23 1.1 (PWD)
+\FP@margin=\skip43
+)
+("D:\LaTeX\MiKTeX 2.9\tex\latex\tools\indentfirst.sty"
+Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
+)
+(computer-graphics-report-1.aux)
+\openout1 = `computer-graphics-report-1.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+ [1
+
+] [2] (computer-graphics-report-1.aux) ) 
+Here is how much of TeX's memory you used:
+ 466 strings out of 427895
+ 5579 string characters out of 3154553
+ 162661 words of memory out of 3000000
+ 4427 multiletter control sequences out of 15000+200000
+ 3680 words of font info for 19 fonts, out of 3000000 for 9000
+ 1328 hyphenation exceptions out of 8191
+ 22i,4n,19p,625b,173s stack positions out of 5000i,500n,10000p,200000b,50000s
+
+Output written on computer-graphics-report-1.pdf (2 pages).
