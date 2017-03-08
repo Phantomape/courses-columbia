@@ -15,6 +15,7 @@ import c2g2.engine.graph.Material;
 import c2g2.engine.graph.Mesh;
 import c2g2.engine.graph.OBJLoader;
 import c2g2.engine.graph.PointLight;
+import c2g2.engine.graph.Texture;
 
 public class DummyGame implements IGameLogic {
 
@@ -54,7 +55,7 @@ public class DummyGame implements IGameLogic {
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
         lightAngle = -90;
         currentObj=0;
-        currentShaderIndex=3;
+        currentShaderIndex=4;
     }
 
     @Override
@@ -62,14 +63,16 @@ public class DummyGame implements IGameLogic {
         renderer.init(window);
         float reflectance = 1f;
         Mesh mesh = OBJLoader.loadMesh("src/resources/models/bunny.obj");
-        Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
+        Texture texture = new Texture("src/resources/textures/grassblock.png");
+        Material material = new Material(texture, reflectance);
         
-        mesh.translateMesh(new Vector3f(-1000.0f, -10f, -10f));
+        
+        //mesh.translateMesh(new Vector3f(-1000.0f, -10f, -1000f));
         
         mesh.setMaterial(material);
         GameItem gameItem = new GameItem(mesh);
         gameItem.setScale(0.5f);
-        gameItem.setPosition(0, 0, -2);
+        gameItem.setPosition(-0.5f, -1.2f, -3);
         gameItems = new GameItem[]{gameItem};
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);

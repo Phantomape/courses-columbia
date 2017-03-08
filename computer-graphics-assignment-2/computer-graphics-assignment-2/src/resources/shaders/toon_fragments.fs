@@ -43,13 +43,13 @@ uniform Material material;
 uniform PointLight pointLight;
 uniform DirectionalLight directionalLight;
 
+const int levels = 3;
+const float scaleFactor = 1.0 / levels;
+
 vec4 calcLightColour(vec3 light_colour, float light_intensity, vec3 position, vec3 to_light_dir, vec3 normal)
 {
     vec4 diffuseColour = vec4(0, 0, 0, 0);
     vec4 specColour = vec4(0, 0, 0, 0);
-
-    // Ambient Light 
-    vec4 ambientColour = vec4(ambientLight, 1.0);
 
     // Diffuse Light
     float diffuseFactor = max(dot(normal, to_light_dir), 0.0);
@@ -63,10 +63,7 @@ vec4 calcLightColour(vec3 light_colour, float light_intensity, vec3 position, ve
     specularFactor = pow(specularFactor, specularPower);
     specColour = light_intensity  * specularFactor * material.reflectance * vec4(light_colour, 1.0);
 
-    // texture
-    vec4 texColour = texture(texture_sampler, outTexCoord);
-    return (ambientColour + diffuseColour) * texColour + specColour;
-    //return (diffuseColour + specColour);
+    return (diffuseColour + specColour);
 }
 
 vec4 calcPointLight(PointLight light, vec3 position, vec3 normal)
@@ -87,8 +84,9 @@ vec4 calcDirectionalLight(DirectionalLight light, vec3 position, vec3 normal)
     return calcLightColour(light.colour, light.intensity, position, normalize(light.direction), normal);
 }
 
+
 void main()
-{
+{ 
     vec4 baseColour; 
     if ( material.useColour == 1 )
     {
@@ -100,8 +98,8 @@ void main()
     }
     vec4 totalLight = vec4(ambientLight, 1.0);
     totalLight += calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal);
-    totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
+    totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal);
     
-    //fragColor = baseColour * totalLight * texture2D(texture_sampler, outTexCoord).a;
-    fragColor = baseColour * totalLight;
+
+    fragColor = baseColour * floor(totalLight * 2) * scaleFactor;
 }

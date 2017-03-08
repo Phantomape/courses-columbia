@@ -2,6 +2,8 @@ package c2g2.engine.graph;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
+
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
@@ -21,6 +23,7 @@ public class Texture {
 
     public Texture(InputStream is) throws Exception {
         // Load Texture file
+    	is = new FileInputStream("src/resources/textures/grassblock.png");
         PNGDecoder decoder = new PNGDecoder(is);
 
         this.width = decoder.getWidth();
