@@ -69,7 +69,6 @@ public class ShaderProgram {
     }
 
     public void setUniform(String uniformName, float value) {
-    	System.out.println(uniforms.get(uniformName));
         glUniform1f(uniforms.get(uniformName), value);
     }
 

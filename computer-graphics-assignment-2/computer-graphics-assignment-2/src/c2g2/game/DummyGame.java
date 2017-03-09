@@ -15,7 +15,6 @@ import c2g2.engine.graph.Material;
 import c2g2.engine.graph.Mesh;
 import c2g2.engine.graph.OBJLoader;
 import c2g2.engine.graph.PointLight;
-import c2g2.engine.graph.Texture;
 
 public class DummyGame implements IGameLogic {
 
@@ -55,26 +54,29 @@ public class DummyGame implements IGameLogic {
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
         lightAngle = -90;
         currentObj=0;
-        currentShaderIndex=4;
+        currentShaderIndex=5;
     }
 
     @Override
     public void init(Window window) throws Exception {
         renderer.init(window);
         float reflectance = 1f;
-        Mesh mesh = OBJLoader.loadMesh("src/resources/models/bunny.obj");
-        Texture texture = new Texture("src/resources/textures/grassblock.png");
-        Material material = new Material(texture, reflectance);
-        
-        
-        //mesh.translateMesh(new Vector3f(-1000.0f, -10f, -1000f));
-        
+        /*Mesh mesh = OBJLoader.loadMesh("src/resources/models/cube.obj");
+        Material material = new Material(new Vector3f(0.5f, 0.5f, 0.5f), reflectance); 
         mesh.setMaterial(material);
         GameItem gameItem = new GameItem(mesh);
         gameItem.setScale(0.5f);
-        gameItem.setPosition(-0.5f, -1.2f, -3);
+        gameItem.setPosition(-0.8f, -1.2f, -3);
+        gameItems = new GameItem[]{gameItem};*/
+        //	Config for Arc170
+        Mesh mesh = OBJLoader.loadMesh("src/resources/models/Arc170.obj");
+        Material material = new Material(new Vector3f(0.5f, 0.5f, 0.5f), reflectance); 
+        mesh.setMaterial(material);
+        GameItem gameItem = new GameItem(mesh);
+        gameItem.setScale(0.001f);
+        gameItem.setPosition(-0.8f, -0.8f, -3);
         gameItems = new GameItem[]{gameItem};
-
+		
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
         Vector3f lightColour = new Vector3f(1, 1, 1);
         Vector3f lightPosition = new Vector3f(0, 0, 1);

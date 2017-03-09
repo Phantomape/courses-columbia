@@ -110,6 +110,4 @@ void main()
     
     lightColor = baseColour * totalLight;
 
-
-
 }
