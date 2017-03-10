@@ -5,6 +5,7 @@ in vec3 mvVertexNormal;
 in vec3 mvVertexPos;
 
 out vec4 fragColor;
+out int dummy;
 
 struct Attenuation
 {
@@ -33,6 +34,7 @@ struct Material
 {
     vec3 colour;
     int useColour;
+    int hasNormalMap;
     float reflectance;
 };
 
@@ -103,4 +105,5 @@ void main()
         pattern = 1;
     else pattern = 0;
     fragColor = baseColour * totalLight * pattern;
+    dummy = material.hasNormalMap;
 }

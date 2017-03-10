@@ -5,7 +5,8 @@ in vec3 mvVertexNormal;
 in vec3 mvVertexPos;
 
 out vec4 fragColor;
-out vec4 totalLight;
+out vec4 dummyLight;
+out int dummy;
 
 struct Attenuation
 {
@@ -34,6 +35,7 @@ struct Material
 {
     vec3 colour;
     int useColour;
+    int hasNormalMap;
     float reflectance;
 };
 
@@ -96,8 +98,9 @@ void main()
     vec4 totalLight = vec4(ambientLight, 1.0);
     totalLight += calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal);
     totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
-    
-    
+    //  Dummy Variables
+    dummyLight = totalLight;
+
     vec3 camera_direction = normalize(-mvVertexPos);
     vec3 to_light_dir = normalize(directionalLight.direction);
     float diffuse = dot(mvVertexNormal, to_light_dir);
@@ -109,4 +112,5 @@ void main()
     vec4 plt = calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
     vec4 t = amb + dif + plt;
     fragColor = baseColour * diffuse;
+    dummy = material.hasNormalMap;
 }

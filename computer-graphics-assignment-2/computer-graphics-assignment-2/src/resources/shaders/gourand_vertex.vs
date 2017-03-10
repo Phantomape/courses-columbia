@@ -5,6 +5,7 @@ layout (location=1) in vec2 texCoord;
 layout (location=2) in vec3 vertexNormal;
 
 out vec4 lightColor;
+flat out int dummy;
 
 struct Attenuation
 {
@@ -33,6 +34,7 @@ struct Material
 {
     vec3 colour;
     int useColour;
+    int hasNormalMap;
     float reflectance;
 };
 
@@ -109,5 +111,5 @@ void main()
     totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
     
     lightColor = baseColour * totalLight;
-
+    dummy = material.hasNormalMap;
 }

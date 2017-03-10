@@ -7,11 +7,13 @@ in vec3 mvVertexPos;
 out vec4 fragColor;
 out int dummyUseColour;
 out float dummyReflectance;
+out int dummy;
 
 struct Material
 {
     vec3 colour;
     int useColour;
+    int hasNormalMap;
     float reflectance;
 };
 
@@ -26,5 +28,6 @@ void main()
 
     dummyReflectance = material.reflectance * 10;
     dummyUseColour = material.useColour * 10;
+    dummy = material.hasNormalMap;
     fragColor = (baseColour + redTint) * totalLight;
 }

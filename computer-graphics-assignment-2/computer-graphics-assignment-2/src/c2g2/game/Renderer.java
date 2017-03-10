@@ -146,12 +146,13 @@ public class Renderer {
 
     public ShaderProgram createNormapShader() throws Exception {
         ShaderProgram shaderProgram = new ShaderProgram();
-        shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/phong_vertex.vs"))));
-        shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/phong_fragment.fs"))));
+        shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/normap_vertex.vs"))));
+        shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/normap_fragment.fs"))));
         shaderProgram.link();
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("modelViewMatrix");
         shaderProgram.createUniform("texture_sampler");
+        shaderProgram.createUniform("normalMap");
         shaderProgram.createMaterialUniform("material");
         shaderProgram.createUniform("specularPower");
         shaderProgram.createUniform("ambientLight");
@@ -229,6 +230,7 @@ public class Renderer {
             Vector4f aux = new Vector4f(lightPos, 1);
             aux.mul(viewMatrix);
             lightPos.x = aux.x;
+    
             lightPos.y = aux.y;
             lightPos.z = aux.z;
             shaderProgram.setUniform("pointLight", currPointLight);
@@ -340,6 +342,7 @@ public class Renderer {
             shaderProgram.setUniform("directionalLight", currDirLight);
 
             shaderProgram.setUniform("texture_sampler", 0);
+            shaderProgram.setUniform("normalMap", 1);
         }
         else if(currentShader.equals("toon")) {
             shaderProgram.setUniform("projectionMatrix", projectionMatrix);
@@ -375,10 +378,6 @@ public class Renderer {
         }
 
 
-
-        
-        
-        
         
         // Render each gameItem
         for(GameItem gameItem : gameItems) {
