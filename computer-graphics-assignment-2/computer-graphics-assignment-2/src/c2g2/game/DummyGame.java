@@ -72,15 +72,19 @@ public class DummyGame implements IGameLogic {
         InputStream n = new FileInputStream("src/resources/textures/heightmap.png");
         Texture normalMap = new Texture(n);
         
-        //Material material = new Material(new Vector3f(0.5f, 0.5f, 0.5f), reflectance);
+
+        //	Uncomment the code below to render the bunny or cube 
         /*Mesh mesh = OBJLoader.loadMesh("src/resources/models/cube.obj");
-        Material material = new Material(texture, reflectance);
+        Material material = new Material(new Vector3f(0.5f, 0.5f, 0.5f), reflectance);
+        //Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
         GameItem gameItem = new GameItem(mesh);
         gameItem.setScale(0.5f);
         gameItem.setPosition(-0.8f, -1.2f, -3);
-        gameItems = new GameItem[]{gameItem};*/
-        //	Config for Arc170
+        gameItems = new GameItem[]{gameItem};
+        */
+        //	Configuration for Arc170
+        
         Mesh mesh = OBJLoader.loadMesh("src/resources/models/Arc170.obj");
         //Material material = new Material(new Vector3f(0.5f, 0.5f, 0.5f), reflectance); 
         Material material = new Material(texture, reflectance);

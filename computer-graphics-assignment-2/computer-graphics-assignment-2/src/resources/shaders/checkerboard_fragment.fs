@@ -83,7 +83,7 @@ vec4 calcDirectionalLight(DirectionalLight light, vec3 position, vec3 normal)
     return calcLightColour(light.colour, light.intensity, position, normalize(light.direction), normal);
 }
 
-int level = 5;
+int level = 50;
 
 void main()
 {
@@ -99,11 +99,27 @@ void main()
     vec4 totalLight = vec4(ambientLight, 1.0);
     totalLight += calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal);
     totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
-    //baseColour = vec4(outTexCoord.x, outTexCoord.y, 0, 0);
-    float pattern = sin(outTexCoord.x * level * 6 + 30) * 0.5 + sin(outTexCoord.y * level * 6) * 0.5;
-    if(pattern > 0) 
-        pattern = 1;
+    //  Something like snowflake  
+    //      float pattern = sin(outTexCoord.x * level);
+    //      for(int i = 0; i < 40; i++)
+    //          pattern = tan(pattern);
+    //      pattern = pattern * 5;
+    
+    float pattern = sin(outTexCoord.x * level) * 0.5 + sin(outTexCoord.y * level) * 0.5;
+    if(pattern > 0) pattern = 1;
     else pattern = 0;
+    //  Different procedural texture:
+    //      Checkerboard pattern
+    //          float pattern = sin(outTexCoord.x * level) * 0.5 + sin(outTexCoord.y * level) * 0.5;
+    //          if(pattern > 0) 
+    //             pattern = 1;
+    //          else pattern = 0;
+
+    //      Special pattern
+    //          float pattern = sin(outTexCoord.x * level + outTexCoord.y * level) * 0.5;
+    //          float pattern = sin(outTexCoord.x * 60) * sin(outTexCoord.x * 60) * sin(outTexCoord.x * 60 * outTexCoord.y) * sin(outTexCoord.x * 60 * outTexCoord.y) + noise1(outTexCoord.y) * 100;
+              float pattern = tan(outTexCoord.x * 30) * sin(outTexCoord.x * 60) * sin(outTexCoord.x * 60 * outTexCoord.y) * sin(outTexCoord.x * 60 * outTexCoord.y) + noise1(outTexCoord.y) * 100;
+    
     fragColor = baseColour * totalLight * pattern;
     dummy = material.hasNormalMap;
 }
