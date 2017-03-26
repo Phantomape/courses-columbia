@@ -17,7 +17,7 @@ public class Geometry {
 		// Implement here the sampling of projected solid angle 
 		// as we discussed in class
 		double rx = Math.sqrt(seed.x);
-		outDir.z = Math.sqrt(1 - rx * rx);	//	1 - rx * rx 
+		outDir.z = Math.sqrt(1 - seed.x);	//	1 - rx * rx 
 		double phi = 2 * Math.PI * seed.y;
 		outDir.x = rx * Math.cos(phi);
 		outDir.y = rx * Math.sin(phi);

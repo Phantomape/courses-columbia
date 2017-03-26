@@ -59,7 +59,7 @@ public class DirectOnlyRenderer implements Renderer {
     	//	Find whther there is intersection
     	
     	if(scene.getFirstIntersection(ir, ray)){
-    		//	emmitted light radiance
+    		//	1) compute the emitted light radiance from the current surface if the surface is a light surface
     		emittedRadiance(ir, ray.direction, er);
     		//	sampling
     		sampler.sample(1, sampleIndex, seed);
@@ -71,41 +71,7 @@ public class DirectOnlyRenderer implements Renderer {
        	} else {
     		scene.getBackground().evaluate(ray.direction, outColor);
     	}
-    	
-    	/*
-    	        IntersectionRecord iRec = new IntersectionRecord();
-    	 
-    	         if (scene.getFirstIntersection(iRec, ray)) {
-    	 
-    	             Color emittedRadiance = new Color();
-    	             emittedRadiance(iRec, ray.direction, emittedRadiance);
-    	             Point2 directSeed = new Point2();
-    	             sampler.sample(1, sampleIndex, directSeed);     // this random variable is for incident direction
-    	 
-    	             // Generate a random incident direction
-    	             Vector3 L = new Vector3();
-    	             Geometry.squareToPSAHemisphere(directSeed, L);
-    	             iRec.frame.frameToCanonical(L);
-    	 
-    	             Vector3 N = new Vector3(iRec.frame.w);
-    	             N.normalize();
-    	 
-    	             //find reflection direction
-    	             Vector3 R = new Vector3();
-    	             R.set(N);
-    	             R.scale(2 * L.dot(N));
-    	             R.sub(L);
-    	             R.normalize();
-    	 
-    	             Color directRadiance = new Color();
-    	             direct.directIllumination(scene, L, R, iRec, directSeed, directRadiance);
-    	 
-    	             outColor.set(emittedRadiance);
-    	             outColor.add(directRadiance);
-    	         } else {
-    	             scene.getBackground().evaluate(ray.direction, outColor);
-    	         }
-    	         */
+
     }
 
     
@@ -121,23 +87,16 @@ public class DirectOnlyRenderer implements Renderer {
         // If not, the emission is zero.
     	// This function should be called in the rayRadiance(...) method above
     	
-		Material m = ir.surface.getMaterial();
+		Material m = iRec.surface.getMaterial();
 		if(m.isEmitter()){
-			lsr.set(ir);
+			lsr.set(iRec);
 			//Vector3 tmp = new Vector3(-1 * dir.x, -1 * dir.y, -1 * dir.z);
 			//lsr.emitDir.set(tmp);
 			lsr.emitDir.set(dir);
 			lsr.emitDir.scale(-1);
-			ir.surface.getMaterial().emittedRadiance(lsr, outColor);
+			iRec.surface.getMaterial().emittedRadiance(lsr, outColor);
 		} else {
 			outColor.set(0.0);
 		}
-		/*
-                LuminaireSamplingRecord lRec = new LuminaireSamplingRecord();
-    	            lRec.set(iRec);
-    	             lRec.emitDir.set(dir);
-    	             lRec.emitDir.scale(-1);
-    	 iRec.surface.getMaterial().emittedRadiance(lRec, outColor);
-    	 */
     }
 }

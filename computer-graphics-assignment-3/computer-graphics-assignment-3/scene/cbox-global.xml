@@ -5,8 +5,8 @@
   </image>
 
   <sampler type="JitteredSampler">
-    <numSamplesU>30</numSamplesU>
-    <numSamplesV>30</numSamplesV>
+    <numSamplesU>100</numSamplesU>
+    <numSamplesV>100</numSamplesV>
   </sampler>
 
   <!--
@@ -42,7 +42,7 @@
   </renderer>
   -->
   <renderer type="BruteForcePathTracer">
-    <depthLimit>5</depthLimit>
+    <depthLimit>8</depthLimit>
     <backgroundIllumination>1</backgroundIllumination>
   </renderer>
 

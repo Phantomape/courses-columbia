@@ -45,8 +45,8 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
     	// As a hint, here are a few steps when I code this function
     	// 1. Generate a random incident direction according to proj solid angle
         //    pdf is constant 1/pi
-    	// 2. Find incident radiance from that direction
-    	// 3. Estimate reflected radiance using brdf * radiance / pdf = pi * brdf * radiance
+    	
+    	
     	
     	//	randome incident direction
     	Geometry.squareToPSAHemisphere(seed, incDir);
@@ -72,8 +72,7 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
     	IntersectionRecord lightIRec = new IntersectionRecord();
 		sample.set(iRec.frame.o, incDir);
 		sample.makeOffsetRay();
-		if (scene.getFirstIntersection(lightIRec, sample)
-				&& lightIRec.surface.getMaterial().isEmitter()) {
+		if (scene.getFirstIntersection(lightIRec, sample) && lightIRec.surface.getMaterial().isEmitter()) {
 			/*
 			 * if our surface is directly illuminated, calculate the rendering
 			 * equation terms
@@ -83,11 +82,11 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
 			Material m = iRec.surface.getMaterial();
 			m.getBRDF(iRec).evaluate(iRec.frame, incDir, outDir, brdf);
 
-			/* get incident illumination */
+			// 2. Find incident radiance from that direction
 			lightIRec.surface.getMaterial().emittedRadiance(lRec, irradiance);
 			irradiance.scale(iRec.frame.w.dot(incDir));
 
-			/* compute direct illumination */
+			// 3. Estimate reflected radiance using brdf * radiance / pdf = pi * brdf * radiance
 			outColor.set(1.0);
 			outColor.scale(brdf);
 			outColor.scale(irradiance);
