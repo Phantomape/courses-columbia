@@ -15,11 +15,11 @@ import ray.sampling.SampleGenerator;
 public abstract class PathTracer extends DirectOnlyRenderer {
 	
 	
-	Color brdf = new Color();
+	//Color brdf = new Color();
 	Color irradiance = new Color();
 	Color incRadiance = new Color();
 	Ray sample = new Ray();
-	Vector3 incDir = new Vector3();
+	
 	IntersectionRecord lightIRec = new IntersectionRecord();
 	LuminaireSamplingRecord lRec = new LuminaireSamplingRecord();
 	
@@ -57,11 +57,12 @@ public abstract class PathTracer extends DirectOnlyRenderer {
     	// Here you need to use Geometry.squareToPSAHemisphere that you implemented earlier in this function
     	
     	//	generate random variable and get random incident direction
-
+    
     	
     	//   1. Generate a random incident direction according to proj solid angle
     	Point2 seed = new Point2();
         sampler.sample(1, sampleIndex, seed); 
+        Vector3 incDir = new Vector3();
     	Geometry.squareToPSAHemisphere(seed, incDir);
         iRec.frame.frameToCanonical(incDir);
         incDir.normalize();
@@ -71,31 +72,26 @@ public abstract class PathTracer extends DirectOnlyRenderer {
     	Color indirect = new Color();
         
     	Material material = iRec.surface.getMaterial();
-    	BRDF b = material.getBRDF(iRec);
-    	if ( b != null ) 
-    	{
-
-    		b.evaluate(iRec.frame, incDir, outDir, brdf);
+    	material.getBRDF(iRec).evaluate(iRec.frame, incDir, outDir, brdf);
             
             
-            scene.incidentRadiance(iRec.frame.o, incDir, out);
+            //scene.incidentRadiance(iRec.frame.o, incDir, out);
             
             //generate the new reflected light 
-            Ray newRay = new Ray(iRec.frame.o, incDir);
-            newRay.makeOffsetRay();
-            // recursively compute incident radiance
-            rayRadianceRecursive(scene, newRay, sampler, sampleIndex, level+1, indirect);
-           
-            out.scale(brdf);
-            out.scale(Math.PI); 
-            indirect.scale(brdf);
-            indirect.scale(Math.PI); 
-            out.add(indirect);
-            outColor.add(out);
-    	}
+        Ray newRay = new Ray(iRec.frame.o, incDir);
+        newRay.makeOffsetRay();
+        // recursively compute incident radiance
+        rayRadianceRecursive(scene, newRay, sampler, sampleIndex, level+1, indirect);
+       
+        //out.scale(brdf);
+       // out.scale(Math.PI); 
+        indirect.scale(brdf);
+        indirect.scale(Math.PI); 
+        out.add(indirect);
+        outColor.add(out);
+    	
  
-        return;
-        
+
     	/*
     	//   1. Generate a random incident direction according to proj solid angle
         sampler.sample(1, sampleIndex, seed); 

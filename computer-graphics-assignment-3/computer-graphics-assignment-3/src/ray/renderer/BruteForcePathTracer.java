@@ -55,8 +55,8 @@ public class BruteForcePathTracer extends PathTracer {
                 
                 gatherIllumination(scene, outDir, iRec, sampler, sampleIndex, level, gatherRadiance);
                 outColor.add(gatherRadiance);
-    		}    
-            
+    		} else
+    			scene.getBackground().evaluate(ray.direction, outColor);            
 		}
     	/*
     	if(level < depthLimit){
