@@ -16,7 +16,7 @@ public class IntersectionRecord {
   public final Frame3 frame = new Frame3();
 
   /** The texture coordinates of the intersection point */
-  public final Point2 texCoords = new Point2();
+  public Point2 texCoords = new Point2();
   
   /** A reference to the actual surface. */
   public Surface surface = null;

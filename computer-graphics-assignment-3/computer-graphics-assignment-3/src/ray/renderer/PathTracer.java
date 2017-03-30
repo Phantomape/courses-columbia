@@ -15,11 +15,6 @@ import ray.sampling.SampleGenerator;
 public abstract class PathTracer extends DirectOnlyRenderer {
 	
 	
-	//Color brdf = new Color();
-	Color irradiance = new Color();
-	Color incRadiance = new Color();
-	Ray sample = new Ray();
-	
 	IntersectionRecord lightIRec = new IntersectionRecord();
 	LuminaireSamplingRecord lRec = new LuminaireSamplingRecord();
 	
@@ -67,59 +62,23 @@ public abstract class PathTracer extends DirectOnlyRenderer {
         iRec.frame.frameToCanonical(incDir);
         incDir.normalize();
 
-    	Color brdf = new Color();
-    	Color out = new Color();
-    	Color indirect = new Color();
-        
-    	Material material = iRec.surface.getMaterial();
-    	material.getBRDF(iRec).evaluate(iRec.frame, incDir, outDir, brdf);
-            
-            
-            //scene.incidentRadiance(iRec.frame.o, incDir, out);
-            
-            //generate the new reflected light 
-        Ray newRay = new Ray(iRec.frame.o, incDir);
-        newRay.makeOffsetRay();
-        // recursively compute incident radiance
-        rayRadianceRecursive(scene, newRay, sampler, sampleIndex, level+1, indirect);
-       
-        //out.scale(brdf);
-       // out.scale(Math.PI); 
-        indirect.scale(brdf);
-        indirect.scale(Math.PI); 
-        out.add(indirect);
-        outColor.add(out);
     	
- 
-
-    	/*
-    	//   1. Generate a random incident direction according to proj solid angle
-        sampler.sample(1, sampleIndex, seed); 
-    	Geometry.squareToPSAHemisphere(seed, incDir);
-        iRec.frame.frameToCanonical(incDir);
-        incDir.normalize();
-        
-        sample.set(iRec.frame.o, incDir);
-		sample.makeOffsetRay();
-		
-        if (scene.getFirstIntersection(lightIRec, sample) && lightIRec.surface.getMaterial().isEmitter()) {
-			Material material = iRec.surface.getMaterial();
-			material.getBRDF(iRec).evaluate(iRec.frame, incDir, outDir, brdf);
-			scene.incidentRadiance(iRec.frame.o, incDir, incRadiance);
-			incRadiance.scale(brdf);
-			incRadiance.scale(Math.PI);
-			sample = new Ray(iRec.frame.o, incDir);
-			sample.makeOffsetRay();
-			rayRadianceRecursive(scene, sample, sampler, sampleIndex, level + 1, irradiance);
-            irradiance.scale(brdf);
-            irradiance.scale(Math.PI);
-            irradiance.add(incRadiance);
-            outColor.add(irradiance);
-		} else {
-			outColor.set(0);
-			//scene.getBackground().evaluate(ray.direction, outColor);
-		}
-        */
+    	Material material = iRec.surface.getMaterial();
+    	if(material != null){
+    		Color brdf = new Color();
+	    	material.getBRDF(iRec).evaluate(iRec.frame, incDir, outDir, brdf);
+	        
+	        Ray newRay = new Ray(iRec.frame.o, incDir);
+	        newRay.makeOffsetRay();
+	        // recursively compute incident radiance
+	        Color indirect = new Color();
+	        rayRadianceRecursive(scene, newRay, sampler, sampleIndex, level+1, indirect);
+	        
+	        outColor.set(1.0);
+	        outColor.scale(indirect);
+	        outColor.scale(brdf);
+	        outColor.scale(Math.PI); 
+    	}
 
     }
     

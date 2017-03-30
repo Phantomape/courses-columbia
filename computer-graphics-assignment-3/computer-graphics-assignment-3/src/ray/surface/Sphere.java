@@ -164,23 +164,22 @@ public class Sphere extends Surface {
         // Fill out the record
         outRecord.t = t;
         outRecord.surface = this;
-        /*
-        double px = ray.origin.x + t * ray.direction.x;
-        double py = ray.origin.y + t * ray.direction.y;
-        double pz = ray.origin.z + t * ray.direction.z;
-        outRecord.frame.o.set(px, py, pz);
-        
-        double oneoverR = 1.0 / radius;
-        double normx = oneoverR * px;
-        double normy = oneoverR * py;
-        double normz = oneoverR * pz;
-        outRecord.frame.w.set(normx, normy, normz);
-        outRecord.frame.initFromW();
-        */
+
         ray.evaluate(outRecord.frame.o, t);
         outRecord.frame.w.sub(outRecord.frame.o, this.center);
         outRecord.frame.w.normalize();
         outRecord.frame.initFromW();
+        
+        double x = (ray.origin.x + t * ray.direction.x - xc)/radius;
+        double y = (ray.origin.y + t * ray.direction.y - yc)/radius;
+        double z = (ray.origin.z + t * ray.direction.z - zc)/radius;
+        double theta = Math.acos(y);
+        double phi = Math.atan2(z * radius, x * radius);
+        if (phi < 0)
+          phi += 2 * Math.PI;
+        double u = phi / (2 * Math.PI);
+        double v = (Math.PI - theta)/Math.PI;
+        outRecord.texCoords = new Point2(u, v);
         return true;
     }
     

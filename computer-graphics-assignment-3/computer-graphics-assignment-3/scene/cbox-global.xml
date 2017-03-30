@@ -5,8 +5,8 @@
   </image>
 
   <sampler type="JitteredSampler">
-    <numSamplesU>70</numSamplesU>
-    <numSamplesV>70</numSamplesV>
+    <numSamplesU>30</numSamplesU>
+    <numSamplesV>30</numSamplesV>
   </sampler>
 
   <!--

@@ -14,7 +14,6 @@ public class BruteForcePathTracer extends PathTracer {
 	private LuminaireSamplingRecord lsr = new LuminaireSamplingRecord(); 
 	private IntersectionRecord iRec = new IntersectionRecord();
 
-	private Vector3 outDir = new Vector3();
 	
     /**
      * @param scene
@@ -35,53 +34,40 @@ public class BruteForcePathTracer extends PathTracer {
     	// 2) reflected radiance from other lights and objects. You need recursively compute the radiance
     	//    hint: You need to call gatherIllumination(...) method.
     	
+
+    	
     	if(level == 0)
     		outColor.set(0);
-    	if(level == this.depthLimit)
+    	
+    	if(level == this.depthLimit){
+    		outColor.set(0);
     		return;
-    	if(level < this.depthLimit)
-    	{
-    		if (scene.getFirstIntersection(iRec, ray)) 
-    		{
-    			outDir.set(ray.direction); 
-                outDir.scale(-1.0);
-                outDir.normalize();
-            	
-                Color emittedRadiance = new Color();
-            	Color gatherRadiance = new Color();
-                //call emittedRadiance to compute the emitted light radiance from the current surface if the surface is a light surface
-                emittedRadiance(iRec, outDir, emittedRadiance);
-                outColor.add(emittedRadiance);
-                
-                gatherIllumination(scene, outDir, iRec, sampler, sampleIndex, level, gatherRadiance);
-                outColor.add(gatherRadiance);
-    		} else
-    			scene.getBackground().evaluate(ray.direction, outColor);            
-		}
-    	/*
-    	if(level < depthLimit){
-    		if(scene.getFirstIntersection(iRec, ray)){
-    			//	0) compute output ray direction
-    			outDir.set(ray.direction);
-    			outDir.scale(-1.0);
-    			outDir.normalize();
-    			//	1) compute the emitted light radiance from the current surface if the surface is a light surface
-    			emittedRadiance(iRec, ray.direction, emittedRadiance);
-    			outColor.add(emittedRadiance);
-    	    	// 2) reflected radiance from other lights and objects. You need recursively compute the radiance
-    	    	//    hint: You need to call gatherIllumination(...) method.
-    			gatherIllumination(scene, outDir, iRec, sampler, sampleIndex, level, gatherRadiance);
-    			outColor.add(gatherRadiance);
-    		}else{
-    			scene.getBackground().evaluate(ray.direction, outColor);
-    		}
-    	} else if(level == depthLimit){
-    		return;
-    	} else {
-    		//outColor.set(0);
-    		scene.getBackground().evaluate(ray.direction, outColor);
     	}
-    	*/
+    	
+		if (scene.getFirstIntersection(iRec, ray)) 
+		{
+			//	Texture mapping
+			
+			
+			//	Normal global illumination
+			Vector3 outDir = new Vector3();
+			outDir.set(ray.direction); 
+            outDir.scale(-1.0);
+            outDir.normalize();
+        	
+            Color emittedRadiance = new Color();
+            emittedRadiance(iRec, ray.direction, emittedRadiance);
+            outColor.add(emittedRadiance);
+        	
+        	Color gatherRadiance = new Color();
+            gatherIllumination(scene, outDir, iRec, sampler, sampleIndex, level, gatherRadiance);
+            outColor.add(gatherRadiance);
+        	
+		} else{
+			//scene.getBackground().evaluate(ray.direction, outColor);
+			outColor.set(0);
+		}
+
     	
     }
 }
