@@ -5,8 +5,8 @@
   </image>
 
   <sampler type="JitteredSampler">
-    <numSamplesU>30</numSamplesU>
-    <numSamplesV>30</numSamplesV>
+    <numSamplesU>70</numSamplesU>
+    <numSamplesV>70</numSamplesV>
   </sampler>
 
   <!--
@@ -41,7 +41,9 @@
     <directIlluminator type="LuminairesIlluminator" />
   </renderer>
   -->
-  <renderer type="DirectOnlyRenderer">
+  <renderer type="BruteForcePathTracer">
+    <depthLimit>2</depthLimit>
+    <backgroundIllumination>1</backgroundIllumination>
   </renderer>
 
   <camera>
@@ -79,6 +81,12 @@
     <radiance>60 60 60</radiance>
   </material>
 
+  <material name="texture" type="Texture">
+    <brdf type="Lambertian">
+      <reflectance>0.78 0.78 0.78</reflectance>
+    </brdf>
+  </material>
+
   <surface type="Mesh">
     <material ref="light" />
     <data>cbox-light.msh</data>
@@ -99,9 +107,15 @@
     <data>cbox-green.msh</data>
   </surface>
 
+  <surface type="Sphere"> 
+    <material ref="texture" /> 
+    <center>300. 250. 200.</center> 
+    <radius>40.</radius> 
+  </surface>
 
   <background type="Uniform">
     <radiance>0.25 0.25 0.25</radiance>
   </background>
+
 
 </scene>

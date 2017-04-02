@@ -12,7 +12,7 @@ import ray.misc.LuminaireSamplingRecord;
  * @author srm
  */
 public class Homogeneous implements Material {
-	
+
 	BRDF brdf = new Lambertian();
 	
 	public Homogeneous() { }
@@ -31,4 +31,11 @@ public class Homogeneous implements Material {
 		return false;
 	}
 
+	public Color getTextureColor(IntersectionRecord iRec){
+		return new Color();
+	}
+	
+	public boolean hasTexture(){
+		return false;
+	}
 }

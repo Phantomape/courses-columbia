@@ -25,7 +25,6 @@ import ray.sampling.SampleGenerator;
  */
 public class DirectOnlyRenderer implements Renderer {
 	private Point2 seed = new Point2();
-	private IntersectionRecord ir = new IntersectionRecord();
 	private LuminaireSamplingRecord lsr = new LuminaireSamplingRecord(); 
 	private Vector3 L = new Vector3();
 	File file;
@@ -70,14 +69,18 @@ public class DirectOnlyRenderer implements Renderer {
     	//    function here.
     	//	Find whther there is intersection
     	
-    	TextureType tType = TextureType.IMAGE_TEXTURE;
+    	/*
+    	 * Select texture type for rendering
+    	 */
+    	TextureType tType = TextureType.NONE_TEXTURE;
     	if(tType == TextureType.IMAGE_TEXTURE){
+    		IntersectionRecord ir = new IntersectionRecord();
 			if(scene.getFirstIntersection(ir, ray)){
 	    		if(ir.texCoords.x != 0){
 	    			file = new File("noise.png");
 	    			try {
 	    				image = ImageIO.read(file);
-		    			x = (int)(ir.texCoords.x * 256);
+		    			x = (int)(ir.texCoords.x * 256);	// change 256 to image.width for general picture
 		    			y = (int)(ir.texCoords.y * 256);
 		                pixel = image.getRGB(x, y);   
 		                r = (pixel >> 16) & 0x000000FF;
@@ -107,6 +110,7 @@ public class DirectOnlyRenderer implements Renderer {
 	    		scene.getBackground().evaluate(ray.direction, outColor);
 	    	}
     	} else if(tType == TextureType.PROCEDURAL_TEXTURE){
+    		IntersectionRecord ir = new IntersectionRecord();
     		if(scene.getFirstIntersection(ir, ray)){
     			Random random = new Random();
 	    		if(ir.texCoords.x != 0){	    			
@@ -133,19 +137,22 @@ public class DirectOnlyRenderer implements Renderer {
 	    		scene.getBackground().evaluate(ray.direction, outColor);
 	    	}
     	} else if(tType == TextureType.NONE_TEXTURE){	//	direct illumination
+    		IntersectionRecord ir = new IntersectionRecord();
     		if(scene.getFirstIntersection(ir, ray)){
     			Color emittedRadiance = new Color();
-	    		emittedRadiance(ir, ray.direction, emittedRadiance);
+	    		this.emittedRadiance(ir, ray.direction, emittedRadiance);
 	    		sampler.sample(1, sampleIndex, seed);
 	    		Color directRadiance = new Color();
 	    		Vector3 outDir = new Vector3();
 	    		outDir.set(ray.direction);
 	    		outDir.scale(-1);
+	    		outDir.normalize();
 	    		direct.directIllumination(scene, L, outDir, ir, seed, directRadiance);
 	    		outColor.set(emittedRadiance);
 	    		outColor.add(directRadiance);
     		} else {
-    			scene.getBackground().evaluate(ray.direction, outColor);
+    			//scene.getBackground().evaluate(ray.direction, outColor);
+    			outColor.set(0.0);
     		}
     	}
 
@@ -167,8 +174,6 @@ public class DirectOnlyRenderer implements Renderer {
 		Material m = iRec.surface.getMaterial();
 		if(m.isEmitter()){
 			lsr.set(iRec);
-			//Vector3 tmp = new Vector3(-1 * dir.x, -1 * dir.y, -1 * dir.z);
-			//lsr.emitDir.set(tmp);
 			lsr.emitDir.set(dir);
 			lsr.emitDir.scale(-1);
 			iRec.surface.getMaterial().emittedRadiance(lsr, outColor);

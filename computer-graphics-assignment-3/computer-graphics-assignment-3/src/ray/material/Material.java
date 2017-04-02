@@ -12,7 +12,6 @@ import ray.misc.LuminaireSamplingRecord;
  * @author ags +latest $Author: srm $
  */
 public interface Material {
-	
 	/**
 	 * The material given to all surfaces unless another is specified.
 	 */
@@ -40,4 +39,17 @@ public interface Material {
 	 */
 	public boolean isEmitter();
 	
+	/**
+	 * Identify this material as emitting or not (for purposes of direct lighting).
+	 * @param lRec The luminaire sampling record.  Within this structure, frame and emitDir
+	 *    are inputs to this method.
+	 * @return the color of texture
+	 */
+	public Color getTextureColor(IntersectionRecord iRec);
+	
+	/**
+	 * Identify this material having texture.
+	 * @return 
+	 */
+	public boolean hasTexture();
 }

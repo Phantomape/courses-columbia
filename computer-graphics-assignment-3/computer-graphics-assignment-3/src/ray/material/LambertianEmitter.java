@@ -12,7 +12,7 @@ import ray.misc.LuminaireSamplingRecord;
  * @author srm
  */
 public class LambertianEmitter implements Material {
-	
+
 	Color radiance = new Color();
 	BRDF brdf = new Lambertian(new Color(0, 0, 0));
 	
@@ -31,6 +31,14 @@ public class LambertianEmitter implements Material {
 
 	public boolean isEmitter() {
 		return true;
+	}
+	
+	public Color getTextureColor(IntersectionRecord iRec){
+		return new Color();
+	}
+	
+	public boolean hasTexture(){
+		return false;
 	}
 
 }

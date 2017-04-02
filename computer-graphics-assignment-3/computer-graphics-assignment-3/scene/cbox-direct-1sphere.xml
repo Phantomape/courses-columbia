@@ -5,8 +5,8 @@
   </image>
 
   <sampler type="JitteredSampler">
-    <numSamplesU>30</numSamplesU>
-    <numSamplesV>30</numSamplesV>
+    <numSamplesU>100</numSamplesU>
+    <numSamplesV>100</numSamplesV>
   </sampler>
 
   <!--
@@ -99,6 +99,11 @@
     <data>cbox-green.msh</data>
   </surface>
 
+  <surface type="Sphere"> 
+    <material ref="red" /> 
+    <center>300. 250. 200.</center> 
+    <radius>40.</radius> 
+  </surface>
 
   <background type="Uniform">
     <radiance>0.25 0.25 0.25</radiance>

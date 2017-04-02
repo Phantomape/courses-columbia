@@ -5,8 +5,8 @@
   </image>
 
   <sampler type="JitteredSampler">
-    <numSamplesU>30</numSamplesU>
-    <numSamplesV>30</numSamplesV>
+    <numSamplesU>100</numSamplesU>
+    <numSamplesV>100</numSamplesV>
   </sampler>
 
   <!--
@@ -41,11 +41,13 @@
     <directIlluminator type="LuminairesIlluminator" />
   </renderer>
   -->
-  <renderer type="DirectOnlyRenderer">
+  <renderer type="BruteForcePathTracer">
+    <depthLimit>2</depthLimit>
+    <backgroundIllumination>1</backgroundIllumination>
   </renderer>
 
   <camera>
-    <eye>278.0 273.0 -800.0</eye>
+    <eye>400.0 100.0 -800.0</eye>
     <target>278.0 273.0 0</target>
     <up>0 1 0</up>
     <yFOV>40</yFOV>
@@ -79,29 +81,50 @@
     <radiance>60 60 60</radiance>
   </material>
 
+  <material name="texture" type="Texture">
+    <brdf type="Lambertian">
+      <reflectance>0.78 0.78 0.78</reflectance>
+    </brdf>
+  </material>
+
   <surface type="Mesh">
     <material ref="light" />
     <data>cbox-light.msh</data>
   </surface>
 
-  <surface type="Mesh">
-    <material ref="white" />
-    <data>cbox-white.msh</data>
+
+  <surface type="Sphere"> 
+    <material ref="grey" /> 
+    <center>300. 400. 600.</center> 
+    <radius>40.</radius> 
+  </surface>
+  
+  <surface type="Sphere"> 
+    <material ref="texture" /> 
+    <center>100. 250. 400.</center> 
+    <radius>100.</radius> 
   </surface>
 
-  <surface type="Mesh">
-    <material ref="red" />
-    <data>cbox-red.msh</data>
+  <surface type="Sphere"> 
+    <material ref="grey" /> 
+    <center>300. -1900. 200.</center> 
+    <radius>2000.</radius> 
+  </surface>
+  
+  <surface type="Sphere"> 
+    <material ref="red" /> 
+    <center>300. 100. 600.</center> 
+    <radius>40.</radius> 
   </surface>
 
-  <surface type="Mesh">
-    <material ref="green" />
-    <data>cbox-green.msh</data>
+  <surface type="Sphere"> 
+    <material ref="red" /> 
+    <center>340. 100. 600.</center> 
+    <radius>20.</radius> 
   </surface>
-
-
   <background type="Uniform">
     <radiance>0.25 0.25 0.25</radiance>
   </background>
+
 
 </scene>

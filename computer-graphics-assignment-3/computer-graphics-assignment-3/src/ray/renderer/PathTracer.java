@@ -1,5 +1,7 @@
 package ray.renderer;
 
+import java.util.Random;
+
 import ray.brdf.BRDF;
 import ray.material.Material;
 import ray.math.Geometry;
@@ -13,10 +15,6 @@ import ray.misc.Scene;
 import ray.sampling.SampleGenerator;
 
 public abstract class PathTracer extends DirectOnlyRenderer {
-	
-	
-	IntersectionRecord lightIRec = new IntersectionRecord();
-	LuminaireSamplingRecord lRec = new LuminaireSamplingRecord();
 	
     protected int depthLimit = 5;
     protected int backgroundIllumination = 1;
@@ -56,7 +54,7 @@ public abstract class PathTracer extends DirectOnlyRenderer {
     	
     	//   1. Generate a random incident direction according to proj solid angle
     	Point2 seed = new Point2();
-        sampler.sample(1, sampleIndex, seed); 
+        sampler.sample(level, sampleIndex, seed); 
         Vector3 incDir = new Vector3();
     	Geometry.squareToPSAHemisphere(seed, incDir);
         iRec.frame.frameToCanonical(incDir);
@@ -64,10 +62,18 @@ public abstract class PathTracer extends DirectOnlyRenderer {
 
     	
     	Material material = iRec.surface.getMaterial();
+    	
     	if(material != null){
+    		Color textureColor = new Color();
+    		if(material.hasTexture())
+    			textureColor = material.getTextureColor(iRec);
+    		else
+    			textureColor.set(1.0);
+    		
     		Color brdf = new Color();
 	    	material.getBRDF(iRec).evaluate(iRec.frame, incDir, outDir, brdf);
-	        
+	    	brdf.scale(textureColor);
+	    	
 	        Ray newRay = new Ray(iRec.frame.o, incDir);
 	        newRay.makeOffsetRay();
 	        // recursively compute incident radiance
@@ -79,27 +85,11 @@ public abstract class PathTracer extends DirectOnlyRenderer {
 	        outColor.scale(brdf);
 	        outColor.scale(Math.PI); 
     	}
-
-    }
-    
-    public void rayRadianceExt(Scene scene, Ray ray, IntersectionRecord iRec,
-            SampleGenerator sampler, int sampleIndex, int level, Color outColor) {
-    	LuminaireSamplingRecord lsr = new LuminaireSamplingRecord(); 
-    	Color emittedRadiance = new Color();
-    	Color gatherRadiance = new Color();
-    	
-    	Vector3 outDir = new Vector3();  
-    	if(scene.getFirstIntersection(iRec, ray)){
-    		//	1) compute the emitted light radiance from the current surface if the surface is a light surface
-    		emittedRadiance(iRec, ray.direction, emittedRadiance);
-    		outColor.set(emittedRadiance);
-    		if(level <= depthLimit){
-	    		gatherIllumination(scene, outDir, iRec, sampler, sampleIndex, level, gatherRadiance);
-	    		outColor.add(gatherRadiance);
-    		}
-       	} else {
-    		scene.getBackground().evaluate(ray.direction, outColor);
+    	else{
+    		outColor.set(0.0);
     	}
 
     }
+    
+
 }

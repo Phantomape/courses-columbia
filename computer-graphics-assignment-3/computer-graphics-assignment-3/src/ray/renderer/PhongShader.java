@@ -87,5 +87,6 @@ public class PhongShader implements Renderer {
 		} else {
 			scene.getBackground().evaluate(ray.direction, outColor);
 		}
+		
     }
 }

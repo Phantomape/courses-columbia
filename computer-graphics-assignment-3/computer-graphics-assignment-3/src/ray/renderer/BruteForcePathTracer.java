@@ -10,9 +10,6 @@ import ray.misc.Scene;
 import ray.sampling.SampleGenerator;
 
 public class BruteForcePathTracer extends PathTracer {
-	
-	private LuminaireSamplingRecord lsr = new LuminaireSamplingRecord(); 
-	private IntersectionRecord iRec = new IntersectionRecord();
 
 	
     /**
@@ -43,12 +40,9 @@ public class BruteForcePathTracer extends PathTracer {
     		outColor.set(0);
     		return;
     	}
-    	
+    	IntersectionRecord iRec = new IntersectionRecord();
 		if (scene.getFirstIntersection(iRec, ray)) 
 		{
-			//	Texture mapping
-			
-			
 			//	Normal global illumination
 			Vector3 outDir = new Vector3();
 			outDir.set(ray.direction); 
@@ -57,12 +51,12 @@ public class BruteForcePathTracer extends PathTracer {
         	
             Color emittedRadiance = new Color();
             emittedRadiance(iRec, ray.direction, emittedRadiance);
-            outColor.add(emittedRadiance);
+            outColor.set(emittedRadiance);
         	
         	Color gatherRadiance = new Color();
             gatherIllumination(scene, outDir, iRec, sampler, sampleIndex, level, gatherRadiance);
             outColor.add(gatherRadiance);
-        	
+        	return;
 		} else{
 			//scene.getBackground().evaluate(ray.direction, outColor);
 			outColor.set(0);

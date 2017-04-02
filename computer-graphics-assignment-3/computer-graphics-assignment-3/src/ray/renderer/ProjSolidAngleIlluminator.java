@@ -84,7 +84,7 @@ public class ProjSolidAngleIlluminator extends DirectIlluminator {
 
 			// 2. Find incident radiance from that direction
 			lightIRec.surface.getMaterial().emittedRadiance(lRec, irradiance);
-			irradiance.scale(iRec.frame.w.dot(incDir));
+			//irradiance.scale(iRec.frame.w.dot(incDir));
 
 			// 3. Estimate reflected radiance using brdf * radiance / pdf = pi * brdf * radiance
 			outColor.set(1.0);
