@@ -1,5 +1,6 @@
 package c2g2.geometry;
 
+
 /*
  * The main class that implements the half-edge structure.
  * TODO:
@@ -15,6 +16,10 @@ public class HalfEdge {
 	private Vertex nextV = null;
 	// A pointer to the left face
 	private Face lFace=null;
+	
+	public HalfEdge(Vertex v){
+		nextV = v;
+	}
 	
 	public Face getlFace(){
 		return lFace;
