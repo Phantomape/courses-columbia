@@ -2,11 +2,16 @@ package c2g2.geometry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import c2g2.engine.graph.Mesh;
+//import c2g2.engine.graph.OBJLoader.Face;
 
 /*
  * A mesh represented by HalfEdge data structure
@@ -21,7 +26,31 @@ public class HalfEdgeMesh {
 	 * Convert this HalfEdgeMesh into an indexed triangle mesh
 	 */
 	public Mesh toMesh() {
-		return null;
+		Set<Integer> vertexIdxSet = new HashSet<Integer>();
+		for(int i = 0; i < halfEdges.size()/3;i++){
+			HalfEdge he1 = halfEdges.get(i * 3 + 0), he2 = halfEdges.get(i * 3 + 1), he3 = halfEdges.get(i * 3 + 2);
+			int vertexIdx1 = he1.getNextV().getVertexIdx(), vertexIdx2 = he2.getNextV().getVertexIdx(), vertexIdx3 = he3.getNextV().getVertexIdx();
+			vertexIdxSet.add(vertexIdx1);
+			vertexIdxSet.add(vertexIdx2);
+			vertexIdxSet.add(vertexIdx3);
+		}
+		System.out.println("Vertex:" + vertexIdxSet.size());
+        float[] posArr = new float[vertexIdxSet.size() * 3];
+        float[] textCoordArr = new float[vertexIdxSet.size() * 2];
+        float[] normArr = new float[vertexIdxSet.size() * 3];
+        List<Integer> indiceList = new ArrayList<Integer>();
+        
+        //	Allocate posArr
+        for(int i = 0; i < halfEdges.size()/3; i++){
+        	setProperty(i, 0, posArr, textCoordArr, normArr, indiceList);
+        	setProperty(i, 1, posArr, textCoordArr, normArr, indiceList);
+        	setProperty(i, 2, posArr, textCoordArr, normArr, indiceList);
+        }
+        int[] indicesArr = new int[indiceList.size()];
+        indicesArr = indiceList.stream().mapToInt((Integer v) -> v).toArray();
+        
+        Mesh mesh = new Mesh(posArr, textCoordArr, normArr, indicesArr);
+        return mesh;
 	}
 	
 	/*
@@ -56,6 +85,7 @@ public class HalfEdgeMesh {
 	
 	public HalfEdgeMesh(Mesh mesh) {
 		float[] norms = mesh.getNorms();
+		float[] texs = mesh.getTextco();
 		float[] pos = mesh.getPos();
 		int[] inds = mesh.getInds();
 		halfEdges = new ArrayList<HalfEdge>();
@@ -63,32 +93,43 @@ public class HalfEdgeMesh {
 		map = new HashMap<String, ArrayList<Integer>>();
 		for(int i = 0; i < (inds.length / 3); i++){
 			//	Three index of vertex in each face
+			Vertex v1 = getProperty(inds, pos, norms, texs, i, 0);
+			Vertex v2 = getProperty(inds, pos, norms, texs, i, 1);
+			Vertex v3 = getProperty(inds, pos, norms, texs, i, 2);
+			/*
 			int posIdx1 = inds[i * 3 + 0];
 			int posIdx2 = inds[i * 3 + 1];
 			int posIdx3 = inds[i * 3 + 2];
 			Vector3f pos1 = new Vector3f(pos[posIdx1 * 3], pos[posIdx1 * 3 + 1], pos[posIdx1 * 3 + 2]);
 			Vector3f pos2 = new Vector3f(pos[posIdx2 * 3], pos[posIdx2 * 3 + 1], pos[posIdx2 * 3 + 2]);
 			Vector3f pos3 = new Vector3f(pos[posIdx3 * 3], pos[posIdx3 * 3 + 1], pos[posIdx3 * 3 + 2]);
+			
 			Vector3f norm1 = new Vector3f(norms[posIdx1 * 3], norms[posIdx1 * 3 + 1], norms[posIdx1 * 3 + 2]);
 			Vector3f norm2 = new Vector3f(norms[posIdx2 * 3], norms[posIdx2 * 3 + 1], norms[posIdx2 * 3 + 2]);
 			Vector3f norm3 = new Vector3f(norms[posIdx3 * 3], norms[posIdx3 * 3 + 1], norms[posIdx3 * 3 + 2]);
 			Vertex v1 = new Vertex(pos1, norm1, posIdx1);
 			Vertex v2 = new Vertex(pos2, norm2, posIdx2);
 			Vertex v3 = new Vertex(pos3, norm3, posIdx3);
+			*/
 			//	Construct three halfedges in anti-clockwise direction
 			HalfEdge he1 = new HalfEdge(v1);
+			v1.setEdge(he1);
 			HalfEdge he2 = new HalfEdge(v2);
+			v2.setEdge(he2);
 			HalfEdge he3 = new HalfEdge(v3);
+			v3.setEdge(he3);
 			he1.setNextE(he2);he2.setNextE(he3);he3.setNextE(he1);
 			Map<Integer, Integer> order = new HashMap<Integer, Integer>();
+			int posIdx1 = inds[i * 3 + 0];
+			int posIdx2 = inds[i * 3 + 1];
+			int posIdx3 = inds[i * 3 + 2];
 			order.put(posIdx1, posIdx2);
 			order.put(posIdx2, posIdx3);
 			order.put(posIdx3, posIdx1);
-			//order.put(new Integer(posIdx1), new Integer(posIdx2));
-			//order.put(new Integer(posIdx2), new Integer(posIdx3));
-			//order.put(new Integer(posIdx3), new Integer(posIdx1));
 			
-			halfEdges.add(he1);halfEdges.add(he2);halfEdges.add(he3);
+			halfEdges.add(he1);
+			halfEdges.add(he2);
+			halfEdges.add(he3);
 			Face f = new Face(he1, i, order, posIdx1);
 			he1.setlFace(f);he2.setlFace(f);he3.setlFace(f);
 			faces.add(f);
@@ -103,7 +144,6 @@ public class HalfEdgeMesh {
 		}
 		//	Adding reverse halfedges
 		for(Face f : faces){
-			HalfEdge start = f.getHalfEdge();
 			int v1 = f.v0, v2 = f.v1, v3 = f.v2;
 			//	Key for searching map
 			addRevEdge(v1, v2, f);
@@ -112,6 +152,28 @@ public class HalfEdgeMesh {
 		}
 		System.out.println("Done");
 		
+	}
+	
+	public void setProperty(int i, int offset, float[] posArr, float[] normArr, float[] texsArr, List<Integer> indiceList){
+		HalfEdge he = halfEdges.get(i * 3 + offset);
+    	posArr[i * 3] = he.getNextV().pos.x;
+    	posArr[i * 3 + 1] = he.getNextV().pos.y;
+    	posArr[i * 3 + 2] = he.getNextV().pos.z;
+    	normArr[i * 3] = he.getNextV().norm.x;
+    	normArr[i * 3 + 1] = he.getNextV().norm.x;
+    	normArr[i * 3 + 2] = he.getNextV().norm.x;
+    	texsArr[i * 2] = he.getNextV().tex.x;
+    	texsArr[i * 2 + 1] = he.getNextV().tex.y;
+    	indiceList.add(he.getNextV().getVertexIdx());
+	}
+	
+	public Vertex getProperty(int[] inds, float[] pos, float[] norms, float[] texs, int i, int offset){
+		int posIdx = inds[i * 3 + offset];
+		Vector3f position = new Vector3f(pos[posIdx * 3], pos[posIdx * 3 + 1], pos[posIdx * 3 + 2]);
+		Vector2f texture = new Vector2f(texs[posIdx * 2], texs[posIdx * 2 + 1]);
+		Vector3f norm = new Vector3f(norms[posIdx * 3], norms[posIdx * 3 + 1], norms[posIdx * 3 + 2]);
+		Vertex v = new Vertex(position, norm, texture, posIdx);
+		return v;
 	}
 	
 	public void processMapping(String s, int faceIdx){
