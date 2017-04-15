@@ -24,4 +24,8 @@ public class Face {
 	public int getFaceIdx(){
 		return faceIdx;
 	}
+	
+	public void setHalfEdge(HalfEdge tmp){
+		e = tmp;
+	}
 }

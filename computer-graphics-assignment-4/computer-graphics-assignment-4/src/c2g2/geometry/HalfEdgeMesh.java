@@ -27,6 +27,7 @@ public class HalfEdgeMesh {
 	 */
 	public Mesh toMesh() {
 		Set<Integer> vertexIdxSet = new HashSet<Integer>();
+		//	change this part
 		for(int i = 0; i < halfEdges.size()/3;i++){
 			HalfEdge he1 = halfEdges.get(i * 3 + 0), he2 = halfEdges.get(i * 3 + 1), he3 = halfEdges.get(i * 3 + 2);
 			int vertexIdx1 = he1.getNextV().getVertexIdx(), vertexIdx2 = he2.getNextV().getVertexIdx(), vertexIdx3 = he3.getNextV().getVertexIdx();
@@ -71,7 +72,50 @@ public class HalfEdgeMesh {
 	 * See the specification for the detailed requirement.
 	 */
 	public void removeVertex(Vertex vtx) {
-		//student code
+		//	Record edges to be deleted
+		ArrayList<HalfEdge> toDel = new ArrayList<HalfEdge>();
+		HalfEdge start = vtx.getEdge();
+		Vertex dest = start.getFlipE().getNextV();
+		do{
+			toDel.add(start);
+			start = start.getNextE().getFlipE();
+		}while(start != vtx.getEdge());
+		//	Change corresponding edges
+
+		ArrayList<HalfEdge> overlap = new ArrayList<HalfEdge>();
+		ArrayList<HalfEdge> innerOverlap = new ArrayList<HalfEdge>();
+		for(int i = 0; i < toDel.size(); i++){
+			//	Faces to be deleted
+			HalfEdge iter = toDel.get(i);
+			if(iter.getNextE().getNextV() == dest || iter.getFlipE().getNextV() == dest ){
+				overlap.add(iter.getNextE().getNextE().getFlipE());
+			}else{
+				if(i == 1)
+					innerOverlap.add(iter);
+				if(i == toDel.size() - 1)
+					innerOverlap.add(iter.getFlipE());
+				
+				Face f = iter.getlFace();
+				iter.setNextV(dest);
+				f.setHalfEdge(iter);
+				// modify mapping 
+				changeMapping(f, vtx, dest);
+			}
+		}
+		overlap.get(0).setFlipE(innerOverlap.get(0));
+		innerOverlap.get(0).setFlipE(overlap.get(0));
+		overlap.get(1).setFlipE(innerOverlap.get(1));
+		innerOverlap.get(1).setFlipE(overlap.get(1));
+		//	Update faces and halfEdges
+		
+	}
+	
+	public void changeMapping(Face f, Vertex orig, Vertex next){
+		int fromDest = f.order.get(orig.getVertexIdx());
+		int toDest = f.order.get(fromDest);
+		f.order.remove(orig.getVertexIdx());
+		f.order.put(next.getVertexIdx(), fromDest);
+		f.order.put(toDest, next.getVertexIdx());
 	}
 	
 	/*

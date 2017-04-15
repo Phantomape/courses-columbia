@@ -52,4 +52,11 @@ public class HalfEdge {
 	public void setNextV(Vertex v) {
 		nextV = v;
 	}
+	
+	public void terminate(){
+		nextE = null;
+		flipE = null;
+		nextV = null;
+		lFace=null;
+	}
 }
