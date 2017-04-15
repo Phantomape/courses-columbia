@@ -21,11 +21,11 @@ import c2g2.geometry.HalfEdgeMesh;
 public class DummyGame implements IGameLogic {
 
     private static final float MOUSE_SENSITIVITY = 0.2f;
-    
+
     private static final float SCALE_STEP = 0.01f;
-    
+
     private static final float TRANSLATE_STEP = 0.01f;
-    
+
     private static final float ROTATION_STEP = 0.3f;
 
     private final Vector3f cameraInc;
@@ -45,7 +45,7 @@ public class DummyGame implements IGameLogic {
     private float lightAngle;
 
     private static final float CAMERA_POS_STEP = 0.05f;
-    
+
     private int currentObj;
 
     public DummyGame() {
@@ -59,14 +59,14 @@ public class DummyGame implements IGameLogic {
     @Override
     public void init(Window window) throws Exception {
         renderer.init(window);
-        float reflectance = 1f;        
+        float reflectance = 1f;
         //please uncomment following lines to test your OBJ Loader.
         Mesh mesh = OBJLoader.loadMesh("src/resources/models/bunny.obj");
         //Mesh mesh = new Mesh();
         Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
-        
+
         HalfEdgeMesh hmesh = new HalfEdgeMesh(mesh);
-        
+
 
         mesh.setMaterial(material);
         GameItem gameItem = new GameItem(mesh);
@@ -193,18 +193,32 @@ public class DummyGame implements IGameLogic {
     	else if(window.isKeyPressed(GLFW_KEY_N)){
     		//convert trimesh to halfedge mesh
     		HalfEdgeMesh halfEdgeMesh = new HalfEdgeMesh(gameItems[currentObj].getMesh());
+    		Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), 1f);
+
     		//delete vertex
     		halfEdgeMesh.removeFirstVertex();
+
     		//convert halfedge mesh to trimesh
-    		gameItems[currentObj] = new GameItem(halfEdgeMesh.toMesh());
+    		Mesh mm = halfEdgeMesh.toMesh();
+    		mm.setMaterial(material);
+    		gameItems[currentObj] = new GameItem(mm);
+    		gameItems[currentObj].setScale(0.5f);
+    		gameItems[currentObj].setPosition(0.1f, -0.5f, -2);
+
+
     	}
     	else if(window.isKeyPressed(GLFW_KEY_M)){
     		//convert trimesh to halfedge mesh
-    		HalfEdgeMesh halfEdgeMesh = new HalfEdgeMesh(gameItems[currentObj].getMesh());
-    		//collapse edge
-    		halfEdgeMesh.collapseFirstEdge();
-    		//convert halfedge mesh to trimesh
-    		gameItems[currentObj] = new GameItem(halfEdgeMesh.toMesh());
+	    	HalfEdgeMesh halfEdgeMesh = new HalfEdgeMesh(gameItems[currentObj].getMesh());
+	        Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), 1f);
+	    		//collapse edge
+	    	halfEdgeMesh.collapseFirstEdge();
+	    		//convert halfedge mesh to trimesh
+	        Mesh mm = halfEdgeMesh.toMesh();
+	        mm.setMaterial(material);
+	        gameItems[currentObj] = new GameItem(mm);
+	        gameItems[currentObj].setScale(0.5f);
+	        gameItems[currentObj].setPosition(0.1f, -0.5f, -2);
     	}
     }
 
@@ -213,7 +227,7 @@ public class DummyGame implements IGameLogic {
         // Update camera position
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
 
-        // Update camera based on mouse            
+        // Update camera based on mouse
         if (mouseInput.isLeftButtonPressed()) {
             Vector2f rotVec = mouseInput.getDisplVec();
             System.out.println(rotVec);
@@ -223,7 +237,7 @@ public class DummyGame implements IGameLogic {
 
         // Update directional light direction, intensity and colour
         lightAngle += 1.1f;
-        
+
         if (lightAngle > 90) {
             directionalLight.setIntensity(0);
             if (lightAngle >= 90) {

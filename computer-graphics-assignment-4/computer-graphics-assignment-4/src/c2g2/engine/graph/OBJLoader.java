@@ -1,4 +1,4 @@
-	package c2g2.engine.graph;
+package c2g2.engine.graph;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

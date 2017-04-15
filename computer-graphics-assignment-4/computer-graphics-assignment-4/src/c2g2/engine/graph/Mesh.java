@@ -39,10 +39,6 @@ public class Mesh {
     	return inds;
     }
     
-    public float[] getTextco(){
-    	return textco;
-    }
-    
     
     public Mesh(){
     	this(new float[]{0.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,1.0f,0.0f,0.0f,1.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,1.0f,1.0f,1.0f,0.0f,1.0f,1.0f,1.0f}, 

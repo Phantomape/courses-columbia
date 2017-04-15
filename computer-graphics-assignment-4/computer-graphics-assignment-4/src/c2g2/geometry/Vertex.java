@@ -1,6 +1,5 @@
 package c2g2.geometry;
 
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 /*
@@ -14,19 +13,13 @@ public class Vertex {
 	
 	private HalfEdge e = null;
 	public Vector3f pos = null;
-	public Vector2f tex = null;
 	public Vector3f norm = null;
-	private Integer vertexIdx = 0;
+	public int idx = 0;
 	
-	public Vertex(Vector3f p, Vector3f n, Vector2f t, Integer v){
-		tex = t;
+	public Vertex(Vector3f p, Vector3f n, int i){
 		pos = p;
 		norm = n;
-		vertexIdx = v;
-	}
-	
-	public Integer getVertexIdx(){
-		return vertexIdx;
+		idx = i;
 	}
 	
 	public void setEdge(HalfEdge e0){

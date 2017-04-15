@@ -1,6 +1,5 @@
 package c2g2.geometry;
 
-
 /*
  * The main class that implements the half-edge structure.
  * TODO:
@@ -54,7 +53,6 @@ public class HalfEdge {
 	}
 	
 	public void terminate(){
-		nextE = null;
 		flipE = null;
 		nextV = null;
 		lFace=null;
