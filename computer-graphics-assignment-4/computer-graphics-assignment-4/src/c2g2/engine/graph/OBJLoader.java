@@ -97,6 +97,8 @@ public class OBJLoader {
         float[] textCoordArr = new float[posList.size() * 2];
         float[] normArr = new float[posList.size() * 3];
 
+        //System.out.println("posList.size():" + posList.size());
+        
         for (Face face : facesList) {
             IdxGroup[] faceVertexIndices = face.getFaceVertexIndices();
             for (IdxGroup indValue : faceVertexIndices) {

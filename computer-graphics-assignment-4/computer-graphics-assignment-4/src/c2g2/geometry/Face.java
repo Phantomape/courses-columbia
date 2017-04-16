@@ -1,5 +1,7 @@
 package c2g2.geometry;
 
+import java.util.Comparator;
+
 public class Face {
 	private HalfEdge e;
 	
@@ -14,3 +16,4 @@ public class Face {
 		return e;
 	}
 }
+

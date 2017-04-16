@@ -1,10 +1,12 @@
 package c2g2.geometry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joml.Vector3f;
@@ -27,7 +29,8 @@ public class HalfEdgeMesh {
 	public Mesh toMesh() {
 		Set<Integer> vertexIdxSet = new HashSet<Integer>();
 		//	change this part
-		for(int i = 0; i < halfEdges.size()/3;i++){
+		for(int i = 0; i < faces.size(); i++){
+			System.out.println("faceIdx" + i);
 			HalfEdge he0 = halfEdges.get(i * 3 + 0);
 			HalfEdge he1 = halfEdges.get(i * 3 + 1);
 			HalfEdge he2 = halfEdges.get(i * 3 + 2);
@@ -38,10 +41,14 @@ public class HalfEdgeMesh {
 			vertexIdxSet.add(vertexIdx2);
 			vertexIdxSet.add(vertexIdx3);
 		}
-        float[] posArr = new float[vertexIdxSet.size() * 3];
-        float[] textCoordArr = new float[vertexIdxSet.size() * 2];
-        float[] normArr = new float[vertexIdxSet.size() * 3];
+		System.out.println("Max Index:" + Collections.max(vertexIdxSet));
+        float[] posArr = new float[vertexSize * 3];
+        float[] textCoordArr = new float[vertexSize * 2];
+        float[] normArr = new float[vertexSize * 3];
         List<Integer> indiceList = new ArrayList<Integer>();
+        
+        System.out.println("posArr.size():" + posArr.length);
+        System.out.println("normArr.size():" + normArr.length);
         
         //	process normArr and posArr
         for(int i = 0; i < halfEdges.size()/3; i++){
@@ -56,7 +63,7 @@ public class HalfEdgeMesh {
         return mesh;
 	}
 	
-	public void setArr(int i, int offset, float[] posArr, float[] normArr, float[] texsArr, List<Integer> indiceList){
+	public void setArr(int i, int offset, float[] posArr, float[] texsArr, float[] normArr, List<Integer> indiceList){
 		HalfEdge he = halfEdges.get(i * 3 + offset);
 		int posIdx = he.getNextV().idx;
     	indiceList.add(posIdx);
@@ -64,11 +71,10 @@ public class HalfEdgeMesh {
     	posArr[posIdx * 3 + 1] = he.getNextV().pos.y;
     	posArr[posIdx * 3 + 2] = he.getNextV().pos.z;
     	normArr[posIdx * 3] = he.getNextV().norm.x;
-    	normArr[posIdx * 3 + 1] = he.getNextV().norm.x;
-    	normArr[posIdx * 3 + 2] = he.getNextV().norm.x;
+    	normArr[posIdx * 3 + 1] = he.getNextV().norm.y;
+    	normArr[posIdx * 3 + 2] = he.getNextV().norm.z;
     	texsArr[posIdx * 2] = 0;
     	texsArr[posIdx * 2 + 1] = 0;
-    	indiceList.add(he.getNextV().idx);
 	}
 	
 	/*
@@ -100,81 +106,98 @@ public class HalfEdgeMesh {
 	public void collapseEdge(HalfEdge edge) {
 		HalfEdge rev = edge.getFlipE();
 		Face leftFace = edge.getlFace(), rightFace = rev.getlFace();
+		Face leftUpFace = edge.getNextE().getFlipE().getlFace();
+		Face leftDownFace = edge.getNextE().getNextE().getFlipE().getlFace();
+		Face rightDownFace = rev.getNextE().getFlipE().getlFace(); 
+		Face rightUpFace = rev.getNextE().getNextE().getFlipE().getlFace();
 		HalfEdge leftUp = edge.getNextE().getFlipE(), leftDown = edge.getNextE().getNextE().getFlipE();
-		HalfEdge rightUp = rev.getNextE().getFlipE(), rightDown = rev.getNextE().getNextE().getFlipE();
+		HalfEdge rightUp = rev.getNextE().getNextE().getFlipE(), rightDown = rev.getNextE().getFlipE();
 		Vertex k = getMergeVertex(edge.getNextV(), rev.getNextV());
+		Vertex up = edge.getNextV(), down = rev.getNextV();
+		HalfEdge iter;
 		
 		//	erase edges in left face and right face
-		HalfEdge iter = leftFace.getHalfEdge();
+		iter = leftFace.getHalfEdge();
+		System.out.print("Vertex:");
 		do{
+			System.out.print(iter.getNextV().idx + "->");
 			iter.terminate();
 			iter = iter.getNextE();
 		}while(iter != leftFace.getHalfEdge());
+		System.out.println();
+		System.out.print("Vertex:");
 		iter = rightFace.getHalfEdge();
 		do{
+			System.out.print(iter.getNextV().idx + "->");
 			iter.terminate();
 			iter = iter.getNextE();
 		}while(iter != rightFace.getHalfEdge());
-		
+		System.out.println();
 		//	set reverse edges
 		leftUp.setFlipE(leftDown);
 		leftDown.setFlipE(leftUp);
 		rightUp.setFlipE(rightDown);
 		rightDown.setFlipE(rightUp);
-		
+
 		//	Change vertex
-		Vertex up = edge.getNextV(), down = rev.getNextV();
-		iter = up.getEdge();
-		do{
+		iter = leftUp;
+		while(iter.getNextV().idx == up.idx){
 			iter.setNextV(k);
 			iter = iter.getNextE().getFlipE();
-		}while(iter != up.getEdge());
-		iter = down.getEdge();
-		do{
+		}
+		iter = rightDown;
+		while(iter.getNextV().idx == down.idx){
 			iter.setNextV(k);
 			iter = iter.getNextE().getFlipE();
-		}while(iter != down.getEdge());
-		
+		}		
 		//	Clear half edges in global variable
-		//clearTwoFaces(leftFace, rightFace);
-		renewArray(edge);
-	}
-	public void renewArray(HalfEdge edge){
-		
+		System.out.println("Before renewal:(size)" + halfEdges.size());
+		updateArray(leftUpFace, leftFace.faceIdx, rightFace.faceIdx);
+		System.out.println("After renewal:(size)" + halfEdges.size());
 	}
 	
-	public void clearTwoFaces(Face left, Face right){
-		int leftIdx = left.faceIdx, rightIdx = right.faceIdx;
-		HalfEdge tmp = halfEdges.get(leftIdx * 3);
-		tmp.terminate();
-		halfEdges.set(leftIdx * 3, tmp);
+	public void updateArray(Face f, int a, int b){
+		System.out.println("Remove face:" + a + "and face:" + b);
+		halfEdges.clear();
+		ArrayList<Face> newFaces = new ArrayList<Face>();
 		
-		tmp = halfEdges.get(leftIdx * 3 + 1);
-		tmp.terminate();
-		halfEdges.set(leftIdx * 3 + 1, tmp);
+		//	Change faceIdx
+		for(int i = 0, iend = faces.size(); i < iend; i++){
+			//System.out.println("Before changing:(faceIdx)" + faces.get(i).faceIdx);
+			if(faces.get(i).faceIdx == a || faces.get(i).faceIdx == b)
+				continue;
+			newFaces.add(faces.get(i));
+			//System.out.println("After changing:(faceIdx)" + faces.get(i).faceIdx);
+		}
+		for(int i = 0, iend = newFaces.size(); i < iend; i++){
+			newFaces.get(i).faceIdx = i;
+		}
+		faces = newFaces;
 		
-		tmp = halfEdges.get(leftIdx * 3 + 2);
-		tmp.terminate();
-		halfEdges.set(leftIdx * 3 + 2, tmp);
+		//	Update halfEdges
+		for(int i = 0; i < faces.size(); i++){
+			System.out.println("Face:" + faces.get(i).faceIdx);
+			HalfEdge iter = faces.get(i).getHalfEdge();
+			System.out.print("Vertex:");
+			do{
+				System.out.print(iter.getNextV().idx + "->");
+				if(iter.getFlipE() == null)
+					System.out.println("Error");
+				halfEdges.add(iter);
+				iter = iter.getNextE();
+			}while(iter != faces.get(i).getHalfEdge());
+			System.out.println();
+		}
 		
-		tmp = halfEdges.get(rightIdx * 3);
-		tmp.terminate();
-		halfEdges.set(rightIdx * 3, tmp);
-		
-		tmp = halfEdges.get(rightIdx * 3 + 1);
-		tmp.terminate();
-		halfEdges.set(rightIdx * 3 + 1, tmp);
-		
-		tmp = halfEdges.get(rightIdx * 3 + 2);
-		tmp.terminate();
-		halfEdges.set(rightIdx * 3 + 2, tmp);
 	}
 	
 	public Vertex getMergeVertex(Vertex a, Vertex b){
 		Vector3f pos = a.pos.add(b.pos).div(2);
-		Vector3f norm = new Vector3f();
-		int posIdx = vertexSize++;
+		Vector3f norm = a.norm;	//	How to calculate?
+		int posIdx = a.idx;
 		Vertex res = new Vertex(pos, norm, posIdx);
+		a.pos = pos;
+		b.pos = pos;
 		return res;
 	}
 	
@@ -224,8 +247,9 @@ public class HalfEdgeMesh {
 			processMapping(s1, i);
 			processMapping(s2, i);
 		}
-		
+		//displayMapping();
 		//	Adding reverse halfedges
+
 		for(Face f : faces){
 			Vertex v0 = f.getHalfEdge().getNextV();
 			Vertex v1 = f.getHalfEdge().getNextE().getNextV();
@@ -237,7 +261,20 @@ public class HalfEdgeMesh {
 		}
 		System.out.println("Done");
 		
+		displayProperty();		
+	}
+	
+	public void displayProperty(){
+		//	change this part
+		System.out.println("HalfEdges:(size)" + halfEdges.size());
+		System.out.println("Faces:(size)" + faces.size());
 		
+	}
+	
+	public void displayMapping(){
+		for (Entry<String, ArrayList<Integer>> entry : map.entrySet()) {  
+		    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());  		  
+		}  
 	}
 	
 	public void addRevEdge(Vertex start, Vertex end, Face f){
