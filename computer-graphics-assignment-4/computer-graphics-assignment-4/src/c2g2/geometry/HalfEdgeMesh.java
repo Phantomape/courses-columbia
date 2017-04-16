@@ -30,7 +30,7 @@ public class HalfEdgeMesh {
 		Set<Integer> vertexIdxSet = new HashSet<Integer>();
 		//	change this part
 		for(int i = 0; i < faces.size(); i++){
-			System.out.println("faceIdx" + i);
+			//System.out.println("faceIdx" + i);
 			HalfEdge he0 = halfEdges.get(i * 3 + 0);
 			HalfEdge he1 = halfEdges.get(i * 3 + 1);
 			HalfEdge he2 = halfEdges.get(i * 3 + 2);
@@ -96,6 +96,49 @@ public class HalfEdgeMesh {
 	 */
 	public void removeVertex(Vertex vtx) {
 		//student code
+		System.out.println("Vertex to be removed:" + vtx.idx);
+		System.out.println("New dest vertex:" + vtx.getEdge().getFlipE().getNextV().idx);
+		ArrayList<HalfEdge> edges = new ArrayList<HalfEdge>();
+		HalfEdge inc = vtx.getEdge(), rev = inc.getFlipE();
+		Vertex dest = rev.getNextV();
+		HalfEdge leftUp = rev.getNextE().getFlipE(), leftDown = rev.getNextE().getNextE().getFlipE();
+		HalfEdge rightUp = rev.getNextE(), rightDown = rev.getNextE().getNextE();
+		Face leftFace = rev.getlFace(), rightFace = inc.getlFace();
+		HalfEdge iter = inc;
+		//	get all edges pointing to vtx
+		do{
+			edges.add(iter);
+			iter = iter.getNextE().getFlipE();
+		}while(iter != inc);
+		
+		//	erase edges in left face and right face
+		iter = leftFace.getHalfEdge();
+		System.out.print("Vertex in deleted face:");
+		do{
+			System.out.print(iter.getNextV().idx + "->");
+			iter.terminate();
+			iter = iter.getNextE();
+		}while(iter != leftFace.getHalfEdge());
+		System.out.print("Vertex in deleted face:");
+		iter = rightFace.getHalfEdge();
+		do{
+			System.out.print(iter.getNextV().idx + "->");
+			iter.terminate();
+			iter = iter.getNextE();
+		}while(iter != rightFace.getHalfEdge());
+		System.out.println();
+		//	set reverse edges
+		leftUp.setFlipE(leftDown);
+		leftDown.setFlipE(leftUp);
+		rightUp.setFlipE(rightDown);
+		rightDown.setFlipE(rightUp);
+		
+		//	iterate remainint edges pointing to vtx
+		for(int i = 1; i < edges.size() - 1; i++){
+			edges.get(i).setNextV(dest);
+		}
+		
+		updateArray(leftFace.faceIdx, rightFace.faceIdx);
 	}
 	
 	/*
@@ -152,11 +195,11 @@ public class HalfEdgeMesh {
 		}		
 		//	Clear half edges in global variable
 		System.out.println("Before renewal:(size)" + halfEdges.size());
-		updateArray(leftUpFace, leftFace.faceIdx, rightFace.faceIdx);
+		updateArray(leftFace.faceIdx, rightFace.faceIdx);
 		System.out.println("After renewal:(size)" + halfEdges.size());
 	}
 	
-	public void updateArray(Face f, int a, int b){
+	public void updateArray(int a, int b){
 		System.out.println("Remove face:" + a + "and face:" + b);
 		halfEdges.clear();
 		ArrayList<Face> newFaces = new ArrayList<Face>();
@@ -176,19 +219,19 @@ public class HalfEdgeMesh {
 		
 		//	Update halfEdges
 		for(int i = 0; i < faces.size(); i++){
-			System.out.println("Face:" + faces.get(i).faceIdx);
+			//System.out.print("Face:" + faces.get(i).faceIdx);
 			HalfEdge iter = faces.get(i).getHalfEdge();
-			System.out.print("Vertex:");
+			//System.out.print(", Vertex:");
 			do{
-				System.out.print(iter.getNextV().idx + "->");
-				if(iter.getFlipE() == null)
+				//System.out.print(iter.getNextV().idx + "->");
+				if(iter.getNextV().idx == 11249)
 					System.out.println("Error");
 				halfEdges.add(iter);
 				iter = iter.getNextE();
 			}while(iter != faces.get(i).getHalfEdge());
-			System.out.println();
+			//System.out.println();
 		}
-		
+
 	}
 	
 	public Vertex getMergeVertex(Vertex a, Vertex b){
