@@ -61,7 +61,7 @@ public class DummyGame implements IGameLogic {
         renderer.init(window);
         float reflectance = 1f;
         //please uncomment following lines to test your OBJ Loader.
-        Mesh mesh = OBJLoader.loadMesh("src/resources/models/bunny.obj");
+        Mesh mesh = OBJLoader.loadMesh("src/resources/models/myCube.obj");
         //Mesh mesh = new Mesh();
         Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
 
@@ -70,8 +70,8 @@ public class DummyGame implements IGameLogic {
 
         mesh.setMaterial(material);
         GameItem gameItem = new GameItem(mesh);
-        gameItem.setScale(0.5f);
-        gameItem.setPosition(0.1f, -0.5f, -2);
+        gameItem.setScale(0.3f);
+        gameItem.setPosition(-0.4f, -0.5f, -2);
         gameItems = new GameItem[]{gameItem};
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
@@ -202,23 +202,38 @@ public class DummyGame implements IGameLogic {
     		Mesh mm = halfEdgeMesh.toMesh();
     		mm.setMaterial(material);
     		gameItems[currentObj] = new GameItem(mm);
-    		gameItems[currentObj].setScale(0.5f);
-    		gameItems[currentObj].setPosition(0.1f, -0.5f, -2);
+    		gameItems[currentObj].setScale(0.3f);
+    		gameItems[currentObj].setPosition(-0.4f, -0.5f, -2);
 
-
+	        try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}
     	else if(window.isKeyPressed(GLFW_KEY_M)){
     		//convert trimesh to halfedge mesh
 	    	HalfEdgeMesh halfEdgeMesh = new HalfEdgeMesh(gameItems[currentObj].getMesh());
 	        Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), 1f);
-	    		//collapse edge
+	    	
+	        //collapse edge
 	    	halfEdgeMesh.collapseFirstEdge();
-	    		//convert halfedge mesh to trimesh
+	    	
+	    	//convert halfedge mesh to trimesh
 	        Mesh mm = halfEdgeMesh.toMesh();
 	        mm.setMaterial(material);
 	        gameItems[currentObj] = new GameItem(mm);
-	        gameItems[currentObj].setScale(0.5f);
-	        gameItems[currentObj].setPosition(0.1f, -0.5f, -2);
+	        gameItems[currentObj].setScale(0.3f);
+	        gameItems[currentObj].setPosition(-0.4f, -0.5f, -2);
+	        
+	        
+	        try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}
     }
 
