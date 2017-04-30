@@ -13,6 +13,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 import org.joml.Vector2d;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
@@ -21,6 +22,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+
+import c2g2.kinematics.ForwardKinematics;
 
 
 public class Renderer {
@@ -44,7 +47,8 @@ public class Renderer {
     	linelist = new ArrayList<Float>();
     	isClicked = false;
 	}
-
+  
+    
     public void run() {
     	
         System.out.println("Hello LWJGL " +  Version.getVersion() + "!");
@@ -99,8 +103,16 @@ public class Renderer {
                 }
                 else if (key == GLFW_KEY_A) {
 					System.out.println("A pressed.");
-					//do whatever you want.
 				}
+                else if(key == GLFW_KEY_I){
+					System.out.println("Increase rotational angle by 1 degree.");
+					ForwardKinematics fk = new ForwardKinematics(mScene.skeleton);
+					fk.updateState(1.0);
+				}
+                else if(key == GLFW_KEY_D){
+					System.out.println("Decrease rotational angle by 1 degree.");
+				}
+                
                 //add more key binding here.
                 
             }

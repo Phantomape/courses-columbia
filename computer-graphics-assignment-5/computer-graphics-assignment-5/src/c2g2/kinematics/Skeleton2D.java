@@ -54,6 +54,9 @@ public class Skeleton2D {
 		    ri.setParent(connection2d);
 		    parent.addChild(connection2d);
 	        
+		    Vector2d tmp = new Vector2d(joint0.getPos().x - px, joint0.getPos().y - py);
+		    ri.setLength(tmp.length());
+		    
 	        buildSkeletonFromDoc(cElement, ri, ji, level+1);
 		}
 	}
@@ -90,6 +93,9 @@ public class Skeleton2D {
 	         rootconnection.setChild(root);
 	         rootconnection.setJoint(a0);
 	         root.setParent(rootconnection);
+	         
+	         Vector2d tmp = new Vector2d(px1 - px2, py1 - py2);
+	         root.setLength(tmp.length());
 	         
 	         buildSkeletonFromDoc(e, root, a1, 1);
 	         

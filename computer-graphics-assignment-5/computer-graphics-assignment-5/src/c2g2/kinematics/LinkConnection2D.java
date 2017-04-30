@@ -3,7 +3,7 @@ package c2g2.kinematics;
 public class LinkConnection2D {
 
 	/*
-	 * When the two links look like what follows (form into a straight line)
+	 * When the two lin ks look like what follows (form into a straight line)
 	 * ------(o)------
 	 * Here the left link is the parent link, and the right link is the child link
 	 * The joint rotateAngle is zero

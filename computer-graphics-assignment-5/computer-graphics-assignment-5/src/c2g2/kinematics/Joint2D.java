@@ -18,5 +18,9 @@ public abstract class Joint2D {
 		return fixed;
 	}
 	
+	public void setPos(Vector2d v){
+		position = v;
+	}
+	
 	public abstract void setParam(double p);
 }
