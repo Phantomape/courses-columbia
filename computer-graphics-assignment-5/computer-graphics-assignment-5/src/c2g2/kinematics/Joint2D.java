@@ -6,6 +6,7 @@ public abstract class Joint2D {
 	/*
 	 * Position of the 2D joint
 	 */
+	public boolean isLeaf = false;
 	protected Vector2d position = new Vector2d(0.,0.);
 	
 	protected boolean fixed = false;

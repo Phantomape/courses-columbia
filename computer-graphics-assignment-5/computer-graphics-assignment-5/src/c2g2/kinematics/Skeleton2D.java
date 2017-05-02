@@ -3,6 +3,8 @@ package c2g2.kinematics;
 import org.joml.Vector2d;
 
 import java.io.File;
+import java.util.ArrayList;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -15,9 +17,21 @@ import org.w3c.dom.Element;
 
 public class Skeleton2D {
 	
+	private ArrayList<Joint2D> leafJoints = new ArrayList<Joint2D>();
+	
+	private ArrayList<RigidLink2D> endLinks = new ArrayList<RigidLink2D>();
+	
 	private RigidLink2D	root = null;
 	
 	public Skeleton2D() {
+	}
+	
+	public ArrayList<Joint2D> getLeafJoints(){
+		return leafJoints;
+	}
+	
+	public ArrayList<RigidLink2D> getEndLinks(){
+		return endLinks;
 	}
 	
 	private void buildSkeletonFromDoc(Element e, RigidLink2D parent, Joint2D joint0, int level){
@@ -26,9 +40,13 @@ public class Skeleton2D {
 		if (nList.getLength()==0) {
 			System.out.println("pos:");
 			System.out.println(joint0.getPos());
+			joint0.isLeaf = true;
+			leafJoints.add(joint0);
+			endLinks.add(parent);
 			LinkConnection2D dummyLink = new LinkConnection2D();
 			dummyLink.setParent(parent);
 			dummyLink.setJoint(joint0);
+
 			parent.addChild(dummyLink);
 			return;
 		}
@@ -51,12 +69,13 @@ public class Skeleton2D {
 		    connection2d.setParent(parent);
 		    connection2d.setJoint(joint0);
 		    connection2d.setChild(ri);
+
 		    ri.setParent(connection2d);
 		    parent.addChild(connection2d);
 	        
 		    Vector2d tmp = new Vector2d(joint0.getPos().x - px, joint0.getPos().y - py);
 		    ri.setLength(tmp.length());
-		    
+
 	        buildSkeletonFromDoc(cElement, ri, ji, level+1);
 		}
 	}
@@ -99,13 +118,47 @@ public class Skeleton2D {
 	         
 	         buildSkeletonFromDoc(e, root, a1, 1);
 	         
-	         System.out.println("----------------------------");
+	         System.out.println("Initialization");
+	         init(root);
+
 	     
 	      } catch (Exception e) {
 	         e.printStackTrace();
 	      }
 		
 	}
+	private void init(RigidLink2D root){
+		dfs(root);
+	}
+	
+	private void dfs(RigidLink2D root){
+		for(int i = 0; i < root.childsize(); i++){
+			//	Calculate angle
+			LinkConnection2D lk = root.getChild(i);
+			if(lk.getChild() == null)
+				continue;
+			Joint2D prevJoint = root.getParentJoint();
+			Joint2D currJoint = root.getChildJoint();
+			Joint2D nextJoint = lk.getChild().getChildJoint();
+			
+			Vector2d x0x1 = new Vector2d(currJoint.getPos().x - prevJoint.getPos().x, currJoint.getPos().y - prevJoint.getPos().y);
+			Vector2d x1x2 = new Vector2d(nextJoint.getPos().x - currJoint.getPos().x, nextJoint.getPos().y - currJoint.getPos().y);
+			double rotateAngle = Math.acos(x0x1.dot(x1x2)/(x0x1.length() * x1x2.length()));
+			lk.setAngle(rotateAngle);
+			
+			//	Calculate T
+			double len = lk.getParent().getLength();
+			lk.T.m00(Math.cos(rotateAngle));
+			lk.T.m01(Math.sin(-rotateAngle));
+			lk.T.m02(len);
+			lk.T.m10(Math.sin(rotateAngle));
+			lk.T.m11(Math.cos(rotateAngle));
+			
+			dfs(lk.getChild());
+		}
+	}
+	
+	
 	
 	public void buildTestSkeleton1(){
 		root = new RigidLink2D();

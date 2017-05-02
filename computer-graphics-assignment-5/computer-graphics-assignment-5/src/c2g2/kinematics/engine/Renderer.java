@@ -24,6 +24,8 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
 import c2g2.kinematics.ForwardKinematics;
+import c2g2.kinematics.InverseKinematics;
+import c2g2.kinematics.Joint2D;
 
 
 public class Renderer {
@@ -111,6 +113,8 @@ public class Renderer {
 				}
                 else if(key == GLFW_KEY_D){
 					System.out.println("Decrease rotational angle by 1 degree.");
+					ForwardKinematics fk = new ForwardKinematics(mScene.skeleton);
+					fk.updateState(-1.0);
 				}
                 
                 //add more key binding here.
@@ -141,6 +145,16 @@ public class Renderer {
 					//This is your cursor location in window coordinate, you need to convert it
 					//into world coordinate in order to apply your algorithm.
 					System.out.println("Cursor: "+Double.toString(arg1)+" "+Double.toString(arg2));
+					Vector2d coord = simpleConvert(arg1, arg2, WIDTH, HEIGHT);
+					Vector2d tmp = isEndEffector(mScene, coord);
+					if(tmp.x != 0){
+						System.out.println("Captured end effector.");
+						InverseKinematics ik = new InverseKinematics(mScene.skeleton);
+						ik.initAngle();
+						ik.setEndEffector(tmp);
+						ik.updateState(coord);
+						System.out.println("End loop.");
+					}
 				}
 
 			}
@@ -355,4 +369,26 @@ public class Renderer {
         // draw points 0-3 from the currently bound VAO with current in-use shader
         glDrawArrays (GL_TRIANGLES, 0, pts.length/3);
 	}
+
+    private Vector2d simpleConvert(double x, double y, int width, int height){
+    	Vector2d res = new Vector2d();
+    	width /= 2;
+    	height /= 2;
+    	res.x = (x/width) - 1.0;
+    	res.y = 1.0 - (y/height);
+		return res;
+    }
+    
+    private Vector2d isEndEffector(Scene scene, Vector2d coord){
+    	Vector2d res = new Vector2d();
+		ArrayList<Joint2D> leafJoints = scene.skeleton.getLeafJoints();
+		for(int i = 0; i < leafJoints.size(); i++){
+			Vector2d pos = leafJoints.get(i).getPos();
+			if(pos.distance(coord) < 0.05){
+				res = pos;
+				return res;
+			}
+		}
+    	return res;
+    }
 }

@@ -1,5 +1,8 @@
 package c2g2.kinematics;
 
+import org.joml.Matrix3d;
+import org.joml.Vector2d;
+
 public class LinkConnection2D {
 
 	/*
@@ -13,6 +16,18 @@ public class LinkConnection2D {
 	private RigidLink2D child = null;
 	
 	private Joint2D joint = null;
+	
+	public Matrix3d T = new Matrix3d();
+	
+	private double angle = 0.0;
+	
+	public double getAngle(){
+		return angle;
+	}
+	
+	public void setAngle(double a){
+		angle = a;
+	}
 	
 	public Joint2D getJoint() {
 		return joint;
