@@ -150,7 +150,6 @@ public class Renderer {
 					if(tmp.x != 0){
 						System.out.println("Captured end effector.");
 						InverseKinematics ik = new InverseKinematics(mScene.skeleton);
-						ik.initAngle();
 						ik.setEndEffector(tmp);
 						ik.updateState(coord);
 						System.out.println("End loop.");

@@ -11,6 +11,8 @@ public class LinkConnection2D {
 	 * Here the left link is the parent link, and the right link is the child link
 	 * The joint rotateAngle is zero
 	 */
+	private double dir = 1.0;	//	1.0 for bending upward
+
 	private RigidLink2D parent = null;
 	
 	private RigidLink2D child = null;
@@ -27,6 +29,19 @@ public class LinkConnection2D {
 	
 	public void setAngle(double a){
 		angle = a;
+	}
+	
+	public void offsetAngle(double a){
+		angle += a;
+	}
+	
+	public void updateT(){
+	}
+	
+	public void updatePos(double baseAngle){
+		Joint2D c = child.getChildJoint();
+		double len = child.getLength();
+		c.setPos(new Vector2d(joint.position.x + len * Math.cos(baseAngle + angle), joint.position.y + len * Math.sin(baseAngle + angle)));
 	}
 	
 	public Joint2D getJoint() {

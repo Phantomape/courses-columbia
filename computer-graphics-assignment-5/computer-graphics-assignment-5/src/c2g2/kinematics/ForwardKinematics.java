@@ -1,6 +1,10 @@
 package c2g2.kinematics;
 
 
+import java.util.ArrayList;
+
+import org.ejml.simple.SimpleMatrix;
+import org.joml.Matrix3d;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -24,13 +28,41 @@ public class ForwardKinematics {
 		// TODO: Implement the forward kinematics algorithm here
 	}
 	
+	public RigidLink2D updateState(SimpleMatrix x, ArrayList<LinkConnection2D> linksChain) {
+		RigidLink2D root = skeleton.getRoot();
+		LinkConnection2D lc = root.getParent();
+		Vector2d v1 = new Vector2d(1, 0);
+		Vector2d v2 = new Vector2d(lc.getJoint().getPos().x, lc.getJoint().getPos().y);
+		double baseAngle = Math.acos(v1.dot(v2)/(v1.length() * v2.length()));	
+		baseAngle = v2.y > 0 ? baseAngle : -baseAngle;
+		lc.offsetAngle(x.get(0));
+		lc.updatePos(baseAngle);
+		RigidLink2D endLink = dfs(root, 1, x, linksChain, new Matrix3d(), baseAngle + lc.getAngle());
+		return endLink;
+	}
+	
+	private RigidLink2D dfs(RigidLink2D root, int level, SimpleMatrix x, ArrayList<LinkConnection2D> lc, Matrix3d T, double baseAngle){
+		RigidLink2D res = null;
+		for(int i = 0; i < root.childsize(); i++){
+			LinkConnection2D lk = root.getChild(i);
+			if(lk.getChild() == null){
+				res = lk.getParent();
+				continue;
+			}
+			if(lk.getChild().getChildJoint().equals(lc.get(level).getChild().getChildJoint())){
+				lk.offsetAngle(x.get(level));
+				lk.updatePos(baseAngle);
+				res = dfs(lk.getChild(), level + 1, x, lc, T, baseAngle + lk.getAngle());
+			}else continue;
+		}
+		return res;
+	}
+	
 	public void updateState(double offset){
 		dfs(skeleton.getRoot(), offset, 0);
 	}
 	
 	private void dfs(RigidLink2D root, double offset, int level){
-		if(root.childsize() == 0)
-			return;
 		for(int i = 0; i < root.childsize(); i++){
 			LinkConnection2D lk = root.getChild(i);
 			if(lk.getChild() == null)
@@ -81,8 +113,7 @@ public class ForwardKinematics {
 			
 
 			//	recursion
-			if(lk.getChild() != null)
-				dfs(lk.getChild(), offset, level + 1);
+			dfs(lk.getChild(), offset, level + 1);
 		}
 	}
 	

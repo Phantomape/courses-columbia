@@ -23,5 +23,11 @@ public abstract class Joint2D {
 		position = v;
 	}
 	
+	public boolean equals(Joint2D j){
+		if(position.x == j.getPos().x && position.y == j.getPos().y)
+			return true;
+		return false;
+	}
+	
 	public abstract void setParam(double p);
 }

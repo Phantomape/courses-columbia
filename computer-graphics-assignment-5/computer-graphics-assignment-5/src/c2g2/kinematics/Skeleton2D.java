@@ -119,7 +119,8 @@ public class Skeleton2D {
 	         buildSkeletonFromDoc(e, root, a1, 1);
 	         
 	         System.out.println("Initialization");
-	         init(root);
+	         initAngle(root);
+	         initT(root);
 
 	     
 	      } catch (Exception e) {
@@ -127,7 +128,23 @@ public class Skeleton2D {
 	      }
 		
 	}
-	private void init(RigidLink2D root){
+	
+	private void initT(RigidLink2D root){
+		dfsT(root);
+	}
+	
+	private void dfsT(RigidLink2D root){
+		
+	}
+	
+	private void initAngle(RigidLink2D root){
+		Joint2D currJoint = root.getParentJoint();
+		Joint2D nextJoint = root.getChildJoint();
+		Vector2d x0x1 = new Vector2d(currJoint.getPos().x, currJoint.getPos().y);
+		Vector2d x1x2 = new Vector2d(nextJoint.getPos().x - currJoint.getPos().x, nextJoint.getPos().y - currJoint.getPos().y);
+		double rotateAngle = Math.acos(x0x1.dot(x1x2)/(x0x1.length() * x1x2.length()));
+		LinkConnection2D lc = root.getParent();
+		lc.setAngle(rotateAngle);
 		dfs(root);
 	}
 	
@@ -140,19 +157,10 @@ public class Skeleton2D {
 			Joint2D prevJoint = root.getParentJoint();
 			Joint2D currJoint = root.getChildJoint();
 			Joint2D nextJoint = lk.getChild().getChildJoint();
-			
 			Vector2d x0x1 = new Vector2d(currJoint.getPos().x - prevJoint.getPos().x, currJoint.getPos().y - prevJoint.getPos().y);
 			Vector2d x1x2 = new Vector2d(nextJoint.getPos().x - currJoint.getPos().x, nextJoint.getPos().y - currJoint.getPos().y);
 			double rotateAngle = Math.acos(x0x1.dot(x1x2)/(x0x1.length() * x1x2.length()));
 			lk.setAngle(rotateAngle);
-			
-			//	Calculate T
-			double len = lk.getParent().getLength();
-			lk.T.m00(Math.cos(rotateAngle));
-			lk.T.m01(Math.sin(-rotateAngle));
-			lk.T.m02(len);
-			lk.T.m10(Math.sin(rotateAngle));
-			lk.T.m11(Math.cos(rotateAngle));
 			
 			dfs(lk.getChild());
 		}
