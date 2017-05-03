@@ -122,12 +122,12 @@ public class Skeleton2D {
 	         initAngle(root);
 	         initT(root);
 
-	     
 	      } catch (Exception e) {
 	         e.printStackTrace();
 	      }
 		
 	}
+
 	
 	private void initT(RigidLink2D root){
 		dfsT(root);

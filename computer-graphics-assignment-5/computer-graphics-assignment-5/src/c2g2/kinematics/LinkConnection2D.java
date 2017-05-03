@@ -11,8 +11,6 @@ public class LinkConnection2D {
 	 * Here the left link is the parent link, and the right link is the child link
 	 * The joint rotateAngle is zero
 	 */
-	private double dir = 1.0;	//	1.0 for bending upward
-
 	private RigidLink2D parent = null;
 	
 	private RigidLink2D child = null;
@@ -38,10 +36,26 @@ public class LinkConnection2D {
 	public void updateT(){
 	}
 	
-	public void updatePos(double baseAngle){
+	public boolean updatePos(double baseAngle){
 		Joint2D c = child.getChildJoint();
 		double len = child.getLength();
+		Joint2D currJoint = child.getParentJoint();
+		Joint2D nextJoint = child.getChildJoint();
+		Vector2d v = new Vector2d(nextJoint.getPos().x - currJoint.getPos().x, nextJoint.getPos().y - currJoint.getPos().y);
+		Vector2d rot_v = new Vector2d(v.x * Math.cos(-baseAngle) - v.y * Math.sin(-baseAngle), v.x * Math.sin(-baseAngle) + v.y * Math.cos(-baseAngle));
+		boolean flag = false;
 		c.setPos(new Vector2d(joint.position.x + len * Math.cos(baseAngle + angle), joint.position.y + len * Math.sin(baseAngle + angle)));
+		/*
+		if((baseAngle > 0 && rot_v.y > 0) || (baseAngle < 0 && rot_v.y < 0)){
+			c.setPos(new Vector2d(joint.position.x + len * Math.cos(baseAngle + angle), joint.position.y + len * Math.sin(baseAngle + angle)));
+			flag = true;
+		}
+		else{
+			c.setPos(new Vector2d(joint.position.x + len * Math.cos(baseAngle - angle), joint.position.y + len * Math.sin(baseAngle - angle)));
+			flag = false;
+		}*/
+		return flag;
+		
 	}
 	
 	public Joint2D getJoint() {

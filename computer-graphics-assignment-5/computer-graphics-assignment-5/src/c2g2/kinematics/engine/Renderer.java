@@ -116,9 +116,7 @@ public class Renderer {
 					ForwardKinematics fk = new ForwardKinematics(mScene.skeleton);
 					fk.updateState(-1.0);
 				}
-                
-                //add more key binding here.
-                
+
             }
         });
        
@@ -178,7 +176,7 @@ public class Renderer {
     }
 
     private void loop() {
-        // This line is critical for LWJGL's interoperation with GLFW's
+        // This line is critical for LWJGL's inter-operation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
         // creates the ContextCapabilities instance and makes the OpenGL

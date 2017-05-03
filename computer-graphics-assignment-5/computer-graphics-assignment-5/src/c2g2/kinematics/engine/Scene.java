@@ -5,9 +5,14 @@ import java.util.ArrayList;
 import org.joml.Vector2d;
 
 import c2g2.kinematics.*;
+import c2g2.kinematics3D.Skeleton3D;
 
 public class Scene {
+	
 	public Skeleton2D skeleton;
+	
+	public Skeleton3D s;
+	
 	public Scene(){
 		
 	}

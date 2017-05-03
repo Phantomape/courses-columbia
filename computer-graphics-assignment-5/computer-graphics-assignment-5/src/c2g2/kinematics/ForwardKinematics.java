@@ -51,8 +51,10 @@ public class ForwardKinematics {
 			}
 			if(lk.getChild().getChildJoint().equals(lc.get(level).getChild().getChildJoint())){
 				lk.offsetAngle(x.get(level));
-				lk.updatePos(baseAngle);
+				boolean flag = lk.updatePos(baseAngle);
+
 				res = dfs(lk.getChild(), level + 1, x, lc, T, baseAngle + lk.getAngle());
+
 			}else continue;
 		}
 		return res;
