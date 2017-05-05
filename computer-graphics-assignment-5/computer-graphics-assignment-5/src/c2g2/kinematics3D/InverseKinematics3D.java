@@ -3,6 +3,7 @@ package c2g2.kinematics3D;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.joml.Vector2d;
 import org.joml.Vector3d;
 
 public class InverseKinematics3D {
@@ -21,31 +22,16 @@ public class InverseKinematics3D {
 	}
 
 	public void updateStates() {		
-		ArrayList<Vector3d> fc = getForwardChain();
-		System.out.println("Forward:");
-		for(int i = 0; i < fc.size(); i++)
-			System.out.println(fc.get(i));
-		System.out.println();
-		System.out.println("Backward:");
+		//	Forward chain
+		ArrayList<Vector3d> fc = getForwardChain();		
+		//	Backward chain
 		ArrayList<Vector3d> bc = getBackwardChain();
-		for(int i = 0; i < fc.size(); i++)
-			System.out.println(fc.get(i));
-		System.out.println();
-		
+		//	Lengths
 		ArrayList<Double> lens = getLengths();
-		
-		ArrayList<Vector3d> rc = new ArrayList<Vector3d>();
-
-		for(int i = 0; i < lens.size(); i++){
-			Vector3d dir = bc.get(i);
-			dir.sub(fc.get(i));
-			dir.normalize();
-			double len = lens.get(i);
-			Vector3d res = new Vector3d(fc.get(i).x + len * dir.x, fc.get(i).y + len * dir.y, fc.get(i).z + len * dir.z);
-			rc.add(res);
-		}
-		Collections.reverse(rc);
-		
+		//	Get final destination
+		ArrayList<Vector3d> rc = getFinalPos(fc, bc, lens);
+		//	Update 
+		updateStates(rc);
 		Joint3D iter = end;
 		for(int i = 0; i < rc.size(); i++){
 			iter.pos = rc.get(i);
@@ -54,14 +40,36 @@ public class InverseKinematics3D {
 		
 	}
 
+	private void updateStates(ArrayList<Vector3d> rc) {
+		Joint3D iter = end;
+		for(int i = 0; i < rc.size(); i++){
+			iter.pos = rc.get(i);
+			iter = iter.parent;
+		}		
+	}
+
+	private ArrayList<Vector3d> getFinalPos(ArrayList<Vector3d> fc, ArrayList<Vector3d> bc, ArrayList<Double> lens) {
+		ArrayList<Vector3d> rc = new ArrayList<Vector3d>();
+		Vector3d start = fc.get(0); 
+		for(int i = 0; i < lens.size(); i++){
+			Vector3d dir = new Vector3d(bc.get(i + 1).x - start.x, bc.get(i + 1).y - start.y, bc.get(i + 1).z - start.z);
+			dir.normalize();
+			double len = lens.get(i);
+			Vector3d res = new Vector3d(start.x + len * dir.x, start.y + len * dir.y, start.z + len * dir.z);
+			start = res;
+			rc.add(res);
+		}
+		Collections.reverse(rc);
+		return rc;
+	}
+
 	private ArrayList<Vector3d> getBackwardChain() {
 		ArrayList<Vector3d> bc = new ArrayList<Vector3d>();
 		Vector3d v = targetPos;
 		Joint3D iter = end;
 		bc.add(v);
 		while(iter.parent != null){
-			Vector3d dir = iter.parent.pos;
-			dir.sub(v);
+			Vector3d dir = new Vector3d(iter.parent.pos.x - v.x, iter.parent.pos.y - v.y, iter.parent.pos.z - v.z);
 			dir.normalize();
 			double len = skeleton.getLengths().get(new String(iter.parent.idx + "-" + iter.idx));
 			Vector3d res = new Vector3d(v.x + len * dir.x, v.y + len * dir.y, v.z + len * dir.z);

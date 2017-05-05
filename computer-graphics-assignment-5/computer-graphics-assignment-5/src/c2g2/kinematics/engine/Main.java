@@ -12,7 +12,7 @@ public class Main {
 	
     public static void main(String[] args) {
     	//	2D scene
-    	SceneType st = SceneType.SCENE_2D;
+    	SceneType st = SceneType.SCENE_3D;
     	if(st == SceneType.SCENE_2D){
 	        Scene scene = new Scene();
 	        scene.loadfromXML("src/resources/models/test.xml");

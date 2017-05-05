@@ -130,7 +130,7 @@ public class DefaultRenderer {
             Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
             shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);            
             shaderProgram.setUniform("material", mesh.getMaterial());
-            //mesh.render();
+            mesh.render();
             //Test
             Matrix4f r = new Matrix4f();
             //r.set(projectionMatrix);

@@ -106,7 +106,7 @@ public class Skeleton3D {
         glEnableVertexAttribArray(0);
 
         // wipe the drawing surface clear
-        glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // draw points 0-3 from the currently bound VAO with current in-use shader
         //glDrawArrays (GL_TRIANGLES, 0, positions.length/3);
         glDrawArrays (GL_LINE_STRIP, 0, pts.length/3);

@@ -41,13 +41,13 @@ public class Skeleton2D {
 			System.out.println("pos:");
 			System.out.println(joint0.getPos());
 			joint0.isLeaf = true;
-			leafJoints.add(joint0);
-			endLinks.add(parent);
 			LinkConnection2D dummyLink = new LinkConnection2D();
 			dummyLink.setParent(parent);
 			dummyLink.setJoint(joint0);
-
 			parent.addChild(dummyLink);
+			
+			leafJoints.add(joint0);
+			endLinks.add(parent);
 			return;
 		}
 		
@@ -60,8 +60,6 @@ public class Skeleton2D {
 			}
 	        double px = Double.parseDouble(cElement.getAttribute("x"));
 	        double py = Double.parseDouble(cElement.getAttribute("y"));
-		    System.out.println(px);
-		    System.out.println(py);
 		    
 		    RigidLink2D ri = new RigidLink2D();
 		    LinkConnection2D connection2d = new LinkConnection2D();

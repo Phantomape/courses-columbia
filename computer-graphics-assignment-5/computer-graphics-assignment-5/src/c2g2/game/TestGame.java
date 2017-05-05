@@ -67,7 +67,7 @@ public class TestGame implements IGameLogic{
     public void init(Window window) throws Exception {
         renderer.init(window);
         float reflectance = 1f;
-        Mesh mesh = OBJLoader.loadMesh("src/resources/models/test.obj");
+        Mesh mesh = OBJLoader.loadMesh("src/resources/models/bunny.obj");
         mesh.setSkeleton();
         Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
 	    

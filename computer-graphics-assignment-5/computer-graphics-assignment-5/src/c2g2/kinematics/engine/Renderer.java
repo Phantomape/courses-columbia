@@ -165,10 +165,20 @@ public class Renderer {
 				}
 
 			}
-			private RigidLink2D getEndLink(Scene mScene, Vector2d pos) {
-				// TODO Auto-generated method stub
-				return null;
+			private RigidLink2D getEndLink(Scene scene, Vector2d pos) {
+				RigidLink2D res = null;
+				ArrayList<RigidLink2D> endLinks = scene.skeleton.getEndLinks();			
+				for(int i = 0; i < endLinks.size(); i++){
+					RigidLink2D r = endLinks.get(i);
+					Vector2d p = r.getChildJoint().getPos();
+					if(p.distance(pos) < 0.05){
+						res = r;
+						break;
+					}
+				}
+		    	return res;
 			}
+			
 			@Deprecated
 			private Joint2D getEndEffector(Scene scene, Vector2d pos) {
 				// TODO Auto-generated method stub
