@@ -33,13 +33,12 @@ public class Renderer3D {
     
     public void init(Window window) throws Exception {
         shaderProgram = new ShaderProgram();
-        shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/vertex.vs"))));
-        shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/fragment.fs"))));
+        shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/skeleton_vertex.vs"))));
+        shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/skeleton_fragment.fs"))));
         shaderProgram.link();
         
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("modelViewMatrix");
-        shaderProgram.createUniform("texture_sampler");
     }
     
     public void render(Window window, Camera camera, GameItem[] gameItems) {
@@ -63,16 +62,21 @@ public class Renderer3D {
         Matrix4f viewMatrix = transformation.getViewMatrix(camera);
 
         for(GameItem gameItem : gameItems) {
-            Skeleton3D skeleton = gameItem.getSkeleton();
+            Skeleton3D skeleton = gameItem.getMesh().getSkeleton();
             Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
-            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);            
+            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
             skeleton.render();
         }
+        
 
         shaderProgram.unbind();
     }
     
     public void clear() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+    
+    public float getFOV(){
+    	return FOV;
     }
 }

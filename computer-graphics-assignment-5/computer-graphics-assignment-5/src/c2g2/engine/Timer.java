@@ -1,6 +1,7 @@
 package c2g2.engine;
 
 public class Timer {
+
     private double lastLoopTime;
     
     public void init() {

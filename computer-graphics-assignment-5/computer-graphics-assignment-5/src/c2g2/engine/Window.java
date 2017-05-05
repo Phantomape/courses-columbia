@@ -1,50 +1,36 @@
 package c2g2.engine;
 
-import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
-import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
-import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
-import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
-import static org.lwjgl.glfw.GLFW.glfwInit;
-import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
-import static org.lwjgl.glfw.GLFW.glfwShowWindow;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
-import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.system.MemoryUtil.NULL;
-
+import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
+import org.joml.Matrix4f;
 
 public class Window {
+
     private final String title;
+
     private int width;
+
     private int height;
+
     private long windowHandle;
+
+    private GLFWErrorCallback errorCallback;
+
+    private GLFWKeyCallback keyCallback;
+
+    private GLFWWindowSizeCallback windowSizeCallback;
+    
+    private Matrix4f projectionMatrix;
+
     private boolean resized;
+
     private boolean vSync;
     
     public Window(String title, int width, int height, boolean vSync) {
@@ -53,12 +39,12 @@ public class Window {
         this.height = height;
         this.vSync = vSync;
         this.resized = false;
+        projectionMatrix = new Matrix4f();
     }
-    
     public void init() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
-        glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
+        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if (!glfwInit()) {
@@ -80,17 +66,19 @@ public class Window {
         }
 
         // Setup resize callback
-        glfwSetWindowSizeCallback(windowHandle, new GLFWWindowSizeCallback() {
+        glfwSetWindowSizeCallback(windowHandle, windowSizeCallback = new GLFWWindowSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
                 Window.this.width = width;
                 Window.this.height = height;
                 Window.this.setResized(true);
+//            	System.out.println("resizing");
+
             }
         });
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(windowHandle, new GLFWKeyCallback() {
+        glfwSetKeyCallback(windowHandle, keyCallback = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
@@ -116,6 +104,7 @@ public class Window {
             glfwSwapInterval(1);
         }
 
+
         // Make the window visible
         glfwShowWindow(windowHandle);
 
@@ -124,38 +113,60 @@ public class Window {
         // Set the clear color
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     }
-    
+
     public long getWindowHandle() {
         return windowHandle;
     }
-    
-    public void setResized(boolean resized) {
-        this.resized = resized;
+
+    public void setClearColor(float r, float g, float b, float alpha) {
+        glClearColor(r, g, b, alpha);
     }
-    
-    public boolean isvSync() {
-        return vSync;
+
+    public boolean isKeyPressed(int keyCode) {
+        return glfwGetKey(windowHandle, keyCode) == GLFW_PRESS;
     }
-    
+
     public boolean windowShouldClose() {
         return glfwWindowShouldClose(windowHandle);
     }
-    
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public boolean isResized() {
+        return resized;
+    }
+
+    public void setResized(boolean resized) {
+//    	System.out.println("resizinging");
+        this.resized = resized;
+    }
+
+    public boolean isvSync() {
+        return vSync;
+    }
+
+    public void setvSync(boolean vSync) {
+        this.vSync = vSync;
+    }
+
     public void update() {
         glfwSwapBuffers(windowHandle);
         glfwPollEvents();
     }
+    
+    public void getProjectionMatrix(){
 
-	public boolean isResized() {
-		return resized;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public int getWidth() {
-		return width;
-	}
+    }
 }

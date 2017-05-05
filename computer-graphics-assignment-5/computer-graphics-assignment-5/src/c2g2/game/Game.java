@@ -8,7 +8,7 @@ import org.joml.Vector3f;
 
 import c2g2.engine.Camera;
 import c2g2.engine.GameItem;
-import c2g2.engine.GameLogic;
+import c2g2.engine.IGameLogic;
 import c2g2.engine.MouseInput;
 import c2g2.engine.Window;
 import c2g2.engine.XMLLoader;
@@ -16,7 +16,7 @@ import c2g2.kinematics3D.Renderer3D;
 import c2g2.kinematics3D.Skeleton3D;
 
 
-public class Game implements GameLogic{
+public class Game implements IGameLogic{
     private static final float MOUSE_SENSITIVITY = 0.2f;
     private static final float CAMERA_POS_STEP = 0.05f;
     private final Vector3f cameraInc;
@@ -36,10 +36,10 @@ public class Game implements GameLogic{
 		renderer.init(window);
 	    float reflectance = 1f;     
 	    seconds = Calendar.getInstance().get(Calendar.SECOND);
-	    Skeleton3D skeleton = XMLLoader.loadXML("src/resources/models/object.xml");
-	    skeleton.init();
-        GameItem obj = new GameItem(skeleton);
-        gameItems = new GameItem[]{obj};
+	    //Skeleton3D skeleton = XMLLoader.loadXML("src/resources/models/object.xml");
+	    //skeleton.init();
+        //GameItem obj = new GameItem(skeleton);
+        //gameItems = new GameItem[]{obj};
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class Game implements GameLogic{
 	}
 
 	@Override
-	public void update(float interval, MouseInput mouseInput) {
+	public void update(Window window, float interval, MouseInput mouseInput) {
         // Update camera position
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
         
@@ -59,7 +59,6 @@ public class Game implements GameLogic{
             System.out.println(rotVec);
 
             if(gameItems != null && gameItems.length != 0){
-            	System.out.println("Has game item");
 	            for(GameItem gameItem : gameItems){
 	            	Vector3f curr = gameItem.getRotation();
 	            	gameItem.setRotation(curr.x+ rotVec.x * MOUSE_SENSITIVITY, curr.y+rotVec.y * MOUSE_SENSITIVITY, 0);

@@ -26,6 +26,8 @@ import org.lwjgl.opengl.GL;
 import c2g2.kinematics.ForwardKinematics;
 import c2g2.kinematics.InverseKinematics;
 import c2g2.kinematics.Joint2D;
+import c2g2.kinematics.RigidLink2D;
+import c2g2.kinematics3D.InverseKinematics2D;
 
 
 public class Renderer {
@@ -41,7 +43,7 @@ public class Renderer {
     private ArrayList<Float> ptlist;
     private ArrayList<Float> linelist;
     private boolean isClicked;
-        
+    
     public Renderer(Scene scene) {
 		// TODO Auto-generated constructor stub
     	mScene = scene;
@@ -143,17 +145,43 @@ public class Renderer {
 					//This is your cursor location in window coordinate, you need to convert it
 					//into world coordinate in order to apply your algorithm.
 					System.out.println("Cursor: "+Double.toString(arg1)+" "+Double.toString(arg2));
-					Vector2d coord = simpleConvert(arg1, arg2, WIDTH, HEIGHT);
-					Vector2d tmp = isEndEffector(mScene, coord);
-					if(tmp.x != 0){
-						System.out.println("Captured end effector.");
-						InverseKinematics ik = new InverseKinematics(mScene.skeleton);
-						ik.setEndEffector(tmp);
-						ik.updateState(coord);
-						System.out.println("End loop.");
+					//	Convert coordinates
+			        float x = (float)(2 * arg1) / (float)WIDTH - 1.0f;
+			        float y = 1.0f - (float)(2 * arg2) / (float)HEIGHT;
+			        Vector2d pos = new Vector2d(x, y);
+			        
+					//Vector2d coord = simpleConvert(arg1, arg2, WIDTH, HEIGHT);
+					//Vector2d tmp = isEndEffector(mScene, pos);
+					RigidLink2D end = getEndLink(mScene, pos);
+					if(end != null){
+						//InverseKinematics ik = new InverseKinematics(mScene.skeleton);
+						//ik.setEndEffector(tmp);
+						//ik.updateState(pos);
+						
+						//	New version using FABRIK
+						InverseKinematics2D ik2 = new InverseKinematics2D(mScene.skeleton, end, pos);
+						ik2.updateStates(pos);
 					}
 				}
 
+			}
+			private RigidLink2D getEndLink(Scene mScene, Vector2d pos) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			@Deprecated
+			private Joint2D getEndEffector(Scene scene, Vector2d pos) {
+				// TODO Auto-generated method stub
+				Joint2D res = null;
+				ArrayList<Joint2D> leafJoints = scene.skeleton.getLeafJoints();
+				for(int i = 0; i < leafJoints.size(); i++){
+					Joint2D j = leafJoints.get(i);
+					Vector2d p = leafJoints.get(i).getPos();
+					if(p.distance(pos) < 0.05){
+						res = j;
+					}
+				}
+		    	return res;
 			}
 		});
 
@@ -367,6 +395,7 @@ public class Renderer {
         glDrawArrays (GL_TRIANGLES, 0, pts.length/3);
 	}
 
+    @Deprecated
     private Vector2d simpleConvert(double x, double y, int width, int height){
     	Vector2d res = new Vector2d();
     	width /= 2;

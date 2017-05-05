@@ -1,30 +1,35 @@
 package c2g2.engine;
 
 import org.joml.Vector3f;
-
+import c2g2.engine.Mesh;
 import c2g2.kinematics3D.Skeleton3D;
 
 public class GameItem {
-	private Skeleton3D skeleton;
+
+    private final Mesh mesh;
+    
     private Vector3f position;
-    private Vector3f rotation;
+    
     private float scale;
 
+    private Vector3f rotation;
+
+    public GameItem(Mesh mesh) {
+        this.mesh = mesh;
+        position = new Vector3f(0, 0, 0);
+        scale = 1;
+        rotation = new Vector3f(0, 0, 0);
+    }
+ 
+
     public GameItem() {
+    	mesh = null;
         position = new Vector3f(0, 0, 0);
         scale = 1;
         rotation = new Vector3f(0, 0, 0);
-    }
-    
-    public GameItem(Skeleton3D skeleton) {
-    	this();
-        this.skeleton = skeleton;
-        position = new Vector3f(0, 0, 0);
-        scale = 1;
-        rotation = new Vector3f(0, 0, 0);
-    }
-    
-    public Vector3f getPosition() {
+	}
+
+	public Vector3f getPosition() {
         return position;
     }
 
@@ -51,13 +56,8 @@ public class GameItem {
         this.rotation.y = y;
         this.rotation.z = z;
     }
-
     
-    public Skeleton3D getSkeleton() {
-        return skeleton;
-    }
-    
-    public void setSkeleton(Skeleton3D skeleton){
-    	this.skeleton = skeleton;
+    public Mesh getMesh() {
+        return mesh;
     }
 }

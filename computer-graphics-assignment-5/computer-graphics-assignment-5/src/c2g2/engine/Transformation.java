@@ -2,6 +2,7 @@ package c2g2.engine;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import c2g2.engine.GameItem;
 
 public class Transformation {
 
@@ -28,13 +29,15 @@ public class Transformation {
     	Vector3f cameraPos = camera.getPosition();
     	Vector3f cameraTarget = camera.getTarget();
     	Vector3f up = camera.getUp();
+    	//student code
         viewMatrix.lookAt(cameraPos, cameraTarget, up);
         return viewMatrix;
     }
     
     public Matrix4f getModelMatrix(GameItem gameItem){
         Vector3f rotation = gameItem.getRotation();
-        Vector3f position = gameItem.getPosition();
+        //Vector3f position = gameItem.getPosition();
+    	//student code
         modelMatrix.identity().translate(gameItem.getPosition()).
                 rotateX((float)Math.toRadians(-rotation.x)).
                 rotateY((float)Math.toRadians(-rotation.y)).
@@ -47,6 +50,4 @@ public class Transformation {
         Matrix4f viewCurr = new Matrix4f(viewMatrix);
         return viewCurr.mul(getModelMatrix(gameItem));
     }
-    
-    
 }

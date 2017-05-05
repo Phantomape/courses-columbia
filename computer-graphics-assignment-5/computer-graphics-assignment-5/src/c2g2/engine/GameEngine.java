@@ -1,22 +1,29 @@
 package c2g2.engine;
 
-public class GameEngine implements Runnable{
+public class GameEngine implements Runnable {
+
     public static final int TARGET_FPS = 75;
+
     public static final int TARGET_UPS = 30;
+
     private final Window window;
+
     private final Thread gameLoopThread;
+
     private final Timer timer;
-    private final GameLogic gameLogic;
+
+    private final IGameLogic gameLogic;
+
     private final MouseInput mouseInput;
 
-    public GameEngine(String windowTitle, int width, int height, boolean vSync, GameLogic gameLogic) throws Exception {
+    public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) throws Exception {
         gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
         window = new Window(windowTitle, width, height, vSync);
         mouseInput = new MouseInput();
         this.gameLogic = gameLogic;
         timer = new Timer();
     }
-	
+
     public void start() {
         String osName = System.getProperty("os.name");
         if ( osName.contains("Mac") ) {
@@ -25,9 +32,9 @@ public class GameEngine implements Runnable{
             gameLoopThread.start();
         }
     }
-    
-	@Override
-	public void run() {
+
+    @Override
+    public void run() {
         try {
             init();
             gameLoop();
@@ -36,8 +43,8 @@ public class GameEngine implements Runnable{
         } finally {
             cleanup();
         }
-	}
-	
+    }
+
     protected void init() throws Exception {
         window.init();
         timer.init();
@@ -84,16 +91,16 @@ public class GameEngine implements Runnable{
             }
         }
     }
-    
+
     protected void input() {
         mouseInput.input(window);
         gameLogic.input(window, mouseInput);
     }
-    
+
     protected void update(float interval) {
-        gameLogic.update(interval, mouseInput);
+        gameLogic.update(window, interval, mouseInput);
     }
-    
+
     protected void render() {
         gameLogic.render(window);
         window.update();
