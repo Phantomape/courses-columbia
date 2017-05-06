@@ -2,7 +2,6 @@ package c2g2.kinematics.engine;
 
 import c2g2.engine.GameEngine;
 import c2g2.engine.IGameLogic;
-import c2g2.game.Game;
 import c2g2.game.TestGame;
 
 

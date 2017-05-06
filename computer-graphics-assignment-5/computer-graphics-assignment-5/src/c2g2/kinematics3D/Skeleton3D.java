@@ -16,13 +16,13 @@ import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.lwjgl.BufferUtils;
 
+import c2g2.engine.Material;
 import c2g2.kinematics.RigidLink2D;
 
 public class Skeleton3D {
     private int vaoId;
     private List<Integer> vboIdList = new ArrayList<Integer>();
-    private int vertexCount;
-
+    private Material material;
 	private Joint3D root = null;
 	private int numJoints = 0;
 	private ArrayList<Joint3D> joints = new ArrayList<Joint3D>(); 
@@ -40,6 +40,18 @@ public class Skeleton3D {
 		this.root = root;
 	}
 	
+	public Skeleton3D(Skeleton3D s) {
+		material = s.getMaterial();
+		root = s.getRoot();
+		joints = s.getJoints();
+		lengths = s.getLengths();
+		links = s.getLinks();
+	}
+
+	public ArrayList<Joint3D> getLinks() {
+		return links;
+	}
+
 	public void init(){
 		setIdx(root);
 		setLen(root);
@@ -81,7 +93,6 @@ public class Skeleton3D {
 
 		int len = links.size() * 3;
     	float[] pts = new float[len];
-    	
     	for(int i = 0; i < links.size(); i++){
     		pts[i * 3 + 0] = (float)links.get(i).pos.x;
     		pts[i * 3 + 1] = (float)links.get(i).pos.y;
@@ -158,4 +169,27 @@ public class Skeleton3D {
     public Joint3D getRoot(){
     	return root;
     }
+    
+    public Material getMaterial(){
+    	return material;
+    }
+    
+    public void setMaterial(Material m){
+    	material = m;
+    }
+
+	public void show() {
+		System.out.println("Skeleton:");
+		Joint3D iter = root;
+		System.out.println("(" + iter.pos.x + "," + iter.pos.y + "," + iter.pos.z + ")");
+		dfs(iter);
+	}
+	
+	private void dfs(Joint3D r){
+		for(int i = 0; i < r.child.size(); i++){
+			Joint3D j = r.child.get(i);
+			System.out.println("(" + j.pos.x + "," + j.pos.y + "," + j.pos.z + ")");
+			dfs(j);
+		}
+	}
 }

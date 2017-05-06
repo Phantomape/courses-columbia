@@ -49,7 +49,7 @@ public class GameEngine implements Runnable {
         window.init();
         timer.init();
         mouseInput.init(window);
-        gameLogic.init(window);
+        gameLogic.init(window, timer);
     }
 
     protected void gameLoop() {
@@ -74,6 +74,7 @@ public class GameEngine implements Runnable {
             if ( !window.isvSync() ) {
                 sync();
             }
+            
         }
     }
 

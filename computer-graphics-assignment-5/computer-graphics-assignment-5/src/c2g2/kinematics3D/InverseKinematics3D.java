@@ -32,12 +32,6 @@ public class InverseKinematics3D {
 		ArrayList<Vector3d> rc = getFinalPos(fc, bc, lens);
 		//	Update 
 		updateStates(rc);
-		Joint3D iter = end;
-		for(int i = 0; i < rc.size(); i++){
-			iter.pos = rc.get(i);
-			iter = iter.parent;
-		}
-		
 	}
 
 	private void updateStates(ArrayList<Vector3d> rc) {
@@ -104,5 +98,7 @@ public class InverseKinematics3D {
 		return lens;
 	}
 
- 
+	public Skeleton3D getSkeleton(){
+		return skeleton;
+	}
 }

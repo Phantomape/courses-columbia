@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import ar.com.hjg.pngj.*;
 
+import c2g2.animation.*;
 import c2g2.engine.GameItem;
 import c2g2.engine.IGameLogic;
 import c2g2.engine.MouseInput;
@@ -22,11 +23,9 @@ import c2g2.engine.Window;
 import c2g2.kinematics3D.Skeleton3D;
 import c2g2.engine.Camera;
 import c2g2.engine.DirectionalLight;
-import c2g2.engine.Material;
-import c2g2.engine.Mesh;
-import c2g2.engine.OBJLoader;
 import c2g2.engine.PointLight;
 import c2g2.engine.ShaderProgram;
+import c2g2.engine.Timer;
 import c2g2.engine.Transformation;
 
 public class DefaultRenderer {
@@ -34,6 +33,7 @@ public class DefaultRenderer {
     /**
      * Field of View in Radians
      */
+	
     private static final float FOV = (float) Math.toRadians(60.0f);
 
     private static final float Z_NEAR = 0.01f;
@@ -76,22 +76,17 @@ public class DefaultRenderer {
     }
 
     public void render(Window window, Camera camera, GameItem[] gameItems, Vector3f ambientLight,
-        PointLight pointLight, DirectionalLight directionalLight) {
+        PointLight pointLight, DirectionalLight directionalLight, AnimationClip animationClip,
+        Timer timer) {
     	
         clear();
 
         if ( window.isResized() ) {
-        	System.out.println("isresized");
-//            glViewport(0, 0, window.getWidth(), window.getHeight());
-//        	int side = window.getWidth();
-//        	if(window.getHeight()>side){
-//        		side = window.getHeight();
-//        	}
-//        	glViewport((window.getWidth()-side)/2, (window.getHeight()-side)/2, side, side);
+            glViewport(0, 0, window.getWidth(), window.getHeight());
             window.setResized(false);
         }
         glViewport(0, 0, window.getWidth(), window.getHeight());
-//        glViewport(0, 0, window.getWidth(), window.getHeight());
+
         shaderProgram.bind();
         
         // Update projection Matrix
@@ -122,27 +117,34 @@ public class DefaultRenderer {
         shaderProgram.setUniform("directionalLight", currDirLight);
         
         shaderProgram.setUniform("texture_sampler", 0);
-        // Render each gameItem
-        for(GameItem gameItem : gameItems) {
-            Mesh mesh = gameItem.getMesh();
-            Skeleton3D skeleton = mesh.getSkeleton();
-            
-            Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+        
+        if(animationClip.isRendering == true){
+        	long t = Math.round((timer.getTime() * 10));        	
+        	Skeleton3D skeleton = gameItems[0].getSkeleton();
+            Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItems[0], viewMatrix);
             shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);            
-            shaderProgram.setUniform("material", mesh.getMaterial());
-            mesh.render();
-            //Test
-            Matrix4f r = new Matrix4f();
-            //r.set(projectionMatrix);
-            r.mul(transformation.getModelMatrix(gameItem));
-            
-            float x = r.m00() * 0.1f + r.m01() * 0.1f + r.m02() * 0.2f + r.m03() * 1.0f;
-            float y = r.m10() * 0.1f + r.m11() * 0.1f + r.m12() * 0.2f + r.m13() * 1.0f;
-            float z = r.m20() * 0.1f + r.m21() * 0.1f + r.m22() * 0.2f + r.m23() * 1.0f;
-            float w = r.m30() * 0.1f + r.m31() * 0.1f + r.m32() * 0.2f + r.m33() * 1.0f;
-            skeleton.render();
+            shaderProgram.setUniform("material", skeleton.getMaterial());
+            animationClip.render(t);
+        }else{
+	        // Render each gameItem
+	        for(GameItem gameItem : gameItems) {
+	        	Skeleton3D skeleton = gameItem.getSkeleton();
+	            Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+	            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);            
+	            shaderProgram.setUniform("material", skeleton.getMaterial());
+	            skeleton.render();
+	            
+	            Matrix4f r = new Matrix4f();
+	            //r.set(projectionMatrix);
+	            r.mul(transformation.getModelMatrix(gameItem));
+	            
+	            float x = r.m00() * 0.1f + r.m01() * 0.1f + r.m02() * 0.2f + r.m03() * 1.0f;
+	            float y = r.m10() * 0.1f + r.m11() * 0.1f + r.m12() * 0.2f + r.m13() * 1.0f;
+	            float z = r.m20() * 0.1f + r.m21() * 0.1f + r.m22() * 0.2f + r.m23() * 1.0f;
+	            float w = r.m30() * 0.1f + r.m31() * 0.1f + r.m32() * 0.2f + r.m33() * 1.0f;
+	            
+	        }
         }
-
         shaderProgram.unbind();
     }
 

@@ -10,6 +10,8 @@ public class GameItem {
     
     private Vector3f position;
     
+    private Skeleton3D skeleton;
+    
     private float scale;
 
     private Vector3f rotation;
@@ -28,6 +30,15 @@ public class GameItem {
         scale = 1;
         rotation = new Vector3f(0, 0, 0);
 	}
+
+	public GameItem(Skeleton3D skeleton) {
+		this();
+		this.skeleton = skeleton;
+        position = new Vector3f(0, 0, 0);
+        scale = 1;
+        rotation = new Vector3f(0, 0, 0);
+	}
+
 
 	public Vector3f getPosition() {
         return position;
@@ -59,5 +70,9 @@ public class GameItem {
     
     public Mesh getMesh() {
         return mesh;
+    }
+    
+    public Skeleton3D getSkeleton(){
+    	return skeleton;
     }
 }

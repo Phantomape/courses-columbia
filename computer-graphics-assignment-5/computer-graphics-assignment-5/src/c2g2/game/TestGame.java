@@ -14,16 +14,19 @@ import c2g2.engine.GameItem;
 import c2g2.engine.IGameLogic;
 import c2g2.engine.MouseInput;
 import c2g2.engine.Window;
-
+import c2g2.engine.XMLLoader;
 import c2g2.kinematics3D.InverseKinematics3D;
 import c2g2.kinematics3D.Joint3D;
 import c2g2.kinematics3D.Skeleton3D;
+import c2g2.animation.AnimationClip;
+import c2g2.animation.AnimationSample;
 import c2g2.engine.Camera;
 import c2g2.engine.DirectionalLight;
 import c2g2.engine.Material;
 import c2g2.engine.Mesh;
 import c2g2.engine.OBJLoader;
 import c2g2.engine.PointLight;
+import c2g2.engine.Timer;
 
 public class TestGame implements IGameLogic{
 
@@ -48,6 +51,12 @@ public class TestGame implements IGameLogic{
     private PointLight pointLight;
 
     private DirectionalLight directionalLight;
+    
+    private AnimationClip animationClip;
+    
+    private Skeleton3D currSkeleton;
+    
+    private Timer timer;
 
     private float lightAngle;
 
@@ -61,24 +70,37 @@ public class TestGame implements IGameLogic{
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
         lightAngle = -90;
         currentObj=0;
+        animationClip = new AnimationClip();
     }
 
     @Override
-    public void init(Window window) throws Exception {
+    public void init(Window window, Timer t) throws Exception {
         renderer.init(window);
+        
+        timer = t;
+        
         float reflectance = 1f;
+        Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
+        
+        //	Mesh
+        /*
         Mesh mesh = OBJLoader.loadMesh("src/resources/models/bunny.obj");
         mesh.setSkeleton();
-        Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
-	    
-        GameItem obj = new GameItem(mesh);
-        gameItems = new GameItem[]{obj};
-
-
         mesh.setMaterial(material);
-        GameItem gameItem = new GameItem(mesh);
-        gameItem.setPosition(0.0f, 0.0f, -2.0f);
-        gameItems = new GameItem[]{gameItem};
+        GameItem meshItem = new GameItem(mesh);
+        meshItem.setPosition(0.0f, 0.0f, -2.0f);
+        gameItems = new GameItem[]{meshItem};
+        */
+        
+        
+        //	Skeleton
+        Skeleton3D skeleton = XMLLoader.loadXML("src/resources/models/object.xml");
+	    skeleton.init();
+        skeleton.setMaterial(material);
+        GameItem skeletonItem = new GameItem(skeleton);
+        skeletonItem.setPosition(0.0f, 0.0f, -2.0f);
+        gameItems = new GameItem[]{skeletonItem};
+        currSkeleton = skeleton;
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
         Vector3f lightColour = new Vector3f(1, 1, 1);
@@ -196,11 +218,26 @@ public class TestGame implements IGameLogic{
     		//get screenshot
     		renderer.writePNG(window);
     	}
+    	else if(window.isKeyPressed(GLFW_KEY_B)){
+    		currSkeleton.show();
+    		animationClip.samples.add(new AnimationSample(currSkeleton.getLinks(), timer.getTime()));
+	        animationClip.numPoints = currSkeleton.getLinks().size();
+    		try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    	}
     	else if(window.isKeyPressed(GLFW_KEY_N)){
-
+    		if(animationClip.samples.size() != 0){
+	    		animationClip.isRendering = true;
+	    		animationClip.init();
+    		}else{
+    			System.out.println("AnimationClip empty, press M to resume");
+    		}
     	}
     	else if(window.isKeyPressed(GLFW_KEY_M)){
-
+    		animationClip.isRendering = false;
     	}
     }
 
@@ -218,14 +255,13 @@ public class TestGame implements IGameLogic{
         }
 		
         if (mouseInput.isRightButtonPressed()) {
-        	System.out.println("Right mouse clicked");
-        	Vector2d pos = mouseInput.getCurrentPos();
+        	//Vector2d pos = mouseInput.getCurrentPos();
         	Vector3d xyz = mouseInput.get3DCoord(window, renderer, camera, gameItems[0]);
-        	System.out.println("Pos in 2D:(" + pos.x + "," + pos.y + ")");
-        	System.out.println("Pos in 3D:(" + xyz.x * 2 + "," + xyz.y * 2 + "," + xyz.z + ")");
+        	//System.out.println("Pos in 2D:(" + pos.x + "," + pos.y + ")");
+        	//System.out.println("Pos in 3D:(" + xyz.x * 2 + "," + xyz.y * 2 + "," + xyz.z + ")");
         	xyz.x *= 2;
         	xyz.y *= 2;
-        	Skeleton3D s = gameItems[0].getMesh().getSkeleton();
+        	Skeleton3D s = gameItems[0].getSkeleton();
         	ArrayList<Joint3D> js = s.getJoints();
         	Joint3D end = null;
         	double dist = 100000;
@@ -243,6 +279,7 @@ public class TestGame implements IGameLogic{
 
         	InverseKinematics3D ik = new InverseKinematics3D(s, end, xyz);
         	ik.updateStates();
+        	currSkeleton = ik.getSkeleton();
         	
         }
 
@@ -272,7 +309,7 @@ public class TestGame implements IGameLogic{
 
     @Override
     public void render(Window window) {
-        renderer.render(window, camera, gameItems, ambientLight, pointLight, directionalLight);
+        renderer.render(window, camera, gameItems, ambientLight, pointLight, directionalLight, animationClip, timer);
     }
 
     @Override
