@@ -15,6 +15,8 @@ import c2g2.engine.IGameLogic;
 import c2g2.engine.MouseInput;
 import c2g2.engine.Window;
 import c2g2.engine.XMLLoader;
+import c2g2.kinematics.ForwardKinematics;
+import c2g2.kinematics3D.ForwardKinematics3D;
 import c2g2.kinematics3D.InverseKinematics3D;
 import c2g2.kinematics3D.Joint3D;
 import c2g2.kinematics3D.Skeleton3D;
@@ -218,6 +220,42 @@ public class TestGame implements IGameLogic{
     		//get screenshot
     		renderer.writePNG(window);
     	}
+    	else if(window.isKeyPressed(GLFW_KEY_C)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectJoint(1);
+    		fk.updateStates(0.0, 1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_V)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectJoint(2);
+    		fk.updateStates(0.0, 1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_X)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectJoint(1);
+    		fk.updateStates(0.0, -1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_Z)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectJoint(2);
+    		fk.updateStates(0.0, -1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_J)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectJoint(1);
+    		fk.updateStates(10.0, 0.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_K)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectJoint(1);
+    		fk.updateStates(-1.0, 0.0);
+    	}
     	else if(window.isKeyPressed(GLFW_KEY_B)){
     		currSkeleton.show();
     		animationClip.samples.add(new AnimationSample(currSkeleton.getLinks(), timer.getTime()));
@@ -261,7 +299,8 @@ public class TestGame implements IGameLogic{
         	//System.out.println("Pos in 3D:(" + xyz.x * 2 + "," + xyz.y * 2 + "," + xyz.z + ")");
         	xyz.x *= 2;
         	xyz.y *= 2;
-        	Skeleton3D s = gameItems[0].getSkeleton();
+        	//Skeleton3D s = gameItems[0].getSkeleton();
+        	Skeleton3D s = currSkeleton;
         	ArrayList<Joint3D> js = s.getJoints();
         	Joint3D end = null;
         	double dist = 100000;

@@ -20,8 +20,6 @@ public class ForwardKinematics {
 		if ( ske == null ) throw new NullPointerException("The provided skeleton is NULL");
 
 		skeleton = ske;
-		// Here you need to create a map that maps parameter array (see updateState(double[]) below)
-		// to individual rotational angles of all the joints on the skeleton
 	}
 	
 	public void updateState(double[] params) {

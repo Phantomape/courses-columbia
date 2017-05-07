@@ -14,6 +14,7 @@ public class RigidLink2D {
 	 */
 	private double length = 0.1;
 	
+	public double theta = 0.0;
 	/*
 	 * The connection to the parent link 
 	 * If the link is a root link, its parent LinkConnection2D must 

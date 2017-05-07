@@ -1,7 +1,6 @@
 package c2g2.kinematics3D;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -12,17 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.lwjgl.BufferUtils;
 
 import c2g2.engine.Material;
-import c2g2.kinematics.RigidLink2D;
 
 public class Skeleton3D {
     private int vaoId;
     private List<Integer> vboIdList = new ArrayList<Integer>();
     private Material material;
+    
 	private Joint3D root = null;
 	private int numJoints = 0;
 	private ArrayList<Joint3D> joints = new ArrayList<Joint3D>(); 
@@ -124,36 +122,6 @@ public class Skeleton3D {
     	
 	}
 	
-	@Deprecated
-	private void testRender(){
-    	
-    	glUniform4f(0, 0.5f,0f,0f,1.0f);
-    	
-    	FloatBuffer vertices = BufferUtils.createFloatBuffer(positions.length);
-        vertices.put(positions);
-        // Rewind the vertices
-        vertices.rewind();
-       
-        int vbo = glGenBuffers();
-        int vao = glGenVertexArrays();
-
-        glBindBuffer (GL_ARRAY_BUFFER, vbo);
-        glBufferData (GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        
-        glBindVertexArray(vao);
-
-        glEnableVertexAttribArray (0);
-        glBindBuffer (GL_ARRAY_BUFFER, vbo);
-        glVertexAttribPointer (0, 3, GL_FLOAT, false, 0, 0);
-
-        // wipe the drawing surface clear
-        glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBindVertexArray (vao);
-        // draw points 0-3 from the currently bound VAO with current in-use shader
-        //glDrawArrays (GL_TRIANGLES, 0, positions.length/3);
-        glDrawArrays (GL_LINE_STRIP, 0, positions.length/3);
-	}
-	
     public int getVaoId() {
         return vaoId;
     }
@@ -188,7 +156,7 @@ public class Skeleton3D {
 	private void dfs(Joint3D r){
 		for(int i = 0; i < r.child.size(); i++){
 			Joint3D j = r.child.get(i);
-			System.out.println("(" + j.pos.x + "," + j.pos.y + "," + j.pos.z + ")");
+			System.out.println("Joint: " + j.idx + ",(" + j.pos.x + "," + j.pos.y + "," + j.pos.z + ")");
 			dfs(j);
 		}
 	}

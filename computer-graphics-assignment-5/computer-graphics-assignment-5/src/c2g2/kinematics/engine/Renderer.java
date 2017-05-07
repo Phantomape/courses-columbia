@@ -27,6 +27,7 @@ import c2g2.kinematics.ForwardKinematics;
 import c2g2.kinematics.InverseKinematics;
 import c2g2.kinematics.Joint2D;
 import c2g2.kinematics.RigidLink2D;
+import c2g2.kinematics3D.ForwardKinematics2D;
 import c2g2.kinematics3D.InverseKinematics2D;
 
 
@@ -106,7 +107,52 @@ public class Renderer {
                     glfwSetWindowShouldClose(window, true); // We will detect this in our rendering loop
                 }
                 else if (key == GLFW_KEY_A) {
-					System.out.println("A pressed.");
+					ForwardKinematics2D fk = new ForwardKinematics2D(mScene.skeleton);
+					fk.init();
+					fk.selectLink(1);
+					fk.updateStates(1.0);
+				}
+                else if (key == GLFW_KEY_S) {
+					ForwardKinematics2D fk = new ForwardKinematics2D(mScene.skeleton);
+					fk.init();
+					fk.selectLink(2);
+					fk.updateStates(1.0);
+				}
+                else if (key == GLFW_KEY_D) {
+					ForwardKinematics2D fk = new ForwardKinematics2D(mScene.skeleton);
+					fk.init();
+					fk.selectLink(3);
+					fk.updateStates(1.0);
+				}
+                else if (key == GLFW_KEY_F) {
+					ForwardKinematics2D fk = new ForwardKinematics2D(mScene.skeleton);
+					fk.init();
+					fk.selectLink(4);
+					fk.updateStates(1.0);
+				}
+                else if (key == GLFW_KEY_Z) {
+					ForwardKinematics2D fk = new ForwardKinematics2D(mScene.skeleton);
+					fk.init();
+					fk.selectLink(1);
+					fk.updateStates(-1.0);
+				}
+                else if (key == GLFW_KEY_X) {
+					ForwardKinematics2D fk = new ForwardKinematics2D(mScene.skeleton);
+					fk.init();
+					fk.selectLink(2);
+					fk.updateStates(-1.0);
+				}
+                else if (key == GLFW_KEY_C) {
+					ForwardKinematics2D fk = new ForwardKinematics2D(mScene.skeleton);
+					fk.init();
+					fk.selectLink(3);
+					fk.updateStates(-1.0);
+				}
+                else if (key == GLFW_KEY_V) {
+					ForwardKinematics2D fk = new ForwardKinematics2D(mScene.skeleton);
+					fk.init();
+					fk.selectLink(4);
+					fk.updateStates(-1.0);
 				}
                 else if(key == GLFW_KEY_I){
 					System.out.println("Increase rotational angle by 1 degree.");

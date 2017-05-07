@@ -29,5 +29,9 @@ public abstract class Joint2D {
 		return false;
 	}
 	
+	public void showPos(){
+		System.out.println("Position:(" + position.x + "," + position.y + ")");
+	}
+	
 	public abstract void setParam(double p);
 }
