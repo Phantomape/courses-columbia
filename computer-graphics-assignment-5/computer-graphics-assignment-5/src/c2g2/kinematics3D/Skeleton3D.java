@@ -87,8 +87,6 @@ public class Skeleton3D {
 	}
 	
 	public void render() {
-		//testRender();
-
 		int len = links.size() * 3;
     	float[] pts = new float[len];
     	for(int i = 0; i < links.size(); i++){
@@ -98,7 +96,6 @@ public class Skeleton3D {
     	}
 		
     	glUniform4f(0, 0.5f,0f,0f,1.0f);
-    	
 
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
@@ -149,8 +146,15 @@ public class Skeleton3D {
 	public void show() {
 		System.out.println("Skeleton:");
 		Joint3D iter = root;
-		System.out.println("(" + iter.pos.x + "," + iter.pos.y + "," + iter.pos.z + ")");
+		System.out.println("Joint:" + root.idx + ",(" + iter.pos.x + "," + iter.pos.y + "," + iter.pos.z + ")");
 		dfs(iter);
+	}
+	
+	public void showLinks(){
+		System.out.println("Links");
+		for(int i = 0; i < links.size(); i += 2){
+			System.out.println(links.get(i).idx + "-" + links.get(i + 1).idx);
+		}
 	}
 	
 	private void dfs(Joint3D r){

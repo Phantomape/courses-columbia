@@ -135,18 +135,10 @@ public class MouseInput {
         Matrix4f invModelMatrix = new Matrix4f();
         invModelMatrix.set(modelMatrix);
         invModelMatrix.invert();
-        tmpVec.mul(invModelMatrix);
+        //tmpVec.mul(invModelMatrix);
         
         
         Vector3d res = new Vector3d(tmpVec.x, tmpVec.y, tmpVec.z);
-        
-        Vector4f k = new Vector4f(0.1f, 0.1f, 0.2f, 1.0f);
-        k.mul(modelMatrix);
-        k.mul(viewMatrix);
-        k.mul(projectionMatrix);
-        k.mul(invProjectionMatrix);
-        k.mul(invViewMatrix);
-        k.mul(invModelMatrix);
         
 		return res;
     	

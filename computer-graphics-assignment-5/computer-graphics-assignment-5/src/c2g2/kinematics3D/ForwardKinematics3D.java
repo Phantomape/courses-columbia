@@ -10,40 +10,48 @@ public class ForwardKinematics3D {
 	
 	private Joint3D currJoint;
 	
+	private Joint3D prevJoint;
+	
 	public ForwardKinematics3D(Skeleton3D skeleton) {
 		if ( skeleton == null ) 
 			throw new NullPointerException("The provided skeleton is NULL");
 		this.skeleton = skeleton;
 	}
 
-	public void selectJoint(int idx) {
+	public void selectChildJoint(int idx) {
 		ArrayList<Joint3D> joints = skeleton.getJoints();
 		for(int i = 0; i < joints.size(); i++)
 			if(joints.get(i).idx == idx)
 				currJoint = joints.get(i);
 	}
-
-	public void updateStates(double deltaTheta, double deltaPhi) {
-		updateStatesRecursive(currJoint, deltaTheta, deltaPhi);
+	
+	public void selectParentJoint(int idx) {
+		ArrayList<Joint3D> joints = skeleton.getJoints();
+		for(int i = 0; i < joints.size(); i++)
+			if(joints.get(i).idx == idx)
+				prevJoint = joints.get(i);
 	}
 
-	private void updateStatesRecursive(Joint3D prevJoint, double deltaTheta, double deltaPhi) {
-		for(int i = 0; i < prevJoint.child.size(); i++){
-			Joint3D currJoint = prevJoint.child.get(i);
-			System.out.println("Previous angles: " + currJoint.theta + " , " + currJoint.phi);
-			currJoint.theta += Math.toRadians(deltaTheta);
-			currJoint.phi += Math.toRadians(deltaPhi);
-			System.out.println("Current angles: " + currJoint.theta + " , " + currJoint.phi);
-			System.out.println("Previous ");
-			currJoint.showPos();
-			double r = skeleton.getLengths().get(new String(prevJoint.idx + "-" + currJoint.idx));
-			currJoint.pos = new Vector3d(prevJoint.pos.x + r * Math.sin(currJoint.theta) * Math.cos(currJoint.phi), 
-					prevJoint.pos.y + r * Math.sin(currJoint.theta) * Math.sin(currJoint.phi),
-					prevJoint.pos.z + r * Math.cos(currJoint.theta));
-			System.out.println("Current ");
-			currJoint.showPos();
-			updateStatesRecursive(currJoint, deltaTheta, deltaPhi);
-		}
+	public void updateStates(double deltaTheta, double deltaPhi) {
+		updateStatesRecursive(prevJoint, currJoint, deltaTheta, deltaPhi);
+	}
+
+	private void updateStatesRecursive(Joint3D prevJoint, Joint3D currJoint, double deltaTheta, double deltaPhi) {
+		System.out.println("Previous angles: " + currJoint.theta + " , " + currJoint.phi);
+		currJoint.theta += Math.toRadians(deltaTheta);
+		currJoint.phi += Math.toRadians(deltaPhi);
+		System.out.println("Current angles: " + currJoint.theta + " , " + currJoint.phi);
+		System.out.println("Previous ");
+		currJoint.showPos();
+		double r = skeleton.getLengths().get(new String(prevJoint.idx + "-" + currJoint.idx));
+		currJoint.pos = new Vector3d(prevJoint.pos.x + r * Math.sin(currJoint.theta) * Math.cos(currJoint.phi), 
+				prevJoint.pos.y + r * Math.sin(currJoint.theta) * Math.sin(currJoint.phi),
+				prevJoint.pos.z + r * Math.cos(currJoint.theta));
+		System.out.println("Current ");
+		currJoint.showPos();
+		for(int i = 0; i < currJoint.child.size(); i++)
+			updateStatesRecursive(currJoint, currJoint.child.get(i), deltaTheta, deltaPhi);
+		
 	}
 
 	public void init() {

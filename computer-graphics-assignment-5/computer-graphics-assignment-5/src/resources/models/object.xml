@@ -4,6 +4,10 @@
         <joint1 x="0.1" y="-0.1" z="0.3">
             <joint2 x="-0.3" y="-0.6" z="0.5">
                 <joint3 x="0.5" y="-0.7" z="0.7">
+                    <joint4 x="0.6" y="-0.9" z="0.3">
+                        <joint5 x="0.1" y="-0.4" z="0.2">
+                        </joint5>
+                    </joint4>
                 </joint3>
             </joint2>
         </joint1>

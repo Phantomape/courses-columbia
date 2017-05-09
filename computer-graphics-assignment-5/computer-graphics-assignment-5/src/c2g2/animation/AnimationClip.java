@@ -21,7 +21,7 @@ public class AnimationClip {
 	
 	public boolean isLooping;
 	
-	public double stride = 0.05;
+	public double stride = 0.02;
 	
 	public ArrayList<AnimationSample> samples;
 	
@@ -42,13 +42,18 @@ public class AnimationClip {
 		buf = new float[(int) (1.0/stride) + 1][numPoints * 3];
 		
 		for(int idx = 0; idx < numPoints; idx++){
+			System.out.println("Idx of Joint to be interpolated: " + idx);
 			ArrayList<Vector3d> keyPoints = new ArrayList<Vector3d>();
 			for(int j = 0; j < samples.size(); j++){
 				keyPoints.add(samples.get(j).getPoints(idx));
 			}
+			for(int j = 0; j < keyPoints.size(); j++){
+				System.out.println("time " + j + "(" + keyPoints.get(j).x + "," + keyPoints.get(j).y + "," + keyPoints.get(j).z + ")");
+			}
 			interpolate(keyPoints, idx);
 			
 			//	Test
+			/*
 			System.out.println("buf:");
 			for(int i = 0; i < buf.length; i++){
 				int j = idx;
@@ -56,6 +61,7 @@ public class AnimationClip {
 				System.out.println();
 			}
 			System.out.println();
+			*/
 		}
 		
 
@@ -91,7 +97,7 @@ public class AnimationClip {
         
         glEnableVertexAttribArray(0);
 
-        glDrawArrays (GL_LINE_STRIP, 0, pts.length/3);       
+        glDrawArrays (GL_LINES, 0, pts.length/3);       
 	}
 	
 	private double getComb(double n, double i){

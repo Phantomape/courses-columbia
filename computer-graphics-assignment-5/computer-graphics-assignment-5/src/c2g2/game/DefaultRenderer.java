@@ -134,15 +134,6 @@ public class DefaultRenderer {
 	            shaderProgram.setUniform("material", skeleton.getMaterial());
 	            skeleton.render();
 	            
-	            Matrix4f r = new Matrix4f();
-	            //r.set(projectionMatrix);
-	            r.mul(transformation.getModelMatrix(gameItem));
-	            
-	            float x = r.m00() * 0.1f + r.m01() * 0.1f + r.m02() * 0.2f + r.m03() * 1.0f;
-	            float y = r.m10() * 0.1f + r.m11() * 0.1f + r.m12() * 0.2f + r.m13() * 1.0f;
-	            float z = r.m20() * 0.1f + r.m21() * 0.1f + r.m22() * 0.2f + r.m23() * 1.0f;
-	            float w = r.m30() * 0.1f + r.m31() * 0.1f + r.m32() * 0.2f + r.m33() * 1.0f;
-	            
 	        }
         }
         shaderProgram.unbind();

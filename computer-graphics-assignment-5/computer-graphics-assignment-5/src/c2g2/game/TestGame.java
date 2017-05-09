@@ -97,11 +97,32 @@ public class TestGame implements IGameLogic{
         
         //	Skeleton
         Skeleton3D skeleton = XMLLoader.loadXML("src/resources/models/object.xml");
+        //Skeleton3D skeleton = XMLLoader.loadXML("src/resources/models/object.xml");
 	    skeleton.init();
         skeleton.setMaterial(material);
         GameItem skeletonItem = new GameItem(skeleton);
         skeletonItem.setPosition(0.0f, 0.0f, -2.0f);
-        gameItems = new GameItem[]{skeletonItem};
+        
+        Skeleton3D xaxis = XMLLoader.loadXML("src/resources/models/x.xml");
+        xaxis.init();
+        xaxis.setMaterial(new Material(new Vector3f(0.0f, 0.0f, 1.0f), reflectance));
+        GameItem x_Axis = new GameItem(xaxis);
+        x_Axis.setPosition(0.0f, 0.0f, -2.0f);
+        
+        Skeleton3D yaxis = XMLLoader.loadXML("src/resources/models/y.xml");
+        yaxis.init();
+        yaxis.setMaterial(new Material(new Vector3f(0.0f, 1.0f, 0.0f), reflectance));
+        GameItem y_Axis = new GameItem(yaxis);
+        y_Axis.setPosition(0.0f, 0.0f, -2.0f);
+        
+        Skeleton3D zaxis = XMLLoader.loadXML("src/resources/models/z.xml");
+        zaxis.init();
+        zaxis.setMaterial(new Material(new Vector3f(1.0f, 0.0f, 0.0f), reflectance));
+        GameItem z_Axis = new GameItem(zaxis);
+        z_Axis.setPosition(0.0f, 0.0f, -2.0f);
+        
+        
+        gameItems = new GameItem[]{skeletonItem, x_Axis, y_Axis, z_Axis};
         currSkeleton = skeleton;
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
@@ -120,143 +141,129 @@ public class TestGame implements IGameLogic{
     @Override
     public void input(Window window, MouseInput mouseInput) {
 
-    	if(window.isKeyPressed(GLFW_KEY_Q)){
-    		//select current object
-    		currentObj = currentObj + 1;
-    		currentObj = currentObj % gameItems.length;
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_W)){
-    		//select current object
-    		currentObj = currentObj - 1;
-    		currentObj = currentObj % gameItems.length;
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_E)){
-    		//scale object
-    		float curr = gameItems[currentObj].getScale();
-    		gameItems[currentObj].setScale(curr+SCALE_STEP);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_R)){
-    		//scale object
-    		float curr = gameItems[currentObj].getScale();
-    		gameItems[currentObj].setScale(curr-SCALE_STEP);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_T)){
-    		//move object x by step
-    		Vector3f curr = gameItems[currentObj].getPosition();
-    		gameItems[currentObj].setPosition(curr.x+TRANSLATE_STEP, curr.y, curr.z);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_Y)){
-    		//move object x by step
-    		Vector3f curr = gameItems[currentObj].getPosition();
-    		gameItems[currentObj].setPosition(curr.x-TRANSLATE_STEP, curr.y, curr.z);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_U)){
-    		//move object y by step
-    		Vector3f curr = gameItems[currentObj].getPosition();
-    		gameItems[currentObj].setPosition(curr.x, curr.y+TRANSLATE_STEP, curr.z);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_I)){
-    		//move object y by step
-    		Vector3f curr = gameItems[currentObj].getPosition();
-    		gameItems[currentObj].setPosition(curr.x, curr.y-TRANSLATE_STEP, curr.z);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_O)){
-    		//move object z by step
-    		Vector3f curr = gameItems[currentObj].getPosition();
-    		gameItems[currentObj].setPosition(curr.x, curr.y, curr.z+TRANSLATE_STEP);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_P)){
-    		//move object z by step
-    		Vector3f curr = gameItems[currentObj].getPosition();
-    		gameItems[currentObj].setPosition(curr.x, curr.y, curr.z-TRANSLATE_STEP);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_A)){
-    		//rotate object at x axis
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x+ROTATION_STEP, curr.y, curr.z);
+    	if(window.isKeyPressed(GLFW_KEY_A)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(0);
+    		fk.selectChildJoint(1);
+    		fk.updateStates(0.0, 1.0);
+    		currSkeleton.showLinks();
+    		System.out.println();
     	}
     	else if(window.isKeyPressed(GLFW_KEY_S)){
-    		//rotate object at x axis
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x-ROTATION_STEP, curr.y, curr.z);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_D)){
-    		//rotate object at x axis
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x, curr.y+ROTATION_STEP, curr.z);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_F)){
-    		//rotate object at x axis
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x, curr.y-ROTATION_STEP, curr.z);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_G)){
-    		//rotate object at x axis
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x, curr.y, curr.z+ROTATION_STEP);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_H)){
-    		//rotate object at x axis
-    		Vector3f curr = gameItems[currentObj].getRotation();
-    		gameItems[currentObj].setRotation(curr.x, curr.y, curr.z-ROTATION_STEP);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_0)){
-    		//rotation by manipulating mesh
-    		gameItems[currentObj].getMesh().translateMesh(new Vector3f(0f,0.05f,1f));
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_9)){
-    		//rotation by manipulating mesh
-    		gameItems[currentObj].getMesh().rotateMesh(new Vector3f(1,1,1), 30);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_8)){
-    		//rotation by manipulating mesh
-    		gameItems[currentObj].getMesh().scaleMesh(1.001f,1.0f,1.0f);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_7)){
-    		//rotation by manipulating mesh
-    		gameItems[currentObj].getMesh().reflectMesh(new Vector3f(0f,1f,0f), new Vector3f(0f, 1f, 0f));
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_1)){
-    		//get screenshot
-    		renderer.writePNG(window);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_C)){
     		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
     		fk.init();
-    		fk.selectJoint(1);
+    		fk.selectParentJoint(0);
+    		fk.selectChildJoint(2);
     		fk.updateStates(0.0, 1.0);
     	}
-    	else if(window.isKeyPressed(GLFW_KEY_V)){
+    	else if(window.isKeyPressed(GLFW_KEY_D)){
     		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
     		fk.init();
-    		fk.selectJoint(2);
+    		fk.selectParentJoint(2);
+    		fk.selectChildJoint(3);
+    		fk.updateStates(0.0, 1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_F)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(3);
+    		fk.selectChildJoint(4);
+    		fk.updateStates(0.0, 1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_G)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(2);
+    		fk.selectChildJoint(5);
+    		fk.updateStates(0.0, 1.0);
+    	}    	
+    	else if(window.isKeyPressed(GLFW_KEY_H)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(5);
+    		fk.selectChildJoint(6);
+    		fk.updateStates(0.0, 1.0);
+    	}    	
+    	else if(window.isKeyPressed(GLFW_KEY_J)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(2);
+    		fk.selectChildJoint(7);
+    		fk.updateStates(0.0, 1.0);
+    	}    	
+    	else if(window.isKeyPressed(GLFW_KEY_K)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(7);
+    		fk.selectChildJoint(8);
+    		fk.updateStates(0.0, 1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_L)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(8);
+    		fk.selectChildJoint(9);
+    		fk.updateStates(0.0, 1.0);
+    	}    	
+    	else if(window.isKeyPressed(GLFW_KEY_Q)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(7);
+    		fk.selectChildJoint(10);
+    		fk.updateStates(0.0, 1.0);
+    	}    	
+    	else if(window.isKeyPressed(GLFW_KEY_W)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(10);
+    		fk.selectChildJoint(11);
+    		fk.updateStates(0.0, 1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_E)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(0);
+    		fk.selectChildJoint(1);
+    		fk.updateStates(0.0, 1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_R)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(0);
+    		fk.selectChildJoint(1);
+    		fk.updateStates(1.0, 0.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_T)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(1);
+    		fk.selectChildJoint(2);
+    		fk.updateStates(1.0, 0.0);
+    	}  
+    	else if(window.isKeyPressed(GLFW_KEY_Y)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(1);
+    		fk.selectChildJoint(2);
+    		fk.updateStates(0.0, 1.0);
+    	}
+    	else if(window.isKeyPressed(GLFW_KEY_Z)){
+    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
+    		fk.init();
+    		fk.selectParentJoint(2);
+    		fk.selectChildJoint(3);
     		fk.updateStates(0.0, 1.0);
     	}
     	else if(window.isKeyPressed(GLFW_KEY_X)){
     		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
     		fk.init();
-    		fk.selectJoint(1);
-    		fk.updateStates(0.0, -1.0);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_Z)){
-    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
-    		fk.init();
-    		fk.selectJoint(2);
-    		fk.updateStates(0.0, -1.0);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_J)){
-    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
-    		fk.init();
-    		fk.selectJoint(1);
-    		fk.updateStates(10.0, 0.0);
-    	}
-    	else if(window.isKeyPressed(GLFW_KEY_K)){
-    		ForwardKinematics3D fk = new ForwardKinematics3D(currSkeleton);
-    		fk.init();
-    		fk.selectJoint(1);
-    		fk.updateStates(-1.0, 0.0);
+    		fk.selectParentJoint(2);
+    		fk.selectChildJoint(3);
+    		fk.updateStates(1.0, 0.0);
     	}
     	else if(window.isKeyPressed(GLFW_KEY_B)){
+    		//	Select key frames
     		currSkeleton.show();
     		animationClip.samples.add(new AnimationSample(currSkeleton.getLinks(), timer.getTime()));
 	        animationClip.numPoints = currSkeleton.getLinks().size();
@@ -267,6 +274,7 @@ public class TestGame implements IGameLogic{
 			}
     	}
     	else if(window.isKeyPressed(GLFW_KEY_N)){
+    		//	Start rendering animation
     		if(animationClip.samples.size() != 0){
 	    		animationClip.isRendering = true;
 	    		animationClip.init();
@@ -275,6 +283,7 @@ public class TestGame implements IGameLogic{
     		}
     	}
     	else if(window.isKeyPressed(GLFW_KEY_M)){
+    		//	Resume selecting key frames
     		animationClip.isRendering = false;
     	}
     }
@@ -288,8 +297,10 @@ public class TestGame implements IGameLogic{
         if (mouseInput.isLeftButtonPressed()) {
             Vector2f rotVec = mouseInput.getDisplVec();
             System.out.println(rotVec);
-            Vector3f curr = gameItems[0].getRotation();
-            gameItems[0].setRotation(curr.x+ rotVec.x * MOUSE_SENSITIVITY, curr.y+rotVec.y * MOUSE_SENSITIVITY, 0);
+            for(GameItem gameItem : gameItems){
+            	Vector3f curr = gameItem.getRotation();
+            	gameItem.setRotation(curr.x+ rotVec.x * MOUSE_SENSITIVITY, curr.y+rotVec.y * MOUSE_SENSITIVITY, 0);
+            }
         }
 		
         if (mouseInput.isRightButtonPressed()) {
@@ -297,8 +308,8 @@ public class TestGame implements IGameLogic{
         	Vector3d xyz = mouseInput.get3DCoord(window, renderer, camera, gameItems[0]);
         	//System.out.println("Pos in 2D:(" + pos.x + "," + pos.y + ")");
         	//System.out.println("Pos in 3D:(" + xyz.x * 2 + "," + xyz.y * 2 + "," + xyz.z + ")");
-        	xyz.x *= 2;
-        	xyz.y *= 2;
+        	//xyz.x *= 2;
+        	//xyz.y *= 2;
         	//Skeleton3D s = gameItems[0].getSkeleton();
         	Skeleton3D s = currSkeleton;
         	ArrayList<Joint3D> js = s.getJoints();
