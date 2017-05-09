@@ -19,6 +19,7 @@ class Gender_recognizer(QtCore.QThread):
             img = []
             cord = []
             for k, face in face_info[0].items():
+                print 'I was here'
                 face_norm = face[2].astype(float)
                 img.append(face_norm)
                 cord.append(face[0][0:2])

@@ -38,6 +38,7 @@ print label
 
 #   Read images
 test_person = cv2.imread('../data/Al_Pacino.jpg')
+cv2.imshow("Original Image", test_person)
 test_data = [test_person]
 prob, pred, feature = net.classify(test_data, layer_name='fc7')
 dist = sklearn.metrics.pairwise.cosine_similarity(feature, db)

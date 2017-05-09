@@ -72,7 +72,7 @@ for img in img_seq:
         dist = sklearn.metrics.pairwise.cosine_similarity(feature, db)
         pred = np.argmax(dist, 1)
         dist = np.max(dist, 1)
-        threshold = 0.8
+        threshold = 0.9
         if dist > threshold:
             pred = pred + 1
         else:
