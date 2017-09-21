@@ -1,27 +1,36 @@
-import time
-import random
 from gopigo import *
+import time
 
-distance = [5, 30, 60]
-min_distance = 3
+min_dist = 3
+dist = [5, 30, 40]
 
 def autonomy():
+    prevLoc = 0
+    currLoc = 0
+    initLoc = us_dist(15)
     while True:
-        servo(90)
-        time.sleep(1)
-        dist = us_dist(15)
-        if dist > min_distance:
-            print 'Forward is good!!!!!!'
-            fwd()
-            time.sleep(1)
-            for d in distance:
-                if dist == d:
-                    print 'Current distance:' + dist
-                    stop()
-        else:
+        currLoc = us_dist(15)
+        while currLoc > initLoc:
+            currLoc = us_dist(15)
+        print currLoc
+
+        if currLoc == 3:
             stop()
+            return
+
+        for t in dist:
+            if prevLoc > t and currLoc <= t:
+                stop()
+                time.sleep(5)
+
+        fwd()
+        stop()
+
+        prevLoc = currLoc
 
 
 stop()
 enable_servo()
+servo(90)
 autonomy()
+
