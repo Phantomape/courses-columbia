@@ -1,13 +1,18 @@
-# COMS4733-Robotics
+This is a Lab 1 submission for group 22
 
-##  Guideline
-* Work on your own branch. For each feature or bug fix, it should create a branch before submitting a patch or pull request. Any request to master or develop will be rejected in the future.
-* Branch should follow a naming rule. It should be named as feature/YOUR_FEATURE_NAME or bugfix/YOUR_BUG_NAME.
-* Always base on latest develop branch. Use "git pull --rebase" to rewind your changes on top of develop.
-* Amend your commit. Prefer merge all your commits into one for one feature or bug fix. (git reset --soft "HEAD^", git commit --amend)
+Team Members: Ziyi Mu zm2263, Xucheng Chen , Benjamin Carlin
 
-##  Copy files to gopigo
-Since gopigo won't be connecting to the network, we can use scp protocl to transfer files on to it. The following example will transfer the whole tmp directory to the gopigo
-```
-scp -r tmp/ pi@192.168.10.105:/home/pi/COMS4733/
-```
+Question 1: Done. 
+
+Question 2: Code implementation is found in dancing.py.
+
+Question 3: Code implementation is found in sensor_accuracy.py. 
+5cm test: 5cm
+10cm test: 10-11cm
+30cm test: 36-37cm
+60cm test: 76-77cm
+
+Question 4: Code implementation is found in beam_width.py. 
+
+
+Question 5: Code implementation is found in locate_object.py

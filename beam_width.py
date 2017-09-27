@@ -29,4 +29,3 @@ if len(change) < 2:
     print 'unsuccessful attempt'
 else:
     print 'beam width: ' + str(change[1] - change[0])
-
