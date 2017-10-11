@@ -1,90 +1,187 @@
-robot_size
-cell_size
-grid_size
-map
-current_pos
-goal
-speed
-rot_time_per_90_degrees
-travel_time_per_cell
+from gopigo import *
+import time
 
-def main():
+# Bug 2 Algorithm based on lecture notes
 
-	initialize_enviroment()
-	next_cell = get_next_cell()
-	while(next_cell != 1):
+CELL_SIZE = 10
+GRID_SIZE = 10
+CUR_X = 0
+CUR_Y = 0
+GOAL_X = 0
+GOAL_Y = 5
+ANGLE = 0
+MAP = []
 
-		next_cell = follow_m_line()
-		if(next_cell == -2)
+''' Utility '''
 
-			return
-		next_cell = trace_object()
-		if(next_cell == -2)
+DPR = 360.0/64
+INF = 200
+LIMIT = 100
+WHEEL_RAD = 3.25
+ERROR = 1.3
 
-			return
+def left_deg(deg=None):
+    if deg is not None:
+        pulse = int(deg/DPR)
+        if pulse == 0:
+            pulse = 1
+        enc_tgt(0, 1, pulse)
+    left()
+
+def right_deg(deg=None):
+    if deg is not None:
+        pulse = int(deg/DPR)
+        if pulse == 0:
+            pulse = 1
+        enc_tgt(0, 1, pulse)
+    right()
+
+def fwd_cm(dist=None):
+    if dist is not None:
+	pulse = int(cm2pulse(dist))
+	enc_tgt(1,1,pulse)
+    fwd()
+
+def cm2pulse(dist):
+    wheel_circ = 2*math.pi*WHEEL_RAD
+    revs = dist/wheel_circ
+    PPR = 18
+    pulses = PPR*revs
+    return pulses
+
+''' Bug 2 '''
 
 def initialize_enviroment()
-
-	print(“Initializing enviroment”)
-
-	robot_size =  cm
-	cell_size = cm
-	if(cell_size < robot_size):
-
-		print(“Error: cell size too small”)
-		return -2
-	grid_size = width, height
-	if(width < 2 or height < 2 or width <= (cell_size / 2) or height <= (cell_size / 2)):
-
-		print(“Error: invalid map dimensions”)
-		return -1
-	map = math.ceil(grid_size[0] / cell_length), math.ceil(grid_size[1] / cell_length), null
-	
-	current_pos = 0, initial_y_pos, 0
-	goal = 0, current_pos[1] + dist_2_goal
-	if(goal[1] < 0):
-
-		print(“Error: invalid location of goal ”)
-		return -1
-	map(0, 0) = 0
-	map(x, y) = 1
-
-	speed = m/sec
-	set_speed(speed)
-	rot_time_per_90_degrees = sec
-	travel_time_per_cell = sec
+	print("Initializing enviroment")
+	servo(90)
+	for i in range(GRID_SIZE):
+		MAP.append([0 for _ in range(GRID_SIZE)])
 
 def follow_m_line():
-
-	print(“Following m line”)
-
-	if(current_pos[0] != 0):
-
-		print(“Error: can’t follow m line, not on m line”)
-		return -2
+	print("Following m line")
 	face_goal()
-
-	next_cell = get_next_cell()
-	while(next_cell == 0):
-
-		go_to_next_cell(next_cell)
-		next_cell = get_next_cell()
-
-	return next_cell
+	dist_to_obj = us_dist(15)
+	while (dist_to_obj > CELL_SIZE * 1.5):
+		fwd_cm(CELL_SIZE)
+		time.sleep(1)
+		stop()
+		CUR_Y += 1
+		if (CUR_Y == GOAL_Y and CUR_X == GOAL_X):
+			return 1
+		dist_to_obj = us_dist(15)
+	return 0
 
 def face_goal():
-
-	print(“Facing goal”)
-
-	theta =  current_pos[2]
-	while(theta != 0):
-
-		left_rot()
-		time.sleep(rot_time_per_90_degrees)
+	print("Facing goal")
+	while(ANGLE != 0):
+		left_deg(90)
+		time.sleep(1)
 		stop()
-		current_pos[2] = (current_pos[2] + 90) % 360
-		theta = current_pos[2] 
+		ANGLE = (ANGLE - 90) % 360
 
+def trace_object()
+	print("Tracing Object")
+	H_X, H_Y = CUR_X, CUR_Y
+	left_deg(90)
+	time.sleep(1)
+	stop()
+	ANGLE = (ANGLE - 90) % 360
+	while (CUR_X != GOAL_X or (CUR_X == GOAL_X and CUR_Y < H_Y)):
+		right_flag = 0
+		front_flag = 0
+		servo(0)
+		dist_to_obj = us_dist(15)
+		if (dist_to_obj < 15):
+			right_flag = 1
+		time.sleep(.5)
+		servo(90)
+		dist_to_obj = us_dist(15)
+		if (dist_to_obj < 15):
+			front_flag = 1
+		time.sleep(.5)
+
+		if (right_flag and front_flag):
+			update_position(-1)
+			left_deg(90)
+			time.sleep(1)
+			stop()
+			fwd_cm(CELL_SIZE)
+			time.sleep(1)
+			stop()
+		elif (right_flag):
+			update_position(0)
+			fwd_cm(CELL_SIZE)
+			time.sleep(1)
+			stop()
+		else:
+			update_position(1)
+			right_deg(90)
+			time.sleep(1)
+			stop()
+			fwd_cm(CELL_SIZE)
+			time.sleep(1)
+			stop()
+
+		if (CUR_Y == GOAL_Y and CUR_X == GOAL_X):
+			return 1
+		if (CUR_Y == H_Y and CUR_X == H_X):
+			return -1
+	return 0
+
+def update_position(move):
+	# left and forward
+	if move == -1:
+		if ANGLE == 0:
+			CUR_X -= 1
+		elif ANGLE == 90:
+			CUR_Y += 1
+		elif ANGLE == 180:
+			CUR_X += 1
+		else:
+			CUR_Y -= 1
+		ANGLE = (ANGLE - 90) % 360
+	# forward
+	elif move == 0:
+		if ANGLE == 0:
+			CUR_Y += 1
+		elif ANGLE == 90:
+			CUR_X += 1
+		elif ANGLE == 180:
+			CUR_Y -= 1
+		else:
+			CUR_X -= 1
+
+	# right and forward
+	else:
+		if ANGLE == 0:
+			CUR_X += 1
+		elif ANGLE == 90:
+			CUR_Y -= 1
+		elif ANGLE == 180:
+			CUR_X -= 1
+		else:
+			CUR_Y += 1
+		ANGLE = (ANGLE + 90) % 360
+
+def main():
+	initialize_enviroment()
+	while True:
+		status = follow_m_line()
+		if(status == 1)
+			print("Goal Reached")
+			stop()
+			return
+		status = trace_object()
+		if(status == 1)
+			print("Goal Reached")
+			stop()
+			return
+		elif (status == -1)
+			print("Robot Trapped")
+			stop()
+			return
+
+'''
 def get_next_cell():
 
 	print(“Searching next cell”)
@@ -173,75 +270,4 @@ def go_to_next_cell(next_cell):
 
 		current_pos[0] +=  1
 		current_pos[1] +=  0
-	
-	
-def trace_object()
-
-	print(“Tracing Object”)
-
-	starting_pos = current_pos
-	starting_trace = 1
-	if(starting_pos[0] != 0):
-
-		print(“Error: not starting trace from m line”)
-		return -2
-
-	next_cell = get_next_cell()
-	if(next_cell == next_cell):
-
-		return next_cell
-
-	if(next_cell != -1):
-
-		print(“Error: not starting trace from obstacle”)
-		return -2
-		
-	left_rot()
-	time.sleep(rot_time_per_90_degrees)
-	stop()
-	current_pos[2] = (current_pos[2] + 90) % 360
-
-	while((current_pos != starting_pos or starting_trace == 1) and next_cell != 1 and (current_pos[0] == 0 and math.abs(current_pos[1] - goal[1]) < math.abs(starting_pos[1] - goal[1])):
-
-		right_rot()
-		time.sleep(rot_time_per_90_degrees)
-		stop()
-		current_pos[2] = (current_pos[2] + 270) % 360
-		current_theta = 0
-		next_cell = get_next_cell()
-			
-		while(next_cell == -1):
-
-			left_rot()
-			time.sleep(rot_time_per_90_degrees)
-			stop()
-			current_pos[2] = (current_pos[2] + 90) % 360
-			current_theta += 90
-			next_cell = get_next_cell()
-	
-			if(current_theta == 360):
-
-				print(“Error: can’t trace, obstacles on all sides”)
-				return -2
-		
-		go_to_next_cell(next_cell)
-		
-		starting_trace = 0
-			
-	if(current_pos == starting_pos):
-		
-		print(“Error: robot enclosed in obstacle”)
-		return -2
-
-	else
-
-		return next_cell
-
--1 == obstacle
-null == unknown
-0 == empty
-1 == goal
-
-x_pos = current_pos[0]
-y_pos = current_pos[1]
-theta =  current_pos[2]
+'''
