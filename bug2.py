@@ -1,5 +1,6 @@
 from gopigo import *
 import time
+import matplotlib.pyplot as plt
 
 # Bug 2 Algorithm based on lecture notes
 
@@ -11,7 +12,6 @@ CUR_Y = 0
 GOAL_X = 0
 GOAL_Y = 10
 ANGLE = 0
-MAP = []
 
 ''' Utility '''
 
@@ -20,6 +20,14 @@ INF = 200
 LIMIT = 100
 WHEEL_RAD = 3.25
 ERROR = 1.3
+
+
+MAP = [[0 for x in range(2 * GRID_SIZE + 1)] for y in range(GRID_SIZE)]
+
+offset_x_r = [1, 0, -1, 0]
+offset_y_r = [0, 1, 0, -1]
+offset_x_l = [1, 0, -1, 0]
+offset_y_l = [0, 1, 0, -1]
 
 def left_deg(deg=None):
     if deg is not None:
@@ -178,6 +186,16 @@ def update_position(move):
 		else:
 			CUR_Y += 1
 		ANGLE = (ANGLE + 90) % 360
+	
+	if ANGLE == 0:
+		oi = 0;
+	elif ANGLE == 90:
+		oi = 3
+	elif ANGLE == 180:
+		oi = 2
+	else:
+		oi = 1
+	plot_map(CUR_X, CUR_Y, oi, 1)
 
 def could_follow_m_line():
 	if ((ANGLE == 90 and CUR_Y > GOAL_Y) or (ANGLE == 270 and CUR_Y < GOAL_Y)):
@@ -193,6 +211,18 @@ def could_follow_m_line():
 		if (dist_to_obj < CELL_SIZE * 1.5):
 			return False
 	return True
+
+def plot_map(xi, yi, oi, wi):
+	MAP[GRID_SIZE - yi][xi + GRID_SIZE] = 1
+    if w[i] == 1:
+        MAP[GRID_SIZE - yi - offset_y_r[oi]][xi + offset_x_r[oi] + GRID_SIZE] = 0.2
+    elif w[i] == -1:
+        MAP[GRID_SIZE - yi - offset_y_l[oi]][xi + offset_x_l[oi] + GRID_SIZE] = 0.2
+    plt.matshow(MAP)
+    plt.plot(xi + GRID_SIZE, GRID_SIZE - yi, marker=(3, 0, oi*90), markersize=20, linestyle='None')
+    plt.show(False)
+    plt.pause(1)
+    plt.close()
 
 def main():
 	initialize_enviroment()
