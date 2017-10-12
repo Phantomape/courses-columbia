@@ -11,8 +11,8 @@ CUR_X = 0
 CUR_Y = 0
 GOAL_X = 0
 GOAL_Y = 10
-ANGLE = 0
-
+ANGLE = 0 
+CNT = 0
 ''' Utility '''
 
 DPR = 360.0/64
@@ -151,6 +151,7 @@ def trace_object():
 
 def update_position(move):
 	# left and forward
+	global CNT
 	global CUR_Y
 	global CUR_X
 	global ANGLE
@@ -195,7 +196,8 @@ def update_position(move):
 		oi = 2
 	else:
 		oi = 1
-	plot_map(CUR_X, CUR_Y, oi, 1)
+	plot_map(CUR_X, CUR_Y, oi, 1, CNT)
+	CNT = CNT + 1
 
 def could_follow_m_line():
 	if ((ANGLE == 90 and CUR_Y > GOAL_Y) or (ANGLE == 270 and CUR_Y < GOAL_Y)):
@@ -212,16 +214,15 @@ def could_follow_m_line():
 			return False
 	return True
 
-def plot_map(xi, yi, oi, wi):
+def plot_map(xi, yi, oi, wi, cnt):
+	global MAP
 	MAP[GRID_SIZE - yi][xi + GRID_SIZE] = 1
-    if w[i] == 1:
+    if wi == 1:
         MAP[GRID_SIZE - yi - offset_y_r[oi]][xi + offset_x_r[oi] + GRID_SIZE] = 0.2
-    elif w[i] == -1:
-        MAP[GRID_SIZE - yi - offset_y_l[oi]][xi + offset_x_l[oi] + GRID_SIZE] = 0.2
     plt.matshow(MAP)
     plt.plot(xi + GRID_SIZE, GRID_SIZE - yi, marker=(3, 0, oi*90), markersize=20, linestyle='None')
     plt.show(False)
-    plt.pause(1)
+	plt.savefig(str(cnt) + '.jpg')
     plt.close()
 
 def main():
