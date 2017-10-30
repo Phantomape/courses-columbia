@@ -1,7 +1,36 @@
 import cv2
 import numpy as np
 import time
+import picamera
 from util import *
+
+refPt = []
+
+
+def get_roi(img):
+    def click_and_crop(event, x, y, flags, param):
+        global refPt
+
+        if event == cv2.EVENT_LBUTTONDOWN:
+            refPt = [(x, y)]
+
+        # check to see if the left mouse button was released
+        elif event == cv2.EVENT_LBUTTONUP:
+            # record the ending (x, y) coordinates and indicate that
+            # the cropping operation is finished
+            refPt.append((x, y))
+
+            # draw a rectangle around the region of interest
+            clone = img
+            #cv2.rectangle(clone, refPt[0], refPt[1], (255, 0, 0), 5)
+            #cv2.imshow("image", clone)
+
+    cv2.namedWindow('image')
+    cv2.setMouseCallback('image', click_and_crop)
+    cv2.imshow('image', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 
 def stream():
     cap = cv2.VideoCapture(0)
@@ -25,16 +54,18 @@ def stream():
 
 def init(camera):
     #   Part one
-    im = cv2.imread('banana.jpg')
+    camera.capture('target.png')
+    time.sleep(2)
+    im = cv2.imread('target.png')
     hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
-    r = cv2.selectROI(hsv, False)
+    get_roi(hsv)
+
+    r = tuple([refPt[0][0], refPt[0][1], refPt[1][0] - refPt[0][0] + 1, refPt[1][1] - refPt[0][1] + 1])
     imCrop = hsv[int(r[1]):int(r[1] + r[3]), int(r[0]):int(r[0] + r[2])]
     cv2.imshow('ROI', imCrop)
     cv2.waitKey(0)
-
     imWidth = imCrop.shape[1]
     imHeight = imCrop.shape[0]
-
     tgthsv = get_target_hsv(imCrop, imWidth, imHeight, r)
 
     #   Part two
@@ -55,15 +86,13 @@ def get_area_centroid(mask):
 
 
 def transform(tgthsv, hsv):
-    lower_bound = np.array([tgthsv[0] - 5, 100, 100])
-    upper_bound = np.array([tgthsv[0] + 5, 255, 255])
+    lower_bound = np.array([tgthsv[0] - 25, 100, 100])
+    upper_bound = np.array([tgthsv[0] + 25, 255, 255])
     hsv = cv2.GaussianBlur(hsv, (5, 5), 0)
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     kernel = np.ones((5, 5), np.uint8)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=3)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=3)
-    cv2.imshow('i', mask)
-    cv2.waitKey(0)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=4)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=4)
     return mask
 
 
@@ -95,8 +124,6 @@ def track(params):
         time.sleep(.5)
 
 if __name__ == "__main__":
-    #camera = picamera.PiCamera()
-    #init(camera)
-    #track()
-    params = init(2)
+    camera = picamera.PiCamera()
+    params = init(camera)
     track(params)
