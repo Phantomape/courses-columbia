@@ -1,7 +1,5 @@
-from __future__ import division
 from gopigo import *
 
-en_debug=1
 DPR = 360.0/64
 WHEEL_RAD = 3.2     #True radius of the wheel
 ratio = 6/64        
@@ -40,6 +38,3 @@ def bwd_cm(dist):
         enc_tgt(1,1,pulse)
         if dist>0:
             bwd()
-
-if __name__ == "__main__":
-    left_deg(360)
