@@ -50,8 +50,9 @@ def run(camera, transform, tgthsv):
         #   camera.capture('next.png')
         time.sleep(2)
         #    im_source = cv2.imread('banana.jpg')
-        im_source = cv2.imread('lab4_images/image00c.jpg')
+        im_source = cv2.imread('lab4_images/image00l.jpg')
         im_roadway = cv2.warpPerspective(im_source, transform, (320, 240))
+        im_roadway = cv2.GaussianBlur(im_roadway, (5, 5), 0)
         cv2.imshow("after warping", im_roadway)
         cv2.waitKey(200)
 
@@ -65,26 +66,80 @@ def run(camera, transform, tgthsv):
         cv2.imshow("edge", edges)
         cv2.waitKey(200)
 
-        lines = cv2.HoughLines(edges, 1, np.pi / 180, 118)
-        result = im_roadway.copy()
-        for line in lines[0]:
-            rho = line[0]
-            theta = line[1]
-            print theta
-            if (theta < (np.pi / 4.)) or (theta > (3. * np.pi / 4.0)):
-                pt1 = (int(rho / np.cos(theta)), 0)
+        lines = cv2.HoughLines(edges, 1, np.pi / 180, 50)
+        #   plot_on_img(im_roadway, lines)
 
-                pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
+        #   Face forward
+        if len(lines[0]) == 0:
+            continue
 
-                cv2.line(result, pt1, pt2, (255))
-            else:
-                pt1 = (0, int(rho / np.sin(theta)))
+        line = lines[0][0]
+        theta = line[1]
+        rho = line[0]
+        print rho
+        print theta
+        if theta > np.pi / 2:
+            offset_angle = (np.pi / 2 - (theta - np.pi / 2)) / np.pi * 180
+            print "rotate right:" + str(offset_angle)
+        else:
+            offset_angle = theta / np.pi * 180
+            print "rotate left:" + str(offset_angle)
 
-                pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
+        #   Centralize
+        centralize(rho, theta)
 
-                cv2.line(result, pt1, pt2, (255), 1)
-        cv2.imshow("detected lines", result)
-        cv2.waitKey(0)
+        #   Move
+        print "move fwd 1 cm"
+
+        flag = detect_orange()
+        if flag is True:
+            u_turn()
+
+
+def detect_orange():
+    print "No orange detected"
+    return False
+
+
+def u_turn():
+    print "U turn"
+
+
+def centralize(dist, angle):
+    if abs(160 - dist) <= 40:
+        print "Skip centralize"
+        return
+
+    if angle > np.pi / 2:
+        print "rotate right 90 degree"
+        print "fwd" + str(abs(160 - dist))
+        print "rotate left 90 degree"
+    else:
+        print "rotate left 90 degree"
+        print "fwd" + str(abs(160 - dist))
+        print "rotate right 90 degree"
+    print "centralized"
+
+
+def plot_on_img(img, lines):
+    result = img.copy()
+    for line in lines[0]:
+        rho = line[0]
+        theta = line[1]
+        if (theta < (np.pi / 4.)) or (theta > (3. * np.pi / 4.0)):
+            pt1 = (int(rho / np.cos(theta)), 0)
+            pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
+            cv2.line(result, pt1, pt2, (255))
+        else:
+            pt1 = (0, int(rho / np.sin(theta)))
+            pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
+            cv2.line(result, pt1, pt2, (255), 1)
+    cv2.imshow("detected lines", result)
+    cv2.waitKey(200)
+
+
+def get_orange_hsv():
+    print "get orange hsv(hardcoded)"
 
 
 def init(camera):
@@ -110,6 +165,12 @@ def init(camera):
     min_color = np.amin(min_color_per_row, axis=0)
     target_hsv = [avg_color, max_color, min_color]
 
+    get_orange_hsv()
+
+    #   ref: [  array([  30.        ,  253.79674797,  212.27100271]),
+    #           array([ 30, 255, 216], dtype=uint8),
+    #           array([ 30, 248, 209], dtype=uint8) ]
+    print target_hsv
     return transform, target_hsv
 
 
