@@ -1,21 +1,21 @@
-#Lab 4
+#   Lab 4
 
-###Group 22 [xc2360, bc2620, zm2263]
+### Group 22 [xc2360, bc2620, zm2263]
 
-###Youtube link: 
+### Youtube link: 
 
 You can find our main in lane_follower.py and helper functions in helper.py.
 We made the following assumptions about our robot/environment: 
 *   light remains steady
 *   robot is placed parallel with the center line at the beginning
 
-##Values calculated from ta_supplied_image_set:
+##  Values calculated from ta_supplied_image_set:
 calculated_angle_offset = <angle_offset>
 calculated_distance_offset = <distance_offset in cm>
 homography_transform_matrix = <matrix>
 distance_to_camera_from_homography = <distance in cm>
 
-##Values calculated from student_captured_image_set
+##  Values calculated from student_captured_image_set
 calculated_angle_offset = 5.0394
 calculated_distance_offset = 1.343663
 homography_transform_matrix = 
@@ -24,7 +24,7 @@ homography_transform_matrix =
  [  3.55270327e-04   3.60338583e-03   1.00000000e+00]]
 distance_to_camera_from_homography = <distance in cm>
 
-##Questions:
+##  Questions:
 
 ####    Describe the overall architecture of your implementation.
 *   Calculate homography based (car must be parallel with the center line, tilted situation can handled once the homography is correct)
