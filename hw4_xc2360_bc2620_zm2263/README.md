@@ -1,5 +1,7 @@
 #Lab 4
+
 ###Group 22 [xc2360, bc2620, zm2263]
+
 ###Youtube link: 
 
 You can find our main in lane_follower.py and helper functions in helper.py.
@@ -62,5 +64,5 @@ while
 
     if stop_sign encountered:
         u_turn
-        
+
 ####    What is the purpose of the distance offset from the camera to the homography transform?
