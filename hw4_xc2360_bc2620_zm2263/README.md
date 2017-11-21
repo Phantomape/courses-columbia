@@ -2,7 +2,7 @@
 
 ### Group 22 [xc2360, bc2620, zm2263]
 
-### Youtube link: 
+### Youtube link: https://www.youtube.com/watch?v=G98b-4b4fUc&feature=em-share_video_user
 
 You can find our main in lane_follower.py and helper functions in helper.py.
 We made the following assumptions about our robot/environment: 
