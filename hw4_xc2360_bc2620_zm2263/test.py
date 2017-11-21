@@ -68,20 +68,23 @@ def run(camera, transform, tgthsv, signhsv):
         #camera.capture('next.png')
         time.sleep(2)
         #im_source = cv2.imread('next.png')
-        im_source = cv2.imread('lab4_images/image00l.jpg')
+        im_source = cv2.imread('ta_captured_image_set/original.jpg')
         im_roadway = cv2.warpPerspective(im_source, transform, (320, 240))
         im_roadway = cv2.GaussianBlur(im_roadway, (5, 5), 0)
         cv2.imshow("after warping", im_roadway)
+        cv2.imwrite("homography_applied.jpg", im_roadway)
         cv2.waitKey(200)
 
         hsv = cv2.cvtColor(im_roadway, cv2.COLOR_BGR2HSV)
         mask = color_filter(hsv, tgthsv)
         cv2.imshow("mask", mask)
+        cv2.imwrite("yellow_color_filtered.jpg", mask)
         cv2.waitKey(200)
 
         mask = cv2.GaussianBlur(mask, (3, 3), 0)
         edges = cv2.Canny(mask, 50, 150)
         cv2.imshow("edge", edges)
+        cv2.imwrite("calculated_hough_lines.jpg", edges)
         cv2.waitKey(200)
 
         lines = cv2.HoughLines(edges, 1, np.pi / 180, 50)
@@ -94,7 +97,9 @@ def run(camera, transform, tgthsv, signhsv):
         line = lines[0][0]
         theta = line[1]
         rho = line[0]
+        offset_dist = rho / 320 * 25
         print rho
+        print offset_dist
         print theta
         if theta > np.pi / 2:
             offset_angle = (np.pi / 2 - (theta - np.pi / 2)) / np.pi * 180
@@ -117,11 +122,12 @@ def run(camera, transform, tgthsv, signhsv):
 
         flag = detect_orange(hsv, signhsv)
         if flag is True:
-                u_turn()
+            u_turn()
 
 
 def detect_orange(hsv, signhsv):
     mask = color_filter(hsv, signhsv)
+    cv2.imwrite("stop_sign_filtered.jpg", mask)
     output = cv2.connectedComponentsWithStats(mask, 4, cv2.CV_32S)
     if output[2].shape[0] == 1:
         print "orange not detected"
@@ -206,10 +212,10 @@ def init(camera):
     #camera.capture('curr.png')
     time.sleep(2)
     #im_source = cv2.imread('curr.png')
-    im_source = cv2.imread('lab4_images/image00c.jpg')
+    im_source = cv2.imread('ta_captured_image_set/calibration_image.jpg')
     get_pts(im_source)
 
-    use_hardcode = True
+    use_hardcode = False
     transform, status = cv2.findHomography(np.array(pts_source), np.array(pts_roadway))
     print transform
     if use_hardcode is True:
@@ -221,6 +227,7 @@ def init(camera):
 
     hsv = cv2.cvtColor(im_roadway, cv2.COLOR_BGR2HSV)
     get_roi(hsv)
+    print len(pts_region)
     r = tuple([pts_region[0][0], pts_region[0][1], pts_region[1][0] - pts_region[0][0] + 1,
                pts_region[1][1] - pts_region[0][1] + 1])
     im_crop = hsv[int(r[1]):int(r[1] + r[3]), int(r[0]):int(r[0] + r[2])]

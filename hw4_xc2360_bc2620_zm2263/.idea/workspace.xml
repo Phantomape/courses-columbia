@@ -11,33 +11,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="114" column="28" lean-forward="true" selection-start-line="114" selection-start-column="28" selection-end-line="114" selection-end-column="28" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="helper.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/helper.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="99" column="32" lean-forward="false" selection-start-line="99" selection-start-column="32" selection-end-line="99" selection-end-column="32" />
+            <state relative-caret-position="360">
+              <caret line="70" column="62" lean-forward="false" selection-start-line="70" selection-start-column="62" selection-end-line="70" selection-end-column="62" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -45,33 +23,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main2.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="141" column="17" lean-forward="true" selection-start-line="141" selection-start-column="17" selection-end-line="147" selection-end-column="14" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="colortracking.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/colortracking.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1710">
-              <caret line="142" column="26" lean-forward="true" selection-start-line="142" selection-start-column="26" selection-end-line="143" selection-end-column="32" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-                <element signature="e#506#949#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="image00l.jpg" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lab4_images/image00l.jpg">
+      <file leaf-file-name="calibration_image.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ta_captured_image_set/calibration_image.jpg">
           <provider selected="true" editor-type-id="images">
             <state />
           </provider>
@@ -90,8 +43,8 @@
     <findStrings>
       <find>refPt</find>
       <find>left_</find>
-      <find>cvt</find>
       <find>edge</find>
+      <find>cvt</find>
     </findStrings>
     <replaceStrings>
       <replace>pts_region</replace>
@@ -135,6 +88,16 @@
             <path>
               <item name="hw4_xc2360_bc2620_zm2263" type="b2602c69:ProjectViewProjectNode" />
               <item name="hw4_xc2360_bc2620_zm2263" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hw4_xc2360_bc2620_zm2263" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hw4_xc2360_bc2620_zm2263" type="462c0819:PsiDirectoryNode" />
+              <item name="student_captured_image_set" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="hw4_xc2360_bc2620_zm2263" type="b2602c69:ProjectViewProjectNode" />
+              <item name="hw4_xc2360_bc2620_zm2263" type="462c0819:PsiDirectoryNode" />
+              <item name="ta_captured_image_set" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -293,12 +256,12 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>192</line>
-          <option name="timeStamp" value="2" />
+          <url>file://$PROJECT_DIR$/test.py</url>
+          <line>215</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="4" />
+      <option name="time" value="5" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -360,10 +323,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1710">
           <caret line="142" column="26" lean-forward="true" selection-start-line="142" selection-start-column="26" selection-end-line="143" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#506#949#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -371,9 +331,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
           <caret line="114" column="28" lean-forward="true" selection-start-line="114" selection-start-column="28" selection-end-line="114" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -381,16 +339,29 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
           <caret line="141" column="17" lean-forward="true" selection-start-line="141" selection-start-column="17" selection-end-line="147" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ta_captured_image_set/image00c.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ta_captured_image_set/calibration_image.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ta_captured_image_set/image04tr_c.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="99" column="32" lean-forward="false" selection-start-line="99" selection-start-column="32" selection-end-line="99" selection-end-column="32" />
+        <state relative-caret-position="360">
+          <caret line="70" column="62" lean-forward="false" selection-start-line="70" selection-start-column="62" selection-end-line="70" selection-end-column="62" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
