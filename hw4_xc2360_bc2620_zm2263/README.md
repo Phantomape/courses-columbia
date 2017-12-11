@@ -2,7 +2,7 @@
 
 ### Group 22 [xc2360, bc2620, zm2263]
 
-### Youtube link: https://www.youtube.com/watch?v=G98b-4b4fUc&feature=em-share_video_user
+### Youtube link: https://www.youtube.com/watch?v=G98b-4b4fUc
 
 You can find our main in lane_follower.py and helper functions in helper.py.
 We made the following assumptions about our robot/environment: 
@@ -10,14 +10,17 @@ We made the following assumptions about our robot/environment:
 *   robot is placed parallel with the center line at the beginning
 
 ##  Values calculated from ta_supplied_image_set:
-calculated_angle_offset = <angle_offset>
-calculated_distance_offset = <distance_offset in cm>
-homography_transform_matrix = <matrix>
+calculated_angle_offset = 20.0000046545
+calculated_distance_offset = 2.578125
+homography_transform_matrix = 
+[[ -9.64006185e+00  -1.28534158e+01   1.77377138e+03]
+ [ -2.38000216e-01  -4.33160393e+01   3.65568332e+03]
+ [ -2.48443176e-03  -7.00189468e-02   1.00000000e+00]]
 distance_to_camera_from_homography = <distance in cm>
 
 ##  Values calculated from student_captured_image_set
 calculated_angle_offset = 5.0394
-calculated_distance_offset = 1.343663
+calculated_distance_offset = 0.643663
 homography_transform_matrix = 
 [[  1.42089702e+00   5.35655622e-01  -3.07229511e+02]
  [  6.36234349e-02   2.25226959e+00  -2.63324672e+02]
