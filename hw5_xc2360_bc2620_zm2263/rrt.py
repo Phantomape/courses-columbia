@@ -23,8 +23,10 @@ class RRT:
         self.state = "Init"
         self.screen = screen
         self.goal_radius = 10
+        self.seed = None
 
     def init_config(self):
+        self.state = "Build"
         for obs in self.obstacles:
             pygame.draw.polygon(self.screen, red, obs, 2)
         pygame.draw.circle(self.screen, cyan, self.start, 3)
@@ -33,29 +35,41 @@ class RRT:
 
     def build(self):
         self.init_config()
-        for k in range(self.K):
-            found = False
-            while found is False:
-                x_rand = self.random_state()
-                x_rand = RRTNode(int(x_rand[0]), int(x_rand[1]))
-                x_near = self.nearest_neighbor(x_rand)
-                x_new = self.step_to(x_near, x_rand)
-                no_collision = self.is_collided([x_new.x, x_new.y])
-                if no_collision is True:
-                    x_near.children.append(x_new)
-                    x_new.parent = x_near
-                    found = True
+        while True:
+            if self.state == "Build":
+                for k in range(self.K):
+                    found = False
+                    while found is False:
+                        x_rand = self.random_state()
+                        x_rand = RRTNode(int(x_rand[0]), int(x_rand[1]))
+                        x_near = self.nearest_neighbor(x_rand)
+                        x_new = self.step_to(x_near, x_rand)
+                        no_collision = self.is_collided([x_new.x, x_new.y])
+                        if no_collision is True:
+                            x_near.children.append(x_new)
+                            x_new.parent = x_near
+                            found = True
 
-                    reached = self.is_reached(x_new)
-                    if reached is True:
-                        self.state = "Reached"
-                    else:
-                        self.state = "Advanced"
+                            reached = self.is_reached(x_new)
+                            if reached is True:
+                                self.state = "Reached"
+                                self.seed = x_new
+                            else:
+                                self.state = "Advanced"
 
-                    pygame.draw.line(self.screen, white, [x_near.x, x_near.y], [x_new.x, x_new.y])
+                            pygame.draw.line(self.screen, white, [x_near.x, x_near.y], [x_new.x, x_new.y])
 
-            pygame.display.update()
-            fpsClock.tick(10000)
+                    pygame.display.update()
+                    fpsClock.tick(10000)
+                    if self.state == "Reached":
+                        break
+            elif self.state == "Reached":
+                curr_node = self.seed
+                while curr_node.parent is not None:
+                    pygame.draw.line(self.screen, cyan, [curr_node.x, curr_node.y], [curr_node.parent.x, curr_node.parent.y])
+                    curr_node = curr_node.parent
+                    pygame.display.update()
+        fpsClock.tick(1000)
 
     def extend(self, x_rand):
         found = False
