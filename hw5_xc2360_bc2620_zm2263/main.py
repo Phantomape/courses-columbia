@@ -3,12 +3,12 @@ from collections import deque
 from math import sqrt, atan2, cos, sin
 
 XDIM = 640
-YDIM = 480
+YDIM = 640
 white = 255, 240, 200
 black = 20, 20, 40
 red = 255, 0, 0
-blue = 0, 255, 0
-green = 0, 0, 255
+green = 0, 255, 0
+blue = 0, 0, 255
 cyan = 0, 255, 255
 
 
@@ -17,16 +17,42 @@ class RRT:
         self.start = start
         self.dest = dest
         self.obstacles = obstacles
-        self.K = 1000
+        self.K = 100000
         self.root = RRTNode(start[0], start[1])
         self.incremental_dist = increment
         self.state = "Init"
         self.screen = screen
+        self.goal_radius = 10
+
+    def init_config(self):
+        for obs in self.obstacles:
+            pygame.draw.polygon(self.screen, red, obs, 2)
+        pygame.draw.circle(self.screen, cyan, self.start, 3)
+        pygame.draw.circle(self.screen, blue, self.dest, 3)
+        pygame.display.update()
 
     def build(self):
+        self.init_config()
         for k in range(self.K):
-            x = self.random_state()
-            self.extend(RRTNode(int(x[0]), int(x[1])))
+            found = False
+            while found is False:
+                x_rand = self.random_state()
+                x_rand = RRTNode(int(x_rand[0]), int(x_rand[1]))
+                x_near = self.nearest_neighbor(x_rand)
+                x_new = self.step_to(x_near, x_rand)
+                no_collision = self.is_collided([x_new.x, x_new.y])
+                if no_collision is True:
+                    x_near.children.append(x_new)
+                    x_new.parent = x_near
+                    found = True
+
+                    reached = self.is_reached(x_new)
+                    if reached is True:
+                        self.state = "Reached"
+                    else:
+                        self.state = "Advanced"
+
+                    pygame.draw.line(self.screen, white, [x_near.x, x_near.y], [x_new.x, x_new.y])
 
             pygame.display.update()
             fpsClock.tick(10000)
@@ -36,13 +62,14 @@ class RRT:
         while found is False:
             x_near = self.nearest_neighbor(x_rand)
             x_new = self.step_to(x_near, x_rand)
-            no_collision = self.is_collided(x_new)
+            no_collision = self.is_collided([x_new.x, x_new.y])
             if no_collision is True:
                 x_near.children.append(x_new)
                 x_new.parent = x_near
                 found = True
 
                 reached = self.is_reached(x_new)
+
                 if reached is True:
                     self.state = "Reached"
                 else:
@@ -51,6 +78,9 @@ class RRT:
                 pygame.draw.line(self.screen, white, [x_near.x, x_near.y], [x_new.x, x_new.y])
 
     def is_reached(self, x_new):
+        dest = RRTNode(int(self.dest[0]), int(self.dest[1]))
+        if self.dist(x_new, dest) < self.goal_radius:
+            return True
         return False
 
     def step_to(self, p1, p2):
@@ -75,8 +105,60 @@ class RRT:
     def dist(self, p1, p2):
         return sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y))
 
-    def is_collided(self, x_rand):
+    def is_collided(self, x_new):
+        p1 = [int(x_new[0]), int(x_new[1])]
+        p2 = [640, int(x_new[1])]
+
+        for obs in self.obstacles:
+            count = 0
+            for x in range(len(obs)):
+                p3 = obs[x % len(obs)]
+                p4 = obs[(x + 1) % len(obs)]
+                if self.intersect(p3, p4, p1, p2) is True:
+                    if self.orientation(p3, p1, p2) == 0:
+                        return self.on_segment(p3, p1, p2)
+                    count += 1
+            if count % 2 == 1:
+                return False
+
         return True
+
+    def intersect(self, p1, p2, p3, p4):
+        o1 = self.orientation(p1, p2, p3)
+        o2 = self.orientation(p1, p2, p4)
+        o3 = self.orientation(p3, p4, p1)
+        o4 = self.orientation(p3, p4, p2)
+
+        if o1 != o2 and o3 != o4:
+            return True
+
+        if o1 == 0 and self.on_segment(p1, p3, p2):
+            return True
+
+        if o2 == 0 and self.on_segment(p1, p4, p2):
+            return True
+
+        if o3 == 0 and self.on_segment(p3, p1, p4):
+            return True
+
+        if o4 == 0 and self.on_segment(p3, p1, p4):
+            return True
+
+        return False
+
+    def orientation(self, p, q, r):
+        val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
+        if val == 0:
+            return 0
+        elif val > 0:
+            return 1
+        else:
+            return 2
+
+    def on_segment(self, p, q, r):
+        if q[0] <= max(p[0], r[0]) and q[0] >= min(p[0], r[0]) and q[1] >= min(p[1], r[1]) and q[1] <= max(p[1], r[1]):
+            return True
+        return False
 
     def random_state(self):
         while True:
@@ -130,5 +212,5 @@ if __name__ == "__main__":
     pygame.display.set_caption('Rapidly Exploring Random Tree')
 
     start, dest, obstacles = parse("obstacles.txt", "start_and_dest.txt")
-    rrt = RRT(start, dest, obstacles, 1, screen)
+    rrt = RRT(start, dest, obstacles, 10, screen)
     rrt.build()
