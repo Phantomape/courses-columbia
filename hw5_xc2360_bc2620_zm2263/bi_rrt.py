@@ -88,6 +88,11 @@ class RRT:
                                     self.seed_bwd = x_new_bwd
                                     break
 
+                if self.state == "Advanced":
+                    print "Cannot Reach Goal After Trying 100000 attempts"
+                    pygame.quit()
+                    break
+
             elif self.state == "Reached":
                 curr_node = self.seed_fwd
                 while curr_node.parent is not None:
@@ -102,6 +107,10 @@ class RRT:
                     pygame.draw.circle(self.screen, green, [curr_node.x, curr_node.y], 3)
                     curr_node = curr_node.parent
                     pygame.display.update()
+
+                pygame.time.wait(5000)
+                pygame.quit()
+                break
 
 
     def extend(self, x_rand):
@@ -125,7 +134,6 @@ class RRT:
                 pygame.draw.line(self.screen, white, [x_near.x, x_near.y], [x_new.x, x_new.y])
 
     def is_reached(self, fwd, bwd):
-        print self.dist(fwd, bwd)
         if self.dist(fwd, bwd) < self.goal_radius:
             return True
         return False

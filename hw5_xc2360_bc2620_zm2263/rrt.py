@@ -63,13 +63,22 @@ class RRT:
                     fpsClock.tick(10000)
                     if self.state == "Reached":
                         break
+
+                if self.state == "Advanced":
+                	print "Cannot Reach Goal After Trying 100000 attempts"
+                	pygame.quit()
+                	break
+
             elif self.state == "Reached":
                 curr_node = self.seed
                 while curr_node.parent is not None:
                     pygame.draw.line(self.screen, cyan, [curr_node.x, curr_node.y], [curr_node.parent.x, curr_node.parent.y])
                     curr_node = curr_node.parent
                     pygame.display.update()
-        fpsClock.tick(1000)
+
+                pygame.time.wait(5000)
+                pygame.quit()
+                break
 
     def extend(self, x_rand):
         found = False
