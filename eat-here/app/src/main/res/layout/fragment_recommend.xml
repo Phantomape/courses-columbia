@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.eathere.cc.eathere.RecommendFragment"
+    android:background="@color/windowBackground">
+
+    <ListView
+        android:id="@+id/frag_recommend_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="?attr/actionBarSize"
+        />
+
+    <TextView
+        android:id="@+id/frag_recommend_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/frag_recommend_empty_list"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+</RelativeLayout>
